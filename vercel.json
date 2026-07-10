@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://sportify-backend-6dou.onrender.com/:path*"
+    }
+  ]
+}
