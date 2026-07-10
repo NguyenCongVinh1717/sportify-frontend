@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/products.html"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://sportify-backend-6dou.onrender.com/:path*"
     }
