@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đơn hàng của tôi | Sportify Premium Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --white: #ffffff;
+      --gray-bg: #f6f8fa;
+      --gray-light: #f8fafc;
+      --gray-border: #e2e8f0;
+      --black: #0f172a;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --radius: 16px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+    }
+
+    body { 
+      background-color: var(--gray-bg); 
+      color: var(--black); 
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== HEADER ===== */
+    .topbar {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-border); 
+      padding: 16px 0; 
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-inner {
+      max-width: 800px; 
+      margin: 0 auto; 
+      padding: 0 20px;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 36px; 
+      height: 36px;
+      background: var(--black); 
+      border-radius: 10px;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+    }
+    
+    .brand-logo i { color: var(--white); font-size: 14px; }
+    .brand-title { font-size: 20px; font-weight: 900; font-style: italic; letter-spacing: -1px; color: var(--black); margin-left: 10px; text-transform: uppercase; }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--black);
+    }
+
+    .status-view {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    /* ===== CARD ĐƠN HÀNG TỐI GIẢN CHUẨN PREMIUM ===== */
+    .orders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .order-card {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: var(--transition);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.02);
+    }
+
+    .order-card:hover {
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+      border-color: #cbd5e1;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed var(--gray-border);
+      margin-bottom: 20px;
+    }
+
+    .order-tag {
+      font-size: 13px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 6px 14px;
+      border-radius: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .order-status {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 50px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Badges Status mượt mà */
+    .status-unpaid { background: #fff7ed; color: #ea580c; }
+    .status-pending { background: #f0fdf4; color: #16a34a; } /* Chờ duyệt đổi màu dịu hơn */
+    .status-shipping { background: #fef9c3; color: #ca8a04; }
+    .status-delivered { background: #ecfdf5; color: var(--success); }
+    .status-cancelled { background: #fef2f2; color: var(--danger); }
+
+    /* Layout hàng thông tin */
+    .order-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 500;
+      min-width: 150px;
+    }
+
+    .info-value {
+      color: var(--black);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* Khu vực thanh toán tinh gọn bên dưới */
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 18px;
+      border-top: 1px dashed var(--gray-border);
+    }
+
+    .method-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--gray-light);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--gray-border);
+    }
+
+    .method-badge i {
+      font-size: 13px;
+    }
+
+    .method-vnpay i {
+      color: #005baa; /* Màu xanh đặc trưng VNPay */
+    }
+
+    .method-cod i {
+      color: #ea580c;
+    }
+
+    .total-container {
+      text-align: right;
+    }
+
+    .total-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .total-price {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: -0.5px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--black);
+      color: var(--white);
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 10px;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: #1e293b;
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+      border: 1px solid var(--gray-border);
+      font-size: 11px;
+      padding: 8px 14px;
+    }
+    .btn-secondary:hover {
+      background: var(--gray-light);
+      border-color: #cbd5e1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="products.html" class="brand-wrapper">
+        <div class="brand-logo">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <div class="brand-title">SPORTIFY</div>
+      </a>
+      <a href="products.html" class="action-btn btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại cửa hàng
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="page-title">Đơn hàng của tôi</h1>
+    </div>
+
+    <div id="loading-view" class="status-view">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 28px; color: var(--black); margin-bottom: 14px;"></i>
+      <p style="font-weight: 600; color: var(--text-muted); font-size: 14px;">Đang tải lịch sử mua sắm của bạn...</p>
+    </div>
+
+    <div id="empty-view" class="status-view" style="display: none;">
+      <i class="fa-solid fa-bag-shopping" style="font-size: 36px; color: var(--text-muted); margin-bottom: 14px;"></i>
+      <p style="font-weight: 600; color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">Bạn chưa thực hiện đơn hàng nào.</p>
+      <a href="products.html" class="action-btn" style="font-size: 11px;">Khám phá sản phẩm ngay</a>
+    </div>
+
+    <div id="orders-container" class="orders-list" style="display: none;"></div>
+  </main>
+
+  <script src="api.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async function() {
+      const loadingView = document.getElementById("loading-view");
+      const emptyView = document.getElementById("empty-view");
+      const ordersContainer = document.getElementById("orders-container");
+
+      try {
+        // Gọi API qua core api.js dùng chung
+        const orders = await apiGet("/order/myOrders");
+
+        loadingView.style.display = "none";
+
+        if (!orders || orders.length === 0) {
+          emptyView.style.display = "block";
+          return;
+        }
+
+        ordersContainer.style.display = "flex";
+        ordersContainer.innerHTML = ""; 
+
+        // Sắp xếp đơn hàng mới nhất lên trên đầu
+        orders.reverse().forEach(order => {
+          
+          let statusClass = "";
+          let statusText = "";
+          let statusIcon = "";
+
+          // Phân định trạng thái mượt mà dựa trên Enum OrderStatus của bạn
+          switch (order.status) {
+            case "UNPAID":
+              statusClass = "status-unpaid";
+              statusText = "Chưa thanh toán";
+              statusIcon = '<i class="fa-regular fa-clock"></i>';
+              break;
+            case "PENDING":
+              statusClass = "status-pending";
+              statusText = "Chờ duyệt";
+              statusIcon = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+              break;
+            case "SHIPPING":
+              statusClass = "status-shipping";
+              statusText = "Đang giao hàng";
+              statusIcon = '<i class="fa-solid fa-truck-fast"></i>';
+              break;
+            case "DELIVERED":
+              statusClass = "status-delivered";
+              statusText = "Đã giao";
+              statusIcon = '<i class="fa-solid fa-circle-check"></i>';
+              break;
+            case "CANCELLED":
+              statusClass = "status-cancelled";
+              statusText = "Đã hủy đơn";
+              statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+              break;
+            default:
+              statusClass = "status-unpaid";
+              statusText = order.status || "Đang xử lý";
+              statusIcon = '<i class="fa-solid fa-circle-question"></i>';
+          }
+
+          // Phân loại hiển thị Phương thức thanh toán linh động từ DB nhả ra
+          // (Dựa vào thuộc tính paymentMethod hoặc tương đương của bạn như VNPAY / COD)
+          let methodIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
+          let methodText = "Thanh toán COD";
+          let methodClass = "method-cod";
+
+          if (order.paymentMethod === "VNPAY" || order.paymentMethod === "ONLINE" || order.vnpTxnRef) {
+            methodIcon = '<i class="fa-solid fa-credit-card"></i>';
+            methodText = "Cổng VNPay";
+            methodClass = "method-vnpay";
+          }
+
+          const orderCard = document.createElement("div");
+          orderCard.className = "order-card";
+          orderCard.innerHTML = `
+            <div class="order-header">
+              <span class="order-tag">#${order.id}</span>
+              <span class="order-status ${statusClass}">
+                ${statusIcon} ${statusText}
+              </span>
+            </div>
+            
+            <div class="order-body">
+              <div class="info-row">
+                <span class="info-label">Người nhận hàng</span>
+                <span class="info-value">${order.receiver || "Chưa cập nhật"}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Số điện thoại</span>
+                <span class="info-value">${order.phone || "Chưa cập nhật"}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Địa chỉ giao tới</span>
+                <span class="info-value">${order.address || "Chưa cập nhật"}</span>
+              </div>
+            </div>
+            
+            <div class="order-footer">
+              <div class="method-badge ${methodClass}">
+                ${methodIcon} <span>${methodText}</span>
+              </div>
+              <div class="total-container">
+                <span class="total-label">Tổng số tiền</span>
+                <span class="total-price">${(order.totalPrice || 0).toLocaleString('vi-VN')}đ</span>
+              </div>
+            </div>
+          `;
+          ordersContainer.appendChild(orderCard);
+        });
+
+      } catch (error) {
+        console.error("Lỗi nạp danh sách đơn hàng:", error);
+        loadingView.innerHTML = `
+          <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; color: var(--danger); margin-bottom: 12px;"></i>
+          <p style="font-weight: 600; color: var(--danger); font-size: 14px;">Không thể đồng bộ: ${error.message || "Phiên làm việc hết hạn"}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sportify Admin | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        :root {
+            --white: #ffffff;
+            --bg-right: #f8f9fa;
+            --text-main: #111111;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-color: var(--white);
+        }
+
+        .left-panel {
+            flex: 1;
+            background-image: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+        }
+
+        .left-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.25);
+            z-index: 1;
+        }
+
+        .logo-brand {
+            font-size: 26px;
+            font-weight: 900;
+            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            color: var(--text-main);
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .left-content {
+            max-width: 480px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .line-top {
+            width: 40px;
+            height: 3px;
+            background: var(--text-main);
+            margin-bottom: 30px;
+        }
+
+        .left-content h1 {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--text-main);
+            margin-bottom: 25px;
+        }
+
+        .left-content p {
+            font-size: 15px;
+            color: #2d3748;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .right-panel {
+            flex: 1;
+            background-color: var(--bg-right);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            position: relative;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 50px 55px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.03);
+        }
+
+        .login-header h2 {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .input-group .eye-icon {
+            left: auto;
+            right: 15px;
+            cursor: pointer;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 15px 13px 45px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--text-main);
+        }
+
+        .forgot-pass {
+            display: block;
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .forgot-pass:hover {
+            color: var(--text-main);
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #222222;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 20px 0;
+            color: #cbd5e1;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #94a3b8;
+        }
+
+        .google-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .signup-link {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+
+        .signup-link a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .msg {
+            color: #e11d48;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Thêm style cho phần nhắc nhở định dạng password */
+        .pwd-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="g_id_onload" data-client_id="1093888167494-njc36m9n4lhbeess9fskjeork1ks3in2.apps.googleusercontent.com"
+        data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false">
+    </div>
+
+    <div class="left-panel">
+        <div class="logo-brand">SPORTIFY</div>
+        <div class="left-content">
+            <div class="line-top"></div>
+            <h1>Quản lý cửa hàng<br>thể thao chuyên nghiệp</h1>
+            <p>Đăng nhập để truy cập và quản lý toàn bộ hoạt động của cửa hàng một cách hiệu quả.</p>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="login-card" id="mainLoginSection">
+            <div class="login-header">
+                <h2>Đăng nhập</h2>
+                <p>Chào mừng bạn quay trở lại với Sportify Admin</p>
+            </div>
+
+            <div id="msg" class="msg"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Địa chỉ Email</label>
+                    <div class="input-group">
+                        <i class="fa-regular fa-envelope"></i> 
+                        <input type="email" id="email" class="form-control" placeholder="example@gmail.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Mật khẩu</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu" required>
+                        <i class="fa-regular fa-eye-slash eye-icon" id="togglePasswordBtn"></i>
+                    </div>
+                </div>
+
+                <a href="javascript:void(0)" class="forgot-pass" id="linkToForgotPassword">Quên mật khẩu?</a>
+
+                <button type="submit" class="btn-login">Đăng nhập</button>
+            </form>
+
+            <div class="divider">
+                <span>hoặc đăng nhập với</span>
+            </div>
+
+            <div class="google-btn-container">
+                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                    data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="350">
+                </div>
+            </div>
+
+            <div class="signup-link">
+                Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+            </div>
+        </div>
+
+
+        <div class="login-card" id="forgotPasswordSection" style="display: none;">
+            <div class="login-header">
+                <h2>Quên mật khẩu</h2>
+                <p>Nhập email hệ thống để nhận mã OTP khôi phục tài khoản</p>
+            </div>
+            <div id="forgotMsg" class="msg"></div>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <label>Email khôi phục</label>
+                    <div class="input-group">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="forgotEmail" class="form-control" placeholder="example@gmail.com" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Gửi mã OTP</button>
+                <div class="signup-link">
+                    <a href="javascript:void(0)" class="backToLogin"><i class="fa-solid fa-arrow-left"></i> Quay lại Đăng nhập</a>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="login-card" id="resetPasswordSection" style="display: none;">
+            <div class="login-header">
+                <h2>Đặt lại mật khẩu</h2>
+                <p>Nhập mã OTP vừa được gửi về Email và mật khẩu mới của bạn</p>
+            </div>
+            <div id="resetMsg" class="msg"></div>
+            <form id="resetForm">
+                <div class="form-group">
+                    <label>Mã số OTP (6 số)</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-key"></i>
+                        <input type="text" id="resetOtp" class="form-control" placeholder="Nhập 6 số OTP" required maxlength="6">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="resetNewPassword" class="form-control" placeholder="Nhập mật khẩu mới" required>
+                        <i class="fa-regular fa-eye-slash eye-icon" id="toggleResetPasswordBtn"></i>
+                    </div>
+                    <div class="pwd-hint">Mật khẩu dài tối thiểu 8 ký tự, gồm ít nhất 1 chữ hoa, 1 chữ thường và 1 số.</div>
+                </div>
+                <button type="submit" class="btn-login">Xác nhận thay đổi</button>
+                <div class="signup-link">
+                    <a href="javascript:void(0)" class="backToLogin"><i class="fa-solid fa-arrow-left"></i> Hủy và quay lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const form = document.getElementById('loginForm');
+        const msg = document.getElementById('msg');
+
+        // Các biến điều khiển luồng Quên mật khẩu
+        const mainLoginSection = document.getElementById('mainLoginSection');
+        const forgotPasswordSection = document.getElementById('forgotPasswordSection');
+        const resetPasswordSection = document.getElementById('resetPasswordSection');
+        
+        const forgotForm = document.getElementById('forgotForm');
+        const resetForm = document.getElementById('resetForm');
+        const forgotMsg = document.getElementById('forgotMsg');
+        const resetMsg = document.getElementById('resetMsg');
+        
+        let savedEmailForReset = ""; // Biến toàn cục lưu email tạm giữa bước 1 và bước 2
+
+        window.onload = () => {
+            localStorage.clear();
+            console.log("Đã dọn sạch localStorage khi tải trang đăng nhập.");
+        };
+
+        // Ẩn / Hiện mật khẩu Form Login
+        togglePasswordBtn.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordBtn.classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordBtn.classList.replace('fa-eye', 'fa-eye-slash');
+            }
+        });
+
+        // Ẩn / Hiện mật khẩu Form Reset
+        const resetNewPasswordInput = document.getElementById('resetNewPassword');
+        const toggleResetPasswordBtn = document.getElementById('toggleResetPasswordBtn');
+        toggleResetPasswordBtn.addEventListener('click', () => {
+            if (resetNewPasswordInput.type === 'password') {
+                resetNewPasswordInput.type = 'text';
+                toggleResetPasswordBtn.classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                resetNewPasswordInput.type = 'password';
+                toggleResetPasswordBtn.classList.replace('fa-eye', 'fa-eye-slash');
+            }
+        });
+
+        // ĐIỀU HƯỚNG HIỂN THỊ CÁC FORM (CHUYỂN GIAO DIỆN)
+        document.getElementById('linkToForgotPassword').addEventListener('click', () => {
+            mainLoginSection.style.display = 'none';
+            forgotPasswordSection.style.display = 'block';
+            forgotMsg.textContent = '';
+        });
+
+        document.querySelectorAll('.backToLogin').forEach(btn => {
+            btn.addEventListener('click', () => {
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordSection.style.display = 'none';
+                mainLoginSection.style.display = 'block';
+                msg.textContent = '';
+            });
+        });
+
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // ==========================================
+        // 1. LOGIC XỬ LÝ ĐĂNG NHẬP THÔNG THƯỜNG
+        // ==========================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email) {
+                msg.textContent = 'Vui lòng nhập địa chỉ Email!';
+                msg.style.color = '#e11d48';
+                return;
+            }
+            if (!validateEmail(email)) {
+                msg.textContent = 'Định dạng Email không hợp lệ!';
+                msg.style.color = '#e11d48';
+                return;
+            }
+            if (!password || password.length < 8) {
+                msg.textContent = 'Mật khẩu bảo mật phải chứa từ 8 ký tự trở lên!';
+                msg.style.color = '#e11d48';
+                return;
+            }
+
+            msg.textContent = 'Đang đăng nhập...';
+            msg.style.color = '#111111';
+
+            try {
+                const data = await apiPost('/auth/login', { email, password });
+                if (data && data.fullName) {
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('fullName', data.fullName);
+                    localStorage.setItem('email', email);
+                    handleNavigation(data.role);
+                } else {
+                    throw new Error("Backend không trả về dữ liệu 'fullName' hợp lệ!");
+                }
+            } catch (err) {
+                msg.textContent = err.message || 'Đăng nhập thất bại!';
+                msg.style.color = '#e11d48';
+            }
+        });
+
+        // ==========================================
+        // 2. LOGIC BƯỚC 1: GỬI YÊU CẦU QUÊN MẬT KHẨU
+        // ==========================================
+        forgotForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById('forgotEmail').value.trim();
+
+            if (!emailInput || !validateEmail(emailInput)) {
+                forgotMsg.textContent = 'Vui lòng nhập định dạng Email hợp lệ!';
+                forgotMsg.style.color = '#e11d48';
+                return;
+            }
+
+            forgotMsg.textContent = 'Đang gửi mã OTP khôi phục...';
+            forgotMsg.style.color = '#111111';
+
+            try {
+                // Gọi API sang endpoint /auth/forgot-password bọc Object Request chuẩn
+                const response = await apiPost('/auth/forgot-password', { email: emailInput });
+                
+                savedEmailForReset = emailInput; // Lưu giữ email để phục vụ bước reset tiếp theo
+                
+                // Đổi form hiển thị sang form nhập OTP
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordSection.style.display = 'block';
+                resetMsg.textContent = response.message || 'Mã OTP đã được gửi thành công!';
+                resetMsg.style.color = 'var(--success)';
+            } catch (err) {
+                forgotMsg.textContent = err.message || 'Email không tồn tại hoặc hệ thống gặp sự cố!';
+                forgotMsg.style.color = '#e11d48';
+            }
+        });
+
+        // ==========================================
+        // 3. LOGIC BƯỚC 2: XÁC THỰC OTP & RESET PASSWORD
+        // ==========================================
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('resetOtp').value.trim();
+            const newPassword = document.getElementById('resetNewPassword').value.trim();
+
+            if (otp.length !== 6 || isNaN(otp)) {
+                resetMsg.textContent = 'Mã số OTP phải có độ dài chính xác là 6 số!';
+                resetMsg.style.color = '#e11d48';
+                return;
+            }
+
+            // Regex kiểm tra độ mạnh password khớp 100% với Backend validation
+            const pwdRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+            if (!pwdRegex.test(newPassword)) {
+                resetMsg.textContent = 'Mật khẩu yếu! Cần ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số.';
+                resetMsg.style.color = '#e11d48';
+                return;
+            }
+
+            resetMsg.textContent = 'Đang tiến hành đặt lại mật khẩu...';
+            resetMsg.style.color = '#111111';
+
+            try {
+                // Gọi API sang endpoint /auth/reset-password bọc Object Request chuẩn
+                const response = await apiPost('/auth/reset-password', {
+                    email: savedEmailForReset,
+                    otp: otp,
+                    newPassword: newPassword
+                });
+
+                resetMsg.textContent = response.message || 'Đổi mật khẩu thành công!';
+                resetMsg.style.color = 'var(--success)';
+
+                // Đổi mật khẩu thành công -> Chờ 2 giây sau đó đẩy tự động về form Đăng Nhập
+                setTimeout(() => {
+                    resetPasswordSection.style.display = 'none';
+                    mainLoginSection.style.display = 'block';
+                    msg.textContent = 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập bằng mật khẩu mới.';
+                    msg.style.color = 'var(--success)';
+                    document.getElementById('password').value = '';
+                }, 2000);
+
+            } catch (err) {
+                resetMsg.textContent = err.message || 'Mã OTP không chính xác hoặc đã hết hiệu lực!';
+                resetMsg.style.color = '#e11d48';
+            }
+        });
+
+        // Xử lý phản hồi từ Google Auth
+        async function handleCredentialResponse(response) {
+            msg.textContent = 'Đang xác thực Google...';
+            msg.style.color = '#111111';
+
+            try {
+                const data = await apiPost('/auth/google', { token: response.credential });
+                if (data && data.fullName) {
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('fullName', data.fullName);
+                    if (data.email) {
+                        localStorage.setItem('email', data.email);
+                    }
+                    handleNavigation(data.role);
+                } else {
+                    throw new Error("Tài khoản Google hợp lệ nhưng Backend không cung cấp 'fullName'!");
+                }
+            } catch (err) {
+                msg.textContent = 'Đăng nhập Google thất bại! Vui lòng thử lại.';
+                msg.style.color = '#e11d48';
+            }
+        }
+
+        // Điều hướng phân quyền
+        function handleNavigation(role) {
+            const userRole = role ? role.toUpperCase() : '';
+            if (userRole.includes('ADMIN')) {
+                window.location.href = 'adminDashboard.html';
+            } else if (userRole.includes('USER')) {
+                window.location.href = 'products.html';
+            } else {
+                msg.textContent = 'Vai trò tài khoản không hợp lệ!';
+                msg.style.color = '#e11d48';
+            }
+        }
+    </script>
+</body>
+
+</html>

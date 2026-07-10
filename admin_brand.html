@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sportify Admin | Quản lý thương hiệu</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --white: #fff;
+      --black: #000;
+      --gray: #f8f9fa;
+      --border: #eee;
+      --text-muted: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: var(--gray);
+      display: flex;
+    }
+
+    /* SIDEBAR SYNCHRONIZED */
+    .sidebar {
+      width: 260px;
+      background: white;
+      height: 100vh;
+      position: fixed;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-header {
+      padding: 40px 25px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .sidebar-menu {
+      padding: 10px 15px;
+    }
+
+    .menu-item {
+      display: flex;
+      gap: 12px;
+      padding: 15px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #666;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: black;
+      color: white;
+    }
+
+    /* MAIN CONTENT SECTION */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      padding: 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+
+    .btn-black {
+      background: black;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    /* TOOLBAR SEARCH */
+    .toolbar {
+      margin-bottom: 25px;
+      background: white;
+      padding: 15px;
+      border: 1px solid var(--border);
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 12px 12px 45px;
+      border: 1px solid #ddd;
+      outline: none;
+      font-weight: 600;
+    }
+
+    /* MINIMALIST CARD & TABLE */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 20px;
+      text-align: left;
+      border-bottom: 2px solid black;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #000;
+      font-weight: 800;
+    }
+
+    td {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-icon {
+      width: 35px;
+      height: 35px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+    }
+
+    .btn-icon:hover {
+      background: black;
+      color: white;
+    }
+
+    /* MODAL MINIMAL STYLE */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
+      justify-content: center;
+      z-index: 2000;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      width: 500px;
+      padding: 35px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      SPORTIFY ADMIN
+    </div>
+
+    <nav class="sidebar-menu">
+      <a href="adminDashboard.html" class="menu-item">
+        <i class="fa-solid fa-chart-line"></i> THỐNG KÊ
+      </a>
+      <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
+      <a href="admin_brand.html" class="menu-item active">
+        <i class="fa-solid fa-award"></i> THƯƠNG HIỆU
+      </a>
+      <a href="admin_color.html" class="menu-item">
+        <i class="fa-solid fa-palette"></i> MÀU SẮC
+      </a>
+      <a href="admin_size.html" class="menu-item">
+        <i class="fa-solid fa-ruler"></i> KÍCH THƯỚC
+      </a>
+      <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
+      <a href="admin_customer.html" class="menu-item">
+        <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h2 style="font-size:30px; font-weight:800;">Quản lý thương hiệu</h2>
+        <p id="brand-count-text" style="color:#666; margin-top:5px;">Danh sách đối tác thương hiệu sản phẩm</p>
+      </div>
+      <button class="btn-black" onclick="openModal()">
+        <i class="fa-solid fa-plus"></i> THÊM THƯƠNG HIỆU
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-brand" placeholder="Tìm theo tên hoặc mã thương hiệu..." oninput="filterBrands()">
+      </div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Mã thương hiệu</th>
+            <th>Tên thương hiệu</th>
+            <th style="text-align:right;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="brand-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="modal" id="brandModal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
+        <h3 id="modalTitle" style="font-weight:800;">THÊM THƯƠNG HIỆU</h3>
+        <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer;">×</button>
+      </div>
+
+      <form id="brandForm">
+        <input type="hidden" id="b-id">
+
+        <div class="form-group">
+          <label>Mã thương hiệu</label>
+          <input type="text" id="b-code" class="form-control" required placeholder="Ví dụ: NIKE, ADI...">
+        </div>
+
+        <div class="form-group">
+          <label>Tên thương hiệu</label>
+          <input type="text" id="b-name" class="form-control" required placeholder="Ví dụ: Nike, Adidas...">
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" onclick="closeModal()" class="btn-black"
+            style="background:#ddd; color:black;">HỦY</button>
+          <button type="submit" class="btn-black">LƯU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    let allBrands = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBrands();
+    });
+
+    async function loadBrands() {
+      try {
+        allBrands = await apiGet('/brands');
+        renderBrands();
+        document.getElementById('brand-count-text').innerText = `Hiện có ${allBrands.length} đối tác thương hiệu sản phẩm`;
+      } catch (err) {
+        Swal.fire('Lỗi', err.message, 'error');
+      }
+    }
+
+    function renderBrands() {
+      const tbody = document.getElementById('brand-body');
+      if (allBrands.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted);">Không tìm thấy thương hiệu nào.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = allBrands.map(b => `
+                <tr>
+                    <td>#${b.id}</td>
+                    <td><strong>${b.brandCode || 'N/A'}</strong></td>
+                    <td>${b.brandName}</td>
+                    <td>
+                        <div style="display:flex; gap:8px; justify-content:flex-end;">
+                            <button class="btn-icon" onclick="editBrand(${b.id})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-icon" onclick="deleteBrand(${b.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    function filterBrands() {
+      const keyword = document.getElementById('search-brand').value.toLowerCase();
+      const tbody = document.getElementById('brand-body');
+
+      const filtered = allBrands.filter(b =>
+        (b.brandName && b.brandName.toLowerCase().includes(keyword)) ||
+        (b.brandCode && b.brandCode.toLowerCase().includes(keyword))
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted);">Không tìm thấy kết quả phù hợp.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => `
+                <tr>
+                    <td>#${b.id}</td>
+                    <td><strong>${b.brandCode || 'N/A'}</strong></td>
+                    <td>${b.brandName}</td>
+                    <td>
+                        <div style="display:flex; gap:8px; justify-content:flex-end;">
+                            <button class="btn-icon" onclick="editBrand(${b.id})">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="btn-icon" onclick="deleteBrand(${b.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    function openModal() {
+      document.getElementById('brandModal').style.display = 'flex';
+      document.getElementById('brandForm').reset();
+      document.getElementById('b-id').value = '';
+      document.getElementById('modalTitle').innerText = 'THÊM THƯƠNG HIỆU';
+    }
+
+    function closeModal() {
+      document.getElementById('brandModal').style.display = 'none';
+    }
+
+    document.getElementById('brandForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('b-id').value;
+      const body = {
+        brandCode: document.getElementById('b-code').value.trim(),
+        brandName: document.getElementById('b-name').value.trim()
+      };
+
+      try {
+        if (id) {
+          await apiPut(`/brands/${id}`, body);
+        } else {
+          await apiPost('/brands', body);
+        }
+        closeModal();
+        loadBrands();
+        Swal.fire('Thành công', 'Lưu dữ liệu thành công', 'success');
+      } catch (err) {
+        Swal.fire('Lỗi', err.message, 'error');
+      }
+    };
+
+    async function editBrand(id) {
+      try {
+        const b = await apiGet(`/brands/${id}`);
+        openModal();
+        document.getElementById('modalTitle').innerText = 'CẬP NHẬT THƯƠNG HIỆU';
+        document.getElementById('b-id').value = b.id;
+        document.getElementById('b-code').value = b.brandCode || '';
+        document.getElementById('b-name').value = b.brandName || '';
+      } catch (err) {
+        Swal.fire('Lỗi', err.message, 'error');
+      }
+    }
+
+    async function deleteBrand(id) {
+      const result = await Swal.fire({
+        title: 'Xóa thương hiệu?',
+        text: "Các sản phẩm thuộc thương hiệu này sẽ bị ảnh hưởng!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#000',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      });
+
+      if (!result.isConfirmed) return;
+
+      try {
+        await apiDelete(`/brands/${id}`);
+        loadBrands();
+        Swal.fire('Đã xóa', 'Thương hiệu đã được loại bỏ.', 'success');
+      } catch (err) {
+        Swal.fire('Lỗi', 'Không thể xóa vì thương hiệu đang có sản phẩm liên kết!', 'error');
+      }
+    }
+  </script>
+</body>
+
+</html>

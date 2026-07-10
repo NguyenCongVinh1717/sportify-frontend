@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sportify Admin | Quản lý người dùng</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --white: #fff;
+      --black: #000;
+      --gray: #f8f9fa;
+      --border: #eee;
+      --text-muted: #666;
+      --success: #2ec4b6;
+      --danger: #e71d36;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: var(--gray);
+      display: flex;
+    }
+
+    /* SIDEBAR SYNCHRONIZED */
+    .sidebar {
+      width: 260px;
+      background: white;
+      height: 100vh;
+      position: fixed;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-header {
+      padding: 40px 25px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .sidebar-menu {
+      padding: 10px 15px;
+    }
+
+    .menu-item {
+      display: flex;
+      gap: 12px;
+      padding: 15px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #666;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: black;
+      color: white;
+    }
+
+    /* MAIN CONTENT SECTION */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      padding: 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+
+    /* TOOLBAR SEARCH */
+    .toolbar {
+      margin-bottom: 25px;
+      background: white;
+      padding: 15px;
+      border: 1px solid var(--border);
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 12px 12px 45px;
+      border: 1px solid #ddd;
+      outline: none;
+      font-weight: 600;
+    }
+
+    /* MINIMALIST CARD & TABLE */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 20px;
+      text-align: left;
+      border-bottom: 2px solid black;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #000;
+      font-weight: 800;
+    }
+
+    td {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* BADGE STATUS STYLE */
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-radius: 4px;
+    }
+
+    .badge-active {
+      background: #e6f9f5;
+      color: var(--success);
+    }
+
+    .badge-blocked {
+      background: #ffebee;
+      color: var(--danger);
+    }
+
+    /* DYNAMIC TOGGLE ACTION BUTTON */
+    .btn-action {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid black;
+      color: black;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action.lock:hover {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+
+    .btn-action.unlock:hover {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      SPORTIFY ADMIN
+    </div>
+
+    <nav class="sidebar-menu">
+      <a href="adminDashboard.html" class="menu-item">
+        <i class="fa-solid fa-chart-line"></i> THỐNG KÊ
+      </a>
+      <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
+      <a href="admin_brand.html" class="menu-item">
+        <i class="fa-solid fa-award"></i> THƯƠNG HIỆU
+      </a>
+      <a href="admin_color.html" class="menu-item">
+        <i class="fa-solid fa-palette"></i> MÀU SẮC
+      </a>
+      <a href="admin_size.html" class="menu-item">
+        <i class="fa-solid fa-ruler"></i> KÍCH THƯỚC
+      </a>
+      <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
+      <a href="admin_customer.html" class="menu-item active">
+        <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
+      </a>
+    </nav>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h2 style="font-size:30px; font-weight:800;">Quản lý người dùng</h2>
+        <p id="user-count-text" style="color:#666; margin-top:5px;">Danh sách tất cả tài khoản thành viên hệ thống</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-user" placeholder="Tìm theo tên hoặc email người dùng..." oninput="filterUsers()">
+      </div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Họ và tên</th>
+            <th>Email tài khoản</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th style="text-align:right;">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="user-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script>
+    let allUsers = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUsers();
+    });
+
+    // 1. Gọi API lấy thẳng danh sách người dùng thô từ endpoint: /users
+    async function loadUsers() {
+      try {
+        allUsers = await apiGet('/users');
+        renderUsers(allUsers);
+        document.getElementById('user-count-text').innerText = `Hiện có ${allUsers.length} tài khoản thành viên hệ thống`;
+      } catch (err) {
+        Swal.fire('Lỗi', err.message, 'error');
+      }
+    }
+
+    // 2. Render dữ liệu
+    function renderUsers(usersList) {
+      const tbody = document.getElementById('user-body');
+      if (usersList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">Không tìm thấy người dùng nào.</td></tr>`;
+        return;
+      }
+
+      // 🌟 Lấy email của Admin đang đăng nhập từ Local Storage
+      const currentAdminEmail = localStorage.getItem("email");
+
+      tbody.innerHTML = usersList.map(u => {
+        const statusBadge = u.enabled
+          ? `<span class="badge badge-active">Hoạt động</span>`
+          : `<span class="badge badge-blocked">Bị khóa</span>`;
+
+        let actionButton = "";
+
+        // 🌟 Kiểm tra nếu trùng email với Admin hiện tại thì ẩn nút Khóa
+        if (u.email === currentAdminEmail) {
+          actionButton = `<span style="color: #999; font-size: 12px; font-style: italic; font-weight: 700; padding-right: 15px;">Bạn</span>`;
+        } else {
+          // Tài khoản khác thì hiển thị nút bình thường
+          actionButton = u.enabled
+            ? `<button class="btn-action lock" onclick="toggleUserStatus(${u.id}, false)"><i class="fa-solid fa-user-slash"></i> Khóa</button>`
+            : `<button class="btn-action unlock" onclick="toggleUserStatus(${u.id}, true)"><i class="fa-solid fa-user-check"></i> Mở khóa</button>`;
+        }
+
+        return `
+      <tr>
+        <td>#${u.id}</td>
+        <td><strong>${u.fullName || 'Chưa cập nhật'}</strong></td>
+        <td>${u.email}</td>
+        <td><span style="font-size: 12px; letter-spacing: 0.5px; font-weight: 700;">${u.role}</span></td>
+        <td>${statusBadge}</td>
+        <td>
+          <div style="display:flex; justify-content:flex-end;">
+            ${actionButton}
+          </div>
+        </td>
+      </tr>
+    `;
+      }).join('');
+    }
+
+    // 3. Bộ lọc tìm kiếm giống bên brand
+    function filterUsers() {
+      const keyword = document.getElementById('search-user').value.toLowerCase();
+      const filtered = allUsers.filter(u =>
+        (u.fullName && u.fullName.toLowerCase().includes(keyword)) ||
+        (u.email && u.email.toLowerCase().includes(keyword))
+      );
+      renderUsers(filtered);
+    }
+
+    // 4. Gọi API PUT thay đổi trạng thái theo cấu trúc mới: /users/{id}/status?enabled=...
+    async function toggleUserStatus(id, targetStatus) {
+      const actionText = targetStatus ? "Mở khóa" : "Khóa";
+      const confirmResult = await Swal.fire({
+        title: `${actionText} tài khoản này?`,
+        text: targetStatus ? "Người dùng này có thể đăng nhập lại bình thường." : "Người dùng sẽ bị đá văng khỏi hệ thống lập tức!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: targetStatus ? '#2ec4b6' : '#e71d36',
+        confirmButtonText: actionText,
+        cancelButtonText: 'Hủy'
+      });
+
+      if (!confirmResult.isConfirmed) return;
+
+      try {
+        // Đã cập nhật url gọi sang: /users/${id}/status
+        const responseMessage = await apiPut(`/users/${id}/status?enabled=${targetStatus}`);
+
+        Swal.fire('Thành công', responseMessage, 'success');
+        loadUsers();
+      } catch (err) {
+        Swal.fire('Lỗi', err.message, 'error');
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sportify Admin | Quản lý sản phẩm</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root {
+      --white: #ffffff;
+      --black: #000000;
+      --gray-bg: #f8f9fa;
+      --gray-border: #eeeeee;
+      --text-muted: #666666;
+      --success: #27ae60;
+      --danger: #eb4d4b;
+      --radius: 4px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      --transition: all 0.3s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--gray-bg); color: var(--black); display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px; background: var(--white);
+      height: 100vh; position: fixed;
+      border-right: 1px solid var(--gray-border);
+      z-index: 1000;
+    }
+    .sidebar-header { padding: 40px 25px; font-size: 22px; font-weight: 800; }
+    .sidebar-menu { padding: 10px 15px; }
+    .menu-item {
+      display: flex; gap: 12px; padding: 15px 20px;
+      border-radius: 4px; text-decoration: none;
+      color: #666; font-weight: 700; margin-bottom: 5px;
+    }
+    .menu-item:hover,
+    .menu-item.active { background: black; color: white; }
+
+    /* MAIN CONTENT */
+    .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .header-title h2 { font-size: 30px; font-weight: 800; }
+    .btn-black {
+      background: var(--black); color: var(--white); border: none;
+      padding: 12px 22px; border-radius: var(--radius); font-weight: 700;
+      cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px;
+    }
+    .btn-black:hover { opacity: 0.8; }
+
+    .filter-toolbar {
+      display: flex; gap: 20px; margin-bottom: 30px; background: var(--white);
+      padding: 20px; border-radius: var(--radius); border: 1px solid var(--gray-border);
+    }
+    .search-box { position: relative; flex: 1; }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    .search-box input {
+      width: 100%; padding: 12px 12px 12px 45px; border: 1px solid var(--gray-border);
+      border-radius: var(--radius); outline: none; background: var(--gray-bg);
+    }
+    .filter-control { padding: 12px; border: 1px solid var(--gray-border); border-radius: var(--radius); font-size: 14px; outline: none; background: var(--white); font-weight: 600; }
+
+    /* CARD & TABLE WITH VERTICAL SCROLL */
+    .card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-border); overflow: hidden; box-shadow: var(--shadow); }
+    
+    .table-responsive {
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+    
+    .admin-table { width: 100%; border-collapse: collapse; }
+    
+    .admin-table th { 
+      padding: 20px 25px; font-size: 12px; font-weight: 800; 
+      border-bottom: 2px solid var(--black); text-align: left;
+      position: sticky; top: 0; background: var(--white); z-index: 10;
+    }
+    
+    .admin-table td { padding: 15px 25px; border-bottom: 1px solid var(--gray-border); font-size: 14px; font-weight: 600; }
+    .product-img { width: 50px; height: 60px; border-radius: 4px; object-fit: contain; background: var(--gray-bg); }
+
+    .badge { padding: 4px 10px; border-radius: 2px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .badge-success { background: #e1f5fe; color: var(--success); border: 1px solid var(--success); }
+    .badge-danger { background: #ffebee; color: var(--danger); border: 1px solid var(--danger); }
+
+    .btn-icon { width: 35px; height: 35px; border-radius: 4px; border: 1px solid var(--gray-border); background: var(--white); cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; }
+    .btn-icon:hover { background: var(--black); color: var(--white); }
+    .action-btns { display: flex; gap: 5px; }
+
+    /* MODAL */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: var(--white); padding: 40px; border-radius: var(--radius);
+      width: 900px; max-height: 90vh; overflow-y: auto;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+    .form-control { width: 100%; padding: 12px; border: 1px solid var(--gray-border); border-radius: var(--radius); font-size: 14px; font-weight: 600; }
+
+    .modal-error {
+      display: none; background: #ffebee; color: var(--danger);
+      padding: 15px; border-radius: var(--radius); border: 1px solid #fab1a0;
+      margin-bottom: 20px; font-size: 13px; font-weight: 700;
+    }
+
+    .variant-table-container { margin-top: 15px; border: 1px solid var(--gray-border); padding: 15px; border-radius: 4px; background: #fafafa; }
+    
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 15px; }
+    .preview-card { position: relative; height: 120px; border: 1px solid var(--gray-border); border-radius: 4px; }
+    .preview-card img { width: 100%; height: 100%; object-fit: contain; }
+    .remove-img { position: absolute; top: -5px; right: -5px; background: var(--black); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">SPORTIFY ADMIN</div>
+    <nav class="sidebar-menu">
+      <a href="adminDashboard.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> THỐNG KÊ</a>
+      <a href="admin_product.html" class="menu-item active"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
+      <a href="admin_brand.html" class="menu-item"><i class="fa-solid fa-award"></i> THƯƠNG HIỆU</a>
+      <a href="admin_color.html" class="menu-item"><i class="fa-solid fa-palette"></i> MÀU SẮC</a>
+      <a href="admin_size.html" class="menu-item"><i class="fa-solid fa-ruler"></i> KÍCH THƯỚC</a>
+      <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-title">
+        <h2>Kho hàng hóa</h2>
+        <p style="color:#666; margin-top:5px;">Quản lý sản phẩm và biến thể (Size/Màu).</p>
+      </div>
+      <button class="btn-black" onclick="openModal()">
+        <i class="fa-solid fa-plus"></i> THÊM MỚI
+      </button>
+    </header>
+
+    <div class="filter-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="search-input" placeholder="Tìm tên, mã sản phẩm..." oninput="filterProducts()">
+      </div>
+      <select id="filter-brand" class="filter-control" onchange="filterProducts()">
+        <option value="">TẤT CẢ THƯƠNG HIỆU</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 30%;">THÔNG TIN</th>
+              <th>MÃ SẢN PHẨM</th>
+              <th>THƯƠNG HIỆU</th>
+              <th>GIÁ BÁN</th>
+              <th>TỒN KHO</th>
+              <th style="text-align: right;">THAO TÁC</th>
+            </tr>
+          </thead>
+          <tbody id="product-list-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 1px solid var(--gray-border); padding-bottom: 15px;">
+        <h3 id="modalTitle" style="font-weight: 800; text-transform: uppercase;">Chi tiết sản phẩm</h3>
+        <button onclick="closeModal()" style="background:none; border:none; font-size: 24px; cursor:pointer;">×</button>
+      </div>
+
+      <div id="modal-error-msg" class="modal-error">
+        <i class="fa-solid fa-circle-exclamation"></i> <span id="error-text"></span>
+      </div>
+
+      <form id="productForm">
+        <input type="hidden" id="p-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Mã sản phẩm (SKU)</label>
+            <input type="text" id="p-code" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Tên sản phẩm</label>
+            <input type="text" id="p-name" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Giá bán (VNĐ)</label>
+            <input type="number" id="p-price" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Thương hiệu</label>
+            <select id="p-brand" class="form-control" required></select>
+          </div>
+        </div>
+
+        <div class="variant-table-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label style="font-size: 11px; font-weight: 800;">QUẢN LÝ BIẾN THỂ (SIZE & MÀU)</label>
+            <button type="button" class="btn-black" style="padding: 5px 10px; font-size: 10px;" onclick="addVariantRow()">+ THÊM DÒNG</button>
+          </div>
+          <table class="admin-table" style="border: 1px solid #eee;">
+            <thead>
+              <tr style="background: #eee;">
+                <th style="padding: 10px;">Màu sắc</th>
+                <th style="padding: 10px;">Kích thước</th>
+                <th style="padding: 10px;">Số lượng</th>
+                <th style="padding: 10px; text-align: center;">Xóa</th>
+              </tr>
+            </thead>
+            <tbody id="variant-input-body"></tbody>
+          </table>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <label>Hình ảnh sản phẩm</label>
+          <div style="border: 2px dashed #ddd; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('p-files').click()">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px;"></i>
+            <p style="font-size: 12px; font-weight: 700; margin-top: 10px;">TẢI ẢNH LÊN</p>
+            <input type="file" id="p-files" multiple hidden accept="image/*" onchange="handleFileSelect(event)">
+          </div>
+          <div id="preview-container" class="preview-grid"></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px;">
+          <button type="button" onclick="closeModal()" class="btn-black" style="background: #eee; color: #000;">HỦY</button>
+          <button type="submit" class="btn-black">LƯU DỮ LIỆU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="viewVariantModal" class="modal">
+    <div class="modal-content" style="width: 500px;">
+      <h3 style="font-weight: 800; margin-bottom: 20px; text-transform: uppercase;">Tồn kho chi tiết</h3>
+      <table class="admin-table" style="border: 1px solid #eee;">
+        <thead>
+          <tr style="background: #000; color: #fff;">
+            <th style="color: #fff;">Màu</th>
+            <th style="color: #fff;">Size</th>
+            <th style="color: #fff;">Tồn kho</th>
+          </tr>
+        </thead>
+        <tbody id="view-variant-body"></tbody>
+      </table>
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="btn-black" onclick="document.getElementById('viewVariantModal').style.display='none'">ĐÓNG</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    const IMG_VIEW_BASE = "https://localhost:8081/images/";
+    const PLACEHOLDER = "https://dummyimage.com/200x200/f8f9fa/666666.png&text=Sportify";
+    
+    let allProducts = [], allBrands = [], allColors = [], allSizes = [];
+    let currentImages = []; 
+    let uploadedImagesThisSession = []; 
+    let imagesToDelete = []; 
+    let isSavedSuccess = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadMetadata();
+      loadProducts();
+    });
+
+    async function loadMetadata() {
+      try {
+        [allBrands, allColors, allSizes] = await Promise.all([
+          apiGet('/brands'), apiGet('/colors'), apiGet('/sizes')
+        ]);
+        const brandSelect = document.getElementById('p-brand');
+        const filterBrand = document.getElementById('filter-brand');
+        
+        brandSelect.innerHTML = '';
+        filterBrand.innerHTML = '<option value="">TẤT CẢ THƯƠNG HIỆU</option>';
+
+        allBrands.forEach(b => {
+          brandSelect.innerHTML += `<option value="${b.id}">${b.brandName}</option>`;
+          filterBrand.innerHTML += `<option value="${b.id}">${b.brandName.toUpperCase()}</option>`;
+        });
+      } catch (err) { console.error("Lỗi metadata:", err); }
+    }
+
+    async function loadProducts() {
+      try {
+        allProducts = await apiGet('/products/all');
+        renderTable(allProducts);
+      } catch (err) { Swal.fire('Lỗi', 'Không thể tải sản phẩm', 'error'); }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('product-list-body');
+      tbody.innerHTML = data.map(p => {
+        let imgUrl = p.images && p.images.length > 0 ? (p.images[0].startsWith('http') ? p.images[0] : `${IMG_VIEW_BASE}${p.images[0]}`) : PLACEHOLDER;
+        const totalQty = p.variants ? p.variants.reduce((sum, v) => sum + v.stock, 0) : 0;
+        
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <img src="${imgUrl}" class="product-img" onerror="this.src='${PLACEHOLDER}'">
+                <div style="font-weight: 800; text-transform:uppercase; font-size:12px;">${p.productName}</div>
+              </div>
+            </td>
+            <td><code>${p.productCode}</code></td>
+            <td>${p.brandName || 'N/A'}</td>
+            <td>${Number(p.price).toLocaleString()}đ</td>
+            <td>
+                ${totalQty > 0 ? `<span class="badge badge-success">Còn hàng (${totalQty})</span>` : '<span class="badge badge-danger">Hết hàng</span>'}
+            </td>
+            <td style="text-align: right;">
+              <div class="action-btns" style="justify-content: flex-end;">
+                <button class="btn-icon" title="Xem chi tiết" onclick="showDetail(${p.id})"><i class="fa-solid fa-eye"></i></button>
+                <button class="btn-icon" onclick="editProduct(${p.id})"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-icon" onclick="deleteProduct(${p.id})"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    async function showDetail(id) {
+      try {
+        const p = await apiGet(`/products/${id}`);
+        const tbody = document.getElementById('view-variant-body');
+        tbody.innerHTML = (p.variants || []).map(v => `
+          <tr>
+            <td>${v.colorName || 'N/A'}</td>
+            <td>${v.sizeName || 'N/A'}</td>
+            <td style="font-weight:800;">${v.stock}</td>
+          </tr>
+        `).join('');
+        if (!p.variants || p.variants.length === 0) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Chưa có biến thể</td></tr>';
+        document.getElementById('viewVariantModal').style.display = 'flex';
+      } catch (err) { Swal.fire('Lỗi', 'Không lấy được thông tin biến thể', 'error'); }
+    }
+
+    function addVariantRow(data = null) {
+      const tbody = document.getElementById('variant-input-body');
+      const tr = document.createElement('tr');
+      tr.className = "variant-row";
+      tr.innerHTML = `
+        <td style="padding: 5px;">
+          <select class="form-control v-color" required>
+            <option value="">-- Màu --</option>
+            ${allColors.map(c => `<option value="${c.id}" ${data && data.colorId == c.id ? 'selected' : ''}>${c.colorName}</option>`).join('')}
+          </select>
+        </td>
+        <td style="padding: 5px;">
+          <select class="form-control v-size" required>
+            <option value="">-- Size --</option>
+            ${allSizes.map(s => `<option value="${s.id}" ${data && data.sizeId == s.id ? 'selected' : ''}>${s.sizeName}</option>`).join('')}
+          </select>
+        </td>
+        <td style="padding: 5px;">
+          <input type="number" class="form-control v-stock" value="${data ? data.stock : 0}" min="0" required>
+        </td>
+        <td style="text-align: center;">
+          <button type="button" class="btn-icon" style="border:none" onclick="this.closest('tr').remove()"><i class="fa-solid fa-circle-xmark" style="color:#eb4d4b"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    document.getElementById('productForm').onsubmit = async (e) => {
+      e.preventDefault();
+      isSavedSuccess = false;
+      const errorDiv = document.getElementById('modal-error-msg');
+      errorDiv.style.display = 'none';
+
+      const variantRows = document.querySelectorAll('.variant-row');
+      const variants = [];
+      const seenVariants = new Set();
+      let hasDuplicate = false;
+
+      for (const row of variantRows) {
+        const colorId = row.querySelector('.v-color').value;
+        const sizeId = row.querySelector('.v-size').value;
+        const stock = parseInt(row.querySelector('.v-stock').value);
+
+        const key = `${colorId}-${sizeId}`;
+        if (seenVariants.has(key)) {
+          hasDuplicate = true;
+          break;
+        }
+        seenVariants.add(key);
+        variants.push({ colorId: parseInt(colorId), sizeId: parseInt(sizeId), stock: stock });
+      }
+
+      if (hasDuplicate) {
+        errorDiv.style.display = 'block';
+        document.getElementById('error-text').innerText = "Lỗi: Một sản phẩm không thể có 2 biến thể cùng Màu sắc và Kích thước!";
+        document.querySelector('.modal-content').scrollTop = 0;
+        return;
+      }
+
+      const productRequest = {
+        productCode: document.getElementById('p-code').value.trim(),
+        productName: document.getElementById('p-name').value.trim(),
+        price: parseFloat(document.getElementById('p-price').value),
+        brandId: parseInt(document.getElementById('p-brand').value),
+        images: currentImages,
+        variants: variants
+      };
+
+      try {
+        const id = document.getElementById('p-id').value;
+        if (id) await apiPut(`/products/${id}`, productRequest);
+        else await apiPost('/products', productRequest);
+        
+        // Gọi DELETE file vật lý đồng bộ bảo mật Cookie
+        for (const fileName of imagesToDelete) {
+            try {
+                await fetch(`${API_BASE}/upload/${encodeURIComponent(fileName)}`, { 
+                    method: 'DELETE', 
+                    credentials: 'include' // Dùng cơ chế bảo mật HttpOnly Cookie
+                });
+            } catch (e) { console.warn("Lỗi xóa file vật lý:", fileName); }
+        }
+
+        isSavedSuccess = true;
+        uploadedImagesThisSession = []; 
+        imagesToDelete = [];
+        
+        Swal.fire('Thành công', 'Dữ liệu đã được lưu', 'success');
+        closeModal(); 
+        loadProducts();
+      } catch (err) {
+        errorDiv.style.display = 'block';
+        document.getElementById('error-text').innerText = "Lỗi: " + err.message;
+        document.querySelector('.modal-content').scrollTop = 0;
+      }
+    };
+
+    async function handleFileSelect(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      const formData = new FormData();
+      files.forEach(f => formData.append('files', f));
+      try {
+        const response = await fetch(`${API_BASE}/upload/multiple`, { 
+            method: 'POST', 
+            credentials: 'include', // Cho phép truyền nhận HttpOnly Cookie tự động qua HTTPS
+            body: formData 
+        });
+        const data = await response.json();
+        if (response.ok) { 
+            currentImages = [...currentImages, ...data]; 
+            uploadedImagesThisSession = [...uploadedImagesThisSession, ...data];
+            renderPreviews(); 
+        }
+      } catch (err) { console.error("Upload fail", err); }
+    }
+
+    function renderPreviews() {
+      const container = document.getElementById('preview-container');
+      container.innerHTML = currentImages.map((imgUrl, index) => {
+        const src = imgUrl.startsWith('http') ? imgUrl : `${IMG_VIEW_BASE}${imgUrl}`;
+        return `<div class="preview-card"><img src="${src}" onerror="this.src='${PLACEHOLDER}'"><button type="button" class="remove-img" onclick="removeImage(${index})">×</button></div>`;
+      }).join('');
+    }
+
+    function removeImage(index) {
+        const fileName = currentImages[index];
+        imagesToDelete.push(fileName);
+        currentImages.splice(index, 1); 
+        renderPreviews();
+    }
+
+    async function closeModal() {
+        if (!isSavedSuccess && uploadedImagesThisSession.length > 0) {
+            for (const fileName of uploadedImagesThisSession) {
+                try {
+                    await fetch(`${API_BASE}/upload/${encodeURIComponent(fileName)}`, { 
+                        method: 'DELETE', 
+                        credentials: 'include'
+                    });
+                } catch (e) {}
+            }
+        }
+        
+        document.getElementById('productModal').style.display = 'none';
+        uploadedImagesThisSession = [];
+        imagesToDelete = [];
+        isSavedSuccess = false;
+    }
+
+    function openModal() {
+        isSavedSuccess = false;
+        uploadedImagesThisSession = [];
+        imagesToDelete = [];
+        
+        document.getElementById('productModal').style.display = 'flex';
+        document.getElementById('productForm').reset();
+        document.getElementById('modal-error-msg').style.display = 'none';
+        document.getElementById('p-id').value = ""; 
+        document.getElementById('variant-input-body').innerHTML = '';
+        addVariantRow();
+        currentImages = [];
+        document.getElementById('preview-container').innerHTML = '';
+        document.getElementById('modalTitle').innerText = "Thêm sản phẩm mới";
+    }
+
+    async function editProduct(id) {
+      try {
+        const p = await apiGet(`/products/${id}`);
+        openModal();
+        document.getElementById('p-id').value = p.id;
+        document.getElementById('p-code').value = p.productCode;
+        document.getElementById('p-name').value = p.productName;
+        document.getElementById('p-price').value = p.price;
+        document.getElementById('p-brand').value = p.brandId || "";
+        
+        document.getElementById('variant-input-body').innerHTML = '';
+        document.getElementById('modalTitle').innerText = "Cập nhật sản phẩm";
+        if (p.variants && p.variants.length > 0) p.variants.forEach(v => addVariantRow(v));
+        else addVariantRow();
+
+        currentImages = (p.images || []).map(img => img.includes("http") ? img.split('/').pop() : img);
+        renderPreviews();
+      } catch (err) { Swal.fire('Lỗi', 'Không thể tải thông tin', 'error'); }
+    }
+
+    async function deleteProduct(id) {
+      const res = await Swal.fire({ title: 'Xóa?', text: "Không thể hoàn tác!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#000', confirmButtonText: 'Xóa ngay' });
+      if (res.isConfirmed) {
+        try { await apiDelete(`/products/${id}`); loadProducts(); Swal.fire('Đã xóa!', '', 'success'); } catch (err) { Swal.fire('Lỗi', err.message, 'error'); }
+      }
+    }
+
+    function filterProducts() {
+      const keyword = document.getElementById('search-input').value.toLowerCase();
+      const brandId = document.getElementById('filter-brand').value;
+      const filtered = allProducts.filter(p => 
+        (p.productName.toLowerCase().includes(keyword) || p.productCode.toLowerCase().includes(keyword)) &&
+        (brandId === "" || p.brandId == brandId)
+      );
+      renderTable(filtered);
+    }
+  </script>
+</body>
+</html>

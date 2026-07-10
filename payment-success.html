@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kết quả thanh toán | Sportify Premium Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --white: #ffffff;
+      --gray-bg: #f8f9fa;
+      --gray-border: #e5e7eb;
+      --black: #111111;
+      --text-muted: #6b7280;
+      --success: #10b981;
+      --success-tint: #ecfdf5;
+      --danger: #ff4757;
+      --danger-tint: #fff1f2;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 20px 50px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.6s ease;
+    }
+
+    /* Sắc nền ấm dần theo kết quả giao dịch — trung tính lúc đang tải,
+       ngả xanh nhạt khi thành công, ngả đỏ nhạt khi thất bại */
+    body.is-success { background: linear-gradient(180deg, var(--success-tint) 0%, var(--white) 380px); }
+    body.is-danger { background: linear-gradient(180deg, var(--danger-tint) 0%, var(--white) 380px); }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== HEADER ĐỒNG BỘ VỚI PRODUCTS.HTML ===== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 16px 0;
+      backdrop-filter: blur(8px);
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+      font-style: italic;
+      letter-spacing: -1px;
+      color: var(--black);
+      text-transform: uppercase;
+    }
+
+    .logo .dot { color: var(--black); }
+
+    /* ===== KHUNG KẾT QUẢ ===== */
+    .result-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 20px;
+    }
+
+    /* --- Trạng thái đang xác thực --- */
+    .loading-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid var(--gray-border);
+      border-top-color: var(--black);
+      animation: spin 0.85s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-card p {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    .loading-dots span {
+      display: inline-block;
+      animation: blink 1.4s infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+    /* --- Thẻ kết quả kiểu vé/hoá đơn --- */
+    .result-card {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      padding: 48px 40px 36px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      animation: riseIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Vết bấm lỗ 2 bên tạo cảm giác "vé/biên lai" ngay chỗ đường đứt nét */
+    .result-card::before,
+    .result-card::after {
+      content: "";
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: var(--gray-bg);
+      border: 1px solid var(--gray-border);
+      border-radius: 50%;
+      top: 224px;
+    }
+    .result-card::before { left: -14px; }
+    .result-card::after { right: -14px; }
+
+    .status-icon {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .status-icon.success { background: var(--success-tint); color: var(--success); }
+    .status-icon.danger { background: var(--danger-tint); color: var(--danger); }
+
+    .result-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+
+    .result-message {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 28px;
+      padding: 0 6px;
+    }
+
+    /* Đường đứt nét kiểu mép xé vé, ngay hàng với 2 lỗ tròn ở cạnh thẻ */
+    .ticket-divider {
+      border: none;
+      border-top: 1.5px dashed var(--gray-border);
+      margin: 0 -40px 26px;
+    }
+
+    .info-list {
+      text-align: left;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .info-row .label {
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .info-row .leader {
+      flex: 1;
+      border-bottom: 1px dotted var(--gray-border);
+      transform: translateY(-3px);
+    }
+
+    .info-row .value {
+      color: var(--black);
+      font-weight: 700;
+      white-space: nowrap;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .info-row.amount .value {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .action-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      background: var(--black);
+      color: var(--white);
+      font-weight: 700;
+      border-radius: 10px;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 1px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: #222222;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .secondary-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    .secondary-link:hover { color: var(--black); text-decoration: underline; }
+
+    .trust-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 26px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .trust-note i { color: var(--success); }
+
+    @media (max-width: 480px) {
+      .result-card { padding: 40px 24px 30px; }
+      .ticket-divider { margin: 0 -24px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, .result-card, .status-icon { animation: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="products.html" class="logo">sportify<span class="dot">.</span></a>
+    </div>
+  </header>
+
+  <main class="result-container">
+    <div class="loading-card" id="loading-card">
+      <div class="loading-spinner"></div>
+      <p>Đang xác thực bảo mật từ cổng VNPAY<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
+    </div>
+
+    <div class="result-card" id="result-card" style="display: none;">
+      <div id="status-icon" class="status-icon"></div>
+      <h2 id="status-title" class="result-title"></h2>
+      <p id="status-message" class="result-message"></p>
+
+      <hr class="ticket-divider">
+
+      <div class="info-list">
+        <div class="info-row">
+          <span class="label">Mã đơn hàng</span>
+          <span class="leader"></span>
+          <span class="value" id="res-order-id">N/A</span>
+        </div>
+        <div class="info-row amount">
+          <span class="label">Số tiền</span>
+          <span class="leader"></span>
+          <span class="value" id="res-amount">0đ</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Nội dung</span>
+          <span class="leader"></span>
+          <span class="value" id="res-info">N/A</span>
+        </div>
+      </div>
+
+      <a href="products.html" id="next-action-btn" class="action-btn">Quay lại cửa hàng</a>
+      <a href="products.html" class="secondary-link">Về trang chủ Sportify</a>
+
+      <div class="trust-note">
+        <i class="fa-solid fa-lock"></i>
+        <span>Giao dịch được xác thực và bảo mật qua cổng VNPAY</span>
+      </div>
+    </div>
+  </main>
+
+<script src="api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // 1. Đọc nhanh dữ liệu từ URL để hiển thị tạm lên giao diện hóa đơn
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('vnp_TxnRef');
+      const amount = urlParams.get('vnp_Amount');
+      const orderInfo = urlParams.get('vnp_OrderInfo');
+
+      document.getElementById('res-order-id').innerText = "#" + (orderId || "");
+      document.getElementById('res-amount').innerText = amount ? (parseInt(amount) / 100).toLocaleString('vi-VN') + 'đ' : '0đ';
+      document.getElementById('res-info').innerText = decodeURIComponent(orderInfo || "").replace(/\+/g, ' ');
+
+      const iconDiv = document.getElementById('status-icon');
+      const titleH2 = document.getElementById('status-title');
+      const messageP = document.getElementById('status-message');
+      const nextBtn = document.getElementById('next-action-btn');
+
+      // 2. Gửi dữ liệu Callback sang Backend và HỨNG KẾT QUẢ JSON TRẢ VỀ
+      let backendResult = null;
+      try {
+        // Hàm apiGet của bạn khi chạy xong sẽ return thẳng về Object JSON của Backend
+        backendResult = await apiGet(`/order/vnpay-callback${window.location.search}`);
+      } catch (err) {
+        console.error("Lỗi kết nối đồng bộ callback sang Backend:", err);
+      }
+
+      // 3. Ẩn màn hình xoay spinner loading, bật khung kết quả Sportify lên
+      document.getElementById('loading-card').style.display = 'none';
+      document.getElementById('result-card').style.display = 'block';
+
+      // 4. CHECK TRẠNG THÁI DỰA TRÊN ĐÚNG BẢN TIN JSON CỦA BACKEND
+      if (backendResult && backendResult.status === "SUCCESS") {
+        // Hợp lệ 100% -> Hiện giao diện TÍCH XANH THÀNH CÔNG
+        document.body.classList.add('is-success'); // ✨ THÊM MỚI: chỉ đổi màu nền, không đổi logic
+        iconDiv.className = "status-icon success";
+        iconDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+        titleH2.innerText = "Thanh toán thành công";
+        messageP.innerText = "🎉 Tuyệt vời! Đơn hàng của bạn đã được đối soát an toàn trên hệ thống Sportify và đang chờ chuẩn bị giao hàng.";
+        nextBtn.innerText = "Xem đơn hàng của tôi";
+        nextBtn.href = "my-orders.html"; // Trả tiền xong đá về trang lịch sử đơn hàng
+        
+        // Mẹo phụ: Nếu trang có hàm xóa sạch giỏ hàng Client thì gọi ở đây
+        if (typeof clearCart === "function") { clearCart(); }
+      } else {
+        // Thất bại hoặc sai chữ ký số -> Hiện giao diện DẤU X ĐỎ LỖI
+        document.body.classList.add('is-danger'); // ✨ THÊM MỚI: chỉ đổi màu nền, không đổi logic
+        iconDiv.className = "status-icon danger";
+        iconDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+        titleH2.innerText = backendResult ? backendResult.message : "Thanh toán thất bại";
+        messageP.innerText = "❌ Giao dịch không thành công, sai chữ ký bảo mật hoặc đã bị hủy bỏ bởi người dùng.";
+        nextBtn.innerText = "Quay về giỏ hàng";
+        nextBtn.href = "cart.html"; // Thất bại thì đá về giỏ hàng để thao tác lại
+      }
+    });
+  </script>
+</body>
+
+</html>

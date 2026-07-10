@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sportify — Đồ thể thao cho mọi chuyển động</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --cream:#F7F6F1;
+    --card:#FFFFFF;
+    --volt:#C6FF3D;
+    --slate:#6B6E76;
+    --slate-light:#E4E3DD;
+    --coral:#FF5A45;
+    --radius:2px;
+    --maxw:1320px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;max-width:100%;}
+  a{text-decoration:none;color:inherit;}
+  ul{list-style:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+  input{font-family:inherit;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--slate);font-weight:700;
+  }
+  .disp{font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.01em;line-height:.92;}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:3px solid var(--ink); outline-offset:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar{
+    background:var(--ink); color:var(--cream);
+    font-size:12px; letter-spacing:.04em;
+  }
+  .topbar .wrap{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 32px; font-weight:500;
+  }
+  .topbar span b{color:var(--volt);}
+
+  /* ============ HEADER ============ */
+  header.site-header{
+    background:var(--cream);
+    border-bottom:2px solid var(--ink);
+    position:sticky; top:0; z-index:100;
+  }
+  .header-row{
+    display:grid;
+    grid-template-columns:1fr 2fr 1fr;
+    align-items:center;
+    gap:24px;
+    padding:18px 32px;
+  }
+  .logo{
+    font-family:'Anton',sans-serif;
+    font-size:30px;
+    text-transform:uppercase;
+    letter-spacing:.01em;
+    display:flex; align-items:center; gap:2px;
+  }
+  .logo .dot{color:var(--volt); font-size:34px; -webkit-text-stroke:1px var(--ink);}
+
+  .search-bar{
+    display:flex;
+    border:2px solid var(--ink);
+    border-radius:999px;
+    overflow:hidden;
+    background:var(--card);
+    max-width:520px;
+    margin:0 auto;
+    width:100%;
+  }
+  .search-bar input{
+    flex:1; border:none; outline:none; padding:12px 20px;
+    font-size:14px; background:transparent; color:var(--ink);
+  }
+  .search-bar input::placeholder{color:var(--slate);}
+  .search-bar button{
+    background:var(--ink); color:var(--volt);
+    padding:0 22px; font-weight:700; font-size:13px;
+    letter-spacing:.04em; text-transform:uppercase;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .search-bar button:hover{background:#26262a;}
+
+  .header-actions{
+    display:flex; justify-content:flex-end; align-items:center; gap:22px;
+  }
+  .icon-btn{
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--ink); position:relative;
+  }
+  .icon-btn svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;transition:transform .15s ease;}
+  .icon-btn:hover svg{transform:translateY(-2px);}
+  .icon-btn .badge{
+    position:absolute; top:-6px; right:-10px;
+    background:var(--volt); color:var(--ink);
+    font-size:10px; font-weight:800;
+    width:16px;height:16px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--ink);
+  }
+
+  @media (max-width:900px){
+    .header-row{grid-template-columns:auto 1fr auto; gap:12px;}
+    .search-bar{grid-column:1 / -1; order:3; max-width:none;}
+    .header-actions{gap:14px;}
+  }
+
+  /* ============ HERO SLIDER ============ */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    height:78vh;
+    min-height:420px;
+    max-height:640px;
+    background:var(--ink);
+  }
+  .hero-track{
+    display:flex;
+    height:100%;
+    width:400%;
+    transition:transform .9s cubic-bezier(.77,0,.18,1);
+  }
+  .hero-slide{
+    position:relative;
+    width:25%;
+    height:100%;
+    flex-shrink:0;
+  }
+  .hero-slide img{
+    width:100%;height:100%;object-fit:cover;
+    filter:grayscale(15%) contrast(1.05);
+  }
+  .hero-slide::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(100deg, rgba(11,11,12,.78) 0%, rgba(11,11,12,.25) 45%, rgba(11,11,12,.05) 70%);
+  }
+  .hero-copy{
+    position:absolute; left:0; bottom:0; z-index:2;
+    padding:0 0 56px 32px;
+    color:var(--cream);
+    max-width:640px;
+  }
+  .hero-copy .eyebrow{color:var(--volt);}
+  .hero-copy h1{
+    font-size:clamp(40px,6.4vw,84px);
+    margin-top:8px;
+  }
+  .hero-copy p{
+    margin-top:16px; font-size:16px; color:#D7D6CF; max-width:440px;
+  }
+  .hero-copy .cta{
+    display:inline-flex; align-items:center; gap:10px;
+    margin-top:26px;
+    background:var(--volt); color:var(--ink);
+    padding:15px 30px; font-weight:800; font-size:13px;
+    letter-spacing:.06em; text-transform:uppercase;
+    border-radius:999px;
+  }
+  .hero-copy .cta:hover{background:var(--cream);}
+
+  .hero-dots{
+    position:absolute; right:32px; bottom:56px; z-index:3;
+    display:flex; gap:10px;
+  }
+  .hero-dots button{
+    width:34px;height:4px;background:rgba(247,246,241,.35);
+    transition:background .2s ease;
+  }
+  .hero-dots button.active{background:var(--volt);}
+
+  .hero-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    z-index:3; width:44px; height:44px; border-radius:50%;
+    background:rgba(247,246,241,.14); border:1px solid rgba(247,246,241,.5);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--cream);
+  }
+  .hero-nav:hover{background:var(--volt); color:var(--ink); border-color:var(--volt);}
+  .hero-nav.prev{left:32px;}
+  .hero-nav.next{right:32px;}
+  @media (max-width:700px){
+    .hero-nav, .hero-dots{display:none;}
+    .hero-copy{padding:0 0 40px 20px;}
+  }
+
+  /* ============ MARQUEE STRIP ============ */
+  .marquee{
+    background:var(--volt); color:var(--ink); overflow:hidden;
+    border-bottom:2px solid var(--ink); border-top:2px solid var(--ink);
+  }
+  .marquee-track{
+    display:flex; gap:48px; white-space:nowrap;
+    padding:10px 0;
+    width:max-content;
+    animation:scroll-left 22s linear infinite;
+    font-family:'Anton',sans-serif; text-transform:uppercase; font-size:14px;
+  }
+  .marquee-track span{display:flex;align-items:center;gap:12px;}
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  /* ============ MAIN LAYOUT ============ */
+  .shop{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    gap:40px;
+    padding:56px 32px 20px;
+    max-width:var(--maxw);
+    margin:0 auto;
+    align-items:start;
+  }
+
+  /* --- FILTER SIDEBAR --- */
+  .filters{
+    background:var(--card);
+    border:2px solid var(--ink);
+    padding:26px 22px;
+    position:sticky; top:110px;
+  }
+  .filters h2{
+    font-family:'Anton',sans-serif; text-transform:uppercase; font-size:20px;
+    margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;
+  }
+  .filters h2 button{
+    font-size:11px; font-weight:700; color:var(--slate); text-transform:none;
+    text-decoration:underline;
+  }
+  .filter-group{
+    border-top:1px solid var(--slate-light); padding:18px 0;
+  }
+  .filter-group:first-of-type{border-top:none; padding-top:0;}
+  .filter-group summary{
+    font-weight:700; font-size:14px; cursor:pointer;
+    list-style:none; display:flex; justify-content:space-between; align-items:center;
+  }
+  .filter-group summary::-webkit-details-marker{display:none;}
+  .filter-group summary::after{
+    content:"+"; font-size:16px; font-weight:400; color:var(--slate);
+  }
+  .filter-group[open] summary::after{content:"–";}
+  .filter-options{margin-top:14px; display:flex; flex-direction:column; gap:11px;}
+  .filter-options label{
+    display:flex; align-items:center; gap:10px;
+    font-size:13.5px; color:#3a3a3d; cursor:pointer;
+  }
+  .filter-options input[type=checkbox]{
+    width:16px;height:16px; accent-color:var(--ink); cursor:pointer;
+  }
+  .filter-options .count{color:var(--slate); margin-left:auto; font-size:12px;}
+  .swatches{display:flex; flex-wrap:wrap; gap:9px;}
+  .swatch{
+    width:26px;height:26px;border-radius:50%;
+    border:2px solid var(--ink); cursor:pointer; position:relative;
+  }
+  .swatch.selected::after{
+    content:""; position:absolute; inset:-5px; border:1px solid var(--ink); border-radius:50%;
+  }
+  .price-range{display:flex;flex-direction:column;gap:10px;}
+  .price-range input[type=range]{width:100%; accent-color:var(--ink);}
+  .price-range .val{font-size:12.5px; color:var(--slate); display:flex; justify-content:space-between;}
+  .sizes{display:flex; flex-wrap:wrap; gap:8px;}
+  .size-chip{
+    border:1.5px solid var(--ink); padding:6px 12px; font-size:12.5px; font-weight:600;
+  }
+  .size-chip.selected{background:var(--ink); color:var(--cream);}
+  .apply-btn{
+    width:100%; background:var(--ink); color:var(--cream);
+    padding:13px; font-weight:800; font-size:13px; letter-spacing:.04em;
+    text-transform:uppercase; margin-top:22px;
+  }
+  .apply-btn:hover{background:var(--coral);}
+
+  @media (max-width:900px){
+    .shop{grid-template-columns:1fr;}
+    .filters{position:static;}
+  }
+
+  /* --- PRODUCT AREA --- */
+  .product-toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:14px;
+    padding-bottom:22px; border-bottom:2px solid var(--ink); margin-bottom:26px;
+  }
+  .product-toolbar h1{
+    font-family:'Anton',sans-serif; font-size:28px; text-transform:uppercase;
+  }
+  .product-toolbar .count-txt{font-size:13px; color:var(--slate); margin-top:2px;}
+  .sort-wrap{display:flex; align-items:center; gap:10px;}
+  .sort-wrap label{font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--slate);}
+  .sort-wrap select{
+    border:2px solid var(--ink); background:var(--card);
+    padding:9px 34px 9px 14px; font-size:13px; font-weight:600;
+    appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%230B0B0C'/></svg>");
+    background-repeat:no-repeat; background-position:right 14px center;
+  }
+
+  .product-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:26px;
+  }
+  @media (max-width:1150px){.product-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.product-grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--card); border:2px solid var(--ink);
+    display:flex; flex-direction:column;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-6px); box-shadow:8px 8px 0 var(--ink);}
+  .card-media{
+    position:relative; aspect-ratio:4/5; overflow:hidden; border-bottom:2px solid var(--ink);
+  }
+  .card-media img{width:100%;height:100%;object-fit:cover; transition:transform .4s ease;}
+  .card:hover .card-media img{transform:scale(1.06);}
+  .tag{
+    position:absolute; top:12px; left:12px;
+    background:var(--ink); color:var(--volt);
+    font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+    padding:5px 10px;
+  }
+  .tag.sale{background:var(--coral); color:var(--cream);}
+  .wish-btn{
+    position:absolute; top:10px; right:10px;
+    width:34px;height:34px; border-radius:50%;
+    background:rgba(247,246,241,.92); border:1.5px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .wish-btn svg{width:16px;height:16px; stroke:var(--ink); fill:none; stroke-width:1.8;}
+  .wish-btn.active svg{fill:var(--coral); stroke:var(--coral);}
+  .quick-add{
+    position:absolute; left:0; right:0; bottom:0;
+    background:var(--ink); color:var(--cream);
+    text-align:center; padding:11px; font-size:12.5px; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase;
+    transform:translateY(100%); transition:transform .22s ease;
+  }
+  .card:hover .quick-add{transform:translateY(0);}
+  .quick-add:hover{background:var(--volt); color:var(--ink);}
+
+  .card-info{padding:16px 16px 18px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .card-info .cat{font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:.04em; font-weight:700;}
+  .card-info .name{font-size:15px; font-weight:700; line-height:1.3;}
+  .card-info .price-row{display:flex; align-items:center; gap:9px; margin-top:4px;}
+  .card-info .price{font-weight:800; font-size:15px;}
+  .card-info .old-price{font-size:13px; color:var(--slate); text-decoration:line-through;}
+  .stars{display:flex; align-items:center; gap:5px; font-size:11.5px; color:var(--slate);}
+  .stars .fill{color:var(--ink);}
+
+  .load-more-wrap{text-align:center; margin:44px 0 10px;}
+  .load-more{
+    border:2px solid var(--ink); padding:14px 40px;
+    font-weight:800; font-size:13px; letter-spacing:.05em; text-transform:uppercase;
+  }
+  .load-more:hover{background:var(--ink); color:var(--cream);}
+
+  /* ============ PERK STRIP ============ */
+  .perks{
+    background:var(--ink); color:var(--cream); margin-top:70px;
+  }
+  .perks .wrap{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:24px;
+    padding:40px 32px;
+  }
+  .perk{display:flex; gap:14px; align-items:flex-start;}
+  .perk svg{width:26px;height:26px;stroke:var(--volt); fill:none; stroke-width:1.6; flex-shrink:0;}
+  .perk h3{font-size:14px; text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px;}
+  .perk p{font-size:12.5px; color:#B9B8B1;}
+  @media (max-width:900px){.perks .wrap{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.perks .wrap{grid-template-columns:1fr;}}
+
+  /* ============ FOOTER ============ */
+  footer{background:#EFEDE5; border-top:2px solid var(--ink);}
+  .footer-top{
+    display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;
+    gap:32px; padding:56px 32px 40px;
+  }
+  .footer-brand .logo{margin-bottom:14px;}
+  .footer-brand p{font-size:13.5px; color:var(--slate); max-width:280px; line-height:1.6;}
+  .social-row{display:flex; gap:10px; margin-top:18px;}
+  .social-row a{
+    width:36px;height:36px;border:1.5px solid var(--ink); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .social-row a:hover{background:var(--ink); color:var(--cream);}
+  .social-row svg{width:16px;height:16px; stroke:currentColor; fill:none; stroke-width:1.6;}
+
+  .footer-col h4{
+    font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:16px; font-weight:800;
+  }
+  .footer-col ul{display:flex; flex-direction:column; gap:11px;}
+  .footer-col a{font-size:13.5px; color:#3a3a3d;}
+  .footer-col a:hover{color:var(--coral); text-decoration:underline;}
+
+  .newsletter p{font-size:13px; color:var(--slate); margin-bottom:14px;}
+  .newsletter form{display:flex; border:2px solid var(--ink);}
+  .newsletter input{flex:1; border:none; background:transparent; padding:11px 12px; font-size:13px; outline:none;}
+  .newsletter button{background:var(--ink); color:var(--volt); padding:0 16px; font-weight:800; font-size:12px; text-transform:uppercase;}
+  .newsletter button:hover{background:#26262a;}
+
+  .footer-bottom{
+    border-top:1px solid #D9D7CD;
+    padding:20px 32px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+    font-size:12px; color:var(--slate);
+  }
+  .footer-bottom .pay-icons{display:flex; gap:8px; font-weight:700; letter-spacing:.02em;}
+  .footer-bottom .pay-icons span{border:1px solid var(--slate); padding:3px 8px; border-radius:3px; font-size:10.5px;}
+
+  @media (max-width:900px){
+    .footer-top{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:560px){
+    .footer-top{grid-template-columns:1fr; padding:40px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<div class="topbar">
+  <div class="wrap">
+    <span>Miễn phí vận chuyển cho đơn từ <b>500.000₫</b></span>
+    <span>Hotline: <b>1900 6868</b></span>
+  </div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-row">
+    <a href="#" class="logo">sportify<span class="dot">.</span></a>
+
+    <form class="search-bar" role="search" onsubmit="return false;">
+      <input id="searchInput" type="text" placeholder="Tìm áo, quần, giày thể thao...">
+      <button type="submit" aria-label="Tìm kiếm">Tìm kiếm</button>
+    </form>
+
+    <div class="header-actions">
+      <a href="#" class="icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        Đăng nhập
+      </a>
+      <button class="icon-btn" id="wishHeaderBtn">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5 5 0 0 0-7.1 0L12 6.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 20.8l8.8-8.8a5 5 0 0 0 0-7.4z"/></svg>
+        Yêu thích <span class="badge" id="wishCount">0</span>
+      </button>
+      <button class="icon-btn" id="cartHeaderBtn">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        Giỏ hàng <span class="badge" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO SLIDER ============ -->
+<section class="hero" aria-label="Bộ sưu tập nổi bật">
+  <div class="hero-track" id="heroTrack">
+    <div class="hero-slide">
+      <img src="https://picsum.photos/seed/sportify-run/1600/900" alt="Bộ sưu tập chạy bộ Sportify">
+      <div class="hero-copy">
+        <p class="eyebrow">Bộ sưu tập Hè 2026</p>
+        <h1 class="disp">Chạy nhanh<br>hơn giới hạn</h1>
+        <p>Vải co giãn 4 chiều, thấm hút mồ hôi tức thì — được thiết kế cho những buổi tập không khoan nhượng.</p>
+        <a href="#shop" class="cta">Mua ngay →</a>
+      </div>
+    </div>
+    <div class="hero-slide">
+      <img src="https://picsum.photos/seed/sportify-gym/1600/900" alt="Bộ sưu tập tập gym Sportify">
+      <div class="hero-copy">
+        <p class="eyebrow">Sportify Training</p>
+        <h1 class="disp">Sức mạnh<br>từ bên trong</h1>
+        <p>Dòng đồ tập gym co giãn linh hoạt, hỗ trợ mọi động tác từ squat đến deadlift.</p>
+        <a href="#shop" class="cta">Khám phá →</a>
+      </div>
+    </div>
+    <div class="hero-slide">
+      <img src="https://picsum.photos/seed/sportify-street/1600/900" alt="Thời trang thể thao đường phố Sportify">
+      <div class="hero-copy">
+        <p class="eyebrow">Sportify Street</p>
+        <h1 class="disp">Năng động<br>mọi lúc</h1>
+        <p>Từ sân tập đến phố xá — phong cách thể thao không giới hạn không gian.</p>
+        <a href="#shop" class="cta">Xem thêm →</a>
+      </div>
+    </div>
+    <div class="hero-slide">
+      <img src="https://picsum.photos/seed/sportify-team/1600/900" alt="Đồng phục đội tuyển Sportify">
+      <div class="hero-copy">
+        <p class="eyebrow">New Arrivals</p>
+        <h1 class="disp">Đồng đội<br>cùng chiến thắng</h1>
+        <p>Trang phục thi đấu đồng bộ cho cả đội, bền bỉ qua từng trận đấu.</p>
+        <a href="#shop" class="cta">Mua ngay →</a>
+      </div>
+    </div>
+  </div>
+
+  <button class="hero-nav prev" id="heroPrev" aria-label="Ảnh trước">‹</button>
+  <button class="hero-nav next" id="heroNext" aria-label="Ảnh sau">›</button>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>★ Miễn phí đổi trả 30 ngày</span>
+    <span>★ Giao hàng toàn quốc</span>
+    <span>★ Ưu đãi thành viên đến 25%</span>
+    <span>★ Hàng chính hãng 100%</span>
+    <span>★ Miễn phí đổi trả 30 ngày</span>
+    <span>★ Giao hàng toàn quốc</span>
+    <span>★ Ưu đãi thành viên đến 25%</span>
+    <span>★ Hàng chính hãng 100%</span>
+  </div>
+</div>
+
+<!-- ============ SHOP ============ -->
+<main class="shop" id="shop">
+
+  <!-- SIDEBAR FILTER -->
+  <aside class="filters" aria-label="Bộ lọc sản phẩm">
+    <h2>Bộ lọc <button id="resetFilters">Xóa hết</button></h2>
+
+    <details class="filter-group" open>
+      <summary>Danh mục</summary>
+      <div class="filter-options">
+        <label><input type="checkbox" checked> Áo thun <span class="count">(24)</span></label>
+        <label><input type="checkbox"> Áo khoác <span class="count">(12)</span></label>
+        <label><input type="checkbox"> Quần legging <span class="count">(18)</span></label>
+        <label><input type="checkbox"> Quần short <span class="count">(15)</span></label>
+        <label><input type="checkbox"> Giày thể thao <span class="count">(9)</span></label>
+        <label><input type="checkbox"> Phụ kiện <span class="count">(7)</span></label>
+      </div>
+    </details>
+
+    <details class="filter-group" open>
+      <summary>Giá</summary>
+      <div class="price-range">
+        <input type="range" min="0" max="3000000" value="1500000" id="priceRange">
+        <div class="val"><span>0₫</span><span id="priceVal">1.500.000₫</span></div>
+      </div>
+    </details>
+
+    <details class="filter-group" open>
+      <summary>Kích cỡ</summary>
+      <div class="sizes">
+        <div class="size-chip">XS</div>
+        <div class="size-chip selected">S</div>
+        <div class="size-chip selected">M</div>
+        <div class="size-chip">L</div>
+        <div class="size-chip">XL</div>
+        <div class="size-chip">XXL</div>
+      </div>
+    </details>
+
+    <details class="filter-group">
+      <summary>Màu sắc</summary>
+      <div class="swatches">
+        <div class="swatch selected" style="background:#0B0B0C" title="Đen"></div>
+        <div class="swatch" style="background:#F7F6F1;border-color:#c9c8c2" title="Trắng"></div>
+        <div class="swatch" style="background:#C6FF3D" title="Volt"></div>
+        <div class="swatch" style="background:#FF5A45" title="Cam san hô"></div>
+        <div class="swatch" style="background:#3B5BFF" title="Xanh dương"></div>
+        <div class="swatch" style="background:#6B6E76" title="Xám"></div>
+      </div>
+    </details>
+
+    <details class="filter-group">
+      <summary>Thương hiệu</summary>
+      <div class="filter-options">
+        <label><input type="checkbox" checked> Sportify Pro</label>
+        <label><input type="checkbox"> Sportify Basic</label>
+        <label><input type="checkbox"> Sportify X</label>
+      </div>
+    </details>
+
+    <button class="apply-btn" id="applyFilters">Áp dụng bộ lọc</button>
+  </aside>
+
+  <!-- PRODUCT LIST -->
+  <section aria-label="Danh sách sản phẩm">
+    <div class="product-toolbar">
+      <div>
+        <h1>Đồ thể thao</h1>
+        <p class="count-txt" id="resultCount">120 sản phẩm</p>
+      </div>
+      <div class="sort-wrap">
+        <label for="sortSelect">Sắp xếp</label>
+        <select id="sortSelect">
+          <option value="default">Nổi bật</option>
+          <option value="price-asc">Giá: Thấp → Cao</option>
+          <option value="price-desc">Giá: Cao → Thấp</option>
+          <option value="name-asc">Tên: A → Z</option>
+          <option value="rating">Đánh giá cao nhất</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="product-grid" id="productGrid"><!-- rendered by JS --></div>
+
+    <div class="load-more-wrap">
+      <button class="load-more" id="loadMoreBtn">Xem thêm sản phẩm</button>
+    </div>
+  </section>
+</main>
+
+<!-- ============ PERKS ============ -->
+<section class="perks">
+  <div class="wrap">
+    <div class="perk">
+      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      <div><h3>Giao hàng nhanh</h3><p>Nhận hàng trong 24–48h tại nội thành</p></div>
+    </div>
+    <div class="perk">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 3v6h6"/></svg>
+      <div><h3>Đổi trả 30 ngày</h3><p>Không hài lòng, hoàn tiền 100%</p></div>
+    </div>
+    <div class="perk">
+      <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6z"/></svg>
+      <div><h3>Hàng chính hãng</h3><p>Cam kết 100% sản phẩm chính hãng</p></div>
+    </div>
+    <div class="perk">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <div><h3>Hỗ trợ 24/7</h3><p>Đội ngũ tư vấn luôn sẵn sàng</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="logo">sportify<span class="dot">.</span></a>
+      <p>Thương hiệu thời trang thể thao dành cho những người không ngừng chuyển động. Chất lượng vải cao cấp, thiết kế bền bỉ theo thời gian.</p>
+      <div class="social-row">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 9V6a1 1 0 0 1 1-1h2V2h-3a4 4 0 0 0-4 4v3H7v3h3v9h3v-9h3l1-3h-4z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M14 3v10.5a3.5 3.5 0 1 1-3-3.46"/><path d="M14 3a5 5 0 0 0 5 5"/></svg></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Mua sắm</h4>
+      <ul>
+        <li><a href="#">Áo thun</a></li>
+        <li><a href="#">Quần legging</a></li>
+        <li><a href="#">Giày thể thao</a></li>
+        <li><a href="#">Hàng mới về</a></li>
+        <li><a href="#">Đang giảm giá</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Hỗ trợ</h4>
+      <ul>
+        <li><a href="#">Hướng dẫn chọn size</a></li>
+        <li><a href="#">Chính sách đổi trả</a></li>
+        <li><a href="#">Vận chuyển</a></li>
+        <li><a href="#">Câu hỏi thường gặp</a></li>
+        <li><a href="#">Liên hệ</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Công ty</h4>
+      <ul>
+        <li><a href="#">Về Sportify</a></li>
+        <li><a href="#">Tuyển dụng</a></li>
+        <li><a href="#">Cửa hàng</a></li>
+        <li><a href="#">Điều khoản</a></li>
+        <li><a href="#">Bảo mật</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col newsletter">
+      <h4>Nhận bản tin</h4>
+      <p>Đăng ký để nhận ưu đãi mới nhất mỗi tuần.</p>
+      <form onsubmit="return false;">
+        <input type="email" placeholder="Email của bạn" required>
+        <button type="submit">Gửi</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Sportify. Đã đăng ký bản quyền.</span>
+    <div class="pay-icons">
+      <span>VISA</span><span>MASTERCARD</span><span>MOMO</span><span>COD</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ============ HERO SLIDER ============ */
+  const track = document.getElementById('heroTrack');
+  const slides = track.children;
+  const total = slides.length;
+  let index = 0;
+  const dotsWrap = document.getElementById('heroDots');
+
+  for(let i=0;i<total;i++){
+    const b = document.createElement('button');
+    if(i===0) b.classList.add('active');
+    b.addEventListener('click', ()=> goTo(i));
+    dotsWrap.appendChild(b);
+  }
+  const dots = dotsWrap.children;
+
+  function render(){
+    track.style.transform = `translateX(-${index * (100/total)}%)`;
+    for(let i=0;i<dots.length;i++){
+      dots[i].classList.toggle('active', i===index);
+    }
+  }
+  function goTo(i){
+    index = (i + total) % total;
+    render();
+    resetTimer();
+  }
+  function next(){ goTo(index+1); }
+  function prev(){ goTo(index-1); }
+
+  document.getElementById('heroNext').addEventListener('click', next);
+  document.getElementById('heroPrev').addEventListener('click', prev);
+
+  let timer = setInterval(next, 4500);
+  function resetTimer(){
+    clearInterval(timer);
+    timer = setInterval(next, 4500);
+  }
+  render();
+
+  /* ============ PRODUCT DATA ============ */
+  const products = [
+    {name:"Áo thun thể thao nam Dry-Fit", cat:"Áo thun", price:349000, old:null, rating:4.8, seed:"p1", tag:null},
+    {name:"Áo khoác gió chạy bộ nữ", cat:"Áo khoác", price:659000, old:890000, rating:4.6, seed:"p2", tag:"sale"},
+    {name:"Quần legging nữ Seamless", cat:"Quần legging", price:479000, old:null, rating:4.9, seed:"p3", tag:"new"},
+    {name:"Quần short tập gym nam", cat:"Quần short", price:259000, old:null, rating:4.5, seed:"p4", tag:null},
+    {name:"Giày chạy bộ Sportify Air", cat:"Giày thể thao", price:1290000, old:1590000, rating:4.7, seed:"p5", tag:"sale"},
+    {name:"Áo bra thể thao nữ chống sốc", cat:"Áo thun", price:329000, old:null, rating:4.6, seed:"p6", tag:"new"},
+    {name:"Áo hoodie unisex Sportify X", cat:"Áo khoác", price:589000, old:null, rating:4.4, seed:"p7", tag:null},
+    {name:"Quần jogger nam thể thao", cat:"Quần short", price:459000, old:520000, rating:4.5, seed:"p8", tag:"sale"},
+    {name:"Giày training nữ đa năng", cat:"Giày thể thao", price:1150000, old:null, rating:4.8, seed:"p9", tag:null},
+    {name:"Áo thun tập gym nam form rộng", cat:"Áo thun", price:299000, old:null, rating:4.3, seed:"p10", tag:null},
+    {name:"Quần legging nam bó cơ", cat:"Quần legging", price:399000, old:null, rating:4.6, seed:"p11", tag:"new"},
+    {name:"Túi đeo chéo thể thao", cat:"Phụ kiện", price:219000, old:259000, rating:4.2, seed:"p12", tag:"sale"},
+  ];
+
+  const grid = document.getElementById('productGrid');
+  const currency = n => n.toLocaleString('vi-VN') + '₫';
+  let wishlist = new Set();
+  let cartCount = 0;
+
+  function starRow(rating){
+    let s = '';
+    for(let i=1;i<=5;i++){
+      s += `<span class="${i<=Math.round(rating)?'fill':''}">★</span>`;
+    }
+    return `<div class="stars">${s}<span>${rating.toFixed(1)}</span></div>`;
+  }
+
+  function cardHTML(p, i){
+    const tagHTML = p.tag==='sale' ? '<span class="tag sale">-Sale</span>'
+                  : p.tag==='new' ? '<span class="tag">Mới</span>' : '';
+    const priceHTML = p.old
+      ? `<span class="price">${currency(p.price)}</span><span class="old-price">${currency(p.old)}</span>`
+      : `<span class="price">${currency(p.price)}</span>`;
+    return `
+      <article class="card" data-idx="${i}">
+        <div class="card-media">
+          ${tagHTML}
+          <button class="wish-btn" aria-label="Yêu thích" data-idx="${i}">
+            <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5 5 0 0 0-7.1 0L12 6.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 20.8l8.8-8.8a5 5 0 0 0 0-7.4z"/></svg>
+          </button>
+          <img src="https://picsum.photos/seed/sportify-${p.seed}/500/620" alt="${p.name}" loading="lazy">
+          <button class="quick-add" data-idx="${i}">+ Thêm vào giỏ</button>
+        </div>
+        <div class="card-info">
+          <span class="cat">${p.cat}</span>
+          <span class="name">${p.name}</span>
+          ${starRow(p.rating)}
+          <div class="price-row">${priceHTML}</div>
+        </div>
+      </article>`;
+  }
+
+  function renderGrid(list){
+    grid.innerHTML = list.map((p,i)=>cardHTML(p,i)).join('');
+    document.getElementById('resultCount').textContent = list.length + ' sản phẩm';
+
+    grid.querySelectorAll('.wish-btn').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const idx = btn.dataset.idx;
+        if(wishlist.has(idx)){ wishlist.delete(idx); btn.classList.remove('active'); }
+        else{ wishlist.add(idx); btn.classList.add('active'); }
+        document.getElementById('wishCount').textContent = wishlist.size;
+      });
+    });
+    grid.querySelectorAll('.quick-add').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        cartCount++;
+        document.getElementById('cartCount').textContent = cartCount;
+        btn.textContent = '✓ Đã thêm';
+        setTimeout(()=>{ btn.textContent = '+ Thêm vào giỏ'; }, 1200);
+      });
+    });
+  }
+
+  renderGrid(products);
+
+  /* SORT */
+  document.getElementById('sortSelect').addEventListener('change', (e)=>{
+    let list = [...products];
+    switch(e.target.value){
+      case 'price-asc': list.sort((a,b)=>a.price-b.price); break;
+      case 'price-desc': list.sort((a,b)=>b.price-a.price); break;
+      case 'name-asc': list.sort((a,b)=>a.name.localeCompare(b.name)); break;
+      case 'rating': list.sort((a,b)=>b.rating-a.rating); break;
+      default: break;
+    }
+    renderGrid(list);
+  });
+
+  /* LOAD MORE (demo: duplicates list) */
+  document.getElementById('loadMoreBtn').addEventListener('click', function(){
+    renderGrid([...products, ...products]);
+    this.textContent = 'Đã hiển thị tất cả';
+    this.disabled = true;
+    this.style.opacity = .5;
+  });
+
+  /* PRICE RANGE */
+  const priceRange = document.getElementById('priceRange');
+  const priceVal = document.getElementById('priceVal');
+  priceRange.addEventListener('input', ()=>{
+    priceVal.textContent = Number(priceRange.value).toLocaleString('vi-VN') + '₫';
+  });
+
+  /* SIZE CHIPS */
+  document.querySelectorAll('.size-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=> chip.classList.toggle('selected'));
+  });
+  /* SWATCHES */
+  document.querySelectorAll('.swatch').forEach(sw=>{
+    sw.addEventListener('click', ()=>{
+      document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+      sw.classList.add('selected');
+    });
+  });
+  /* RESET FILTERS */
+  document.getElementById('resetFilters').addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-options input[type=checkbox]').forEach(c=>c.checked=false);
+    document.querySelectorAll('.size-chip').forEach(c=>c.classList.remove('selected'));
+    document.querySelectorAll('.swatch').forEach(c=>c.classList.remove('selected'));
+    priceRange.value = 1500000;
+    priceVal.textContent = '1.500.000₫';
+  });
+
+  document.getElementById('applyFilters').addEventListener('click', ()=>{
+    document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+  });
+
+  /* SEARCH (simple filter by name) */
+  document.getElementById('searchInput').addEventListener('input', (e)=>{
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = q ? products.filter(p=>p.name.toLowerCase().includes(q)) : products;
+    renderGrid(filtered);
+  });
+})();
+</script>
+</body>
+</html>

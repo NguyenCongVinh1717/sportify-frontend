@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sportify Admin | Quản lý màu sắc</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --white: #fff;
+            --black: #000;
+            --gray: #f8f9fa;
+            --border: #eee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--gray);
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: white;
+            height: 100vh;
+            position: fixed;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-header {
+            padding: 40px 25px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .sidebar-menu {
+            padding: 10px 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: black;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 40px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .btn-black {
+            background: black;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 2px solid black;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: black;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            padding: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-text">SPORTIFY ADMIN</div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="adminDashboard.html" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i> THỐNG KÊ
+            </a>
+
+            <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
+
+            <a href="admin_brand.html" class="menu-item">
+                <i class="fa-solid fa-award"></i> THƯƠNG HIỆU
+            </a>
+
+            <a href="admin_color.html" class="menu-item active">
+                <i class="fa-solid fa-palette"></i> MÀU SẮC
+            </a>
+
+            <a href="admin_size.html" class="menu-item">
+                <i class="fa-solid fa-ruler"></i> KÍCH THƯỚC
+            </a>
+            <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
+            <a href="admin_customer.html" class="menu-item">
+                <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="page-header">
+            <div class="header-title">
+                <h2>Quản lý màu sắc</h2>
+                <p>Danh sách màu sản phẩm trong hệ thống.</p>
+            </div>
+
+            <button class="btn-black" onclick="openModal()">
+                <i class="fa-solid fa-plus"></i> THÊM MÀU
+            </button>
+        </header>
+
+        <div class="card">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>MÃ MÀU</th>
+                        <th>TÊN MÀU</th>
+                        <th style="text-align:right;">THAO TÁC</th>
+                    </tr>
+                </thead>
+
+                <tbody id="color-body"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal" id="colorModal">
+        <div class="modal-content">
+
+            <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
+                <h3 id="modalTitle">THÊM MÀU</h3>
+
+                <button onclick="closeModal()" style="border:none;background:none;font-size:22px;cursor:pointer;">
+                    ×
+                </button>
+            </div>
+
+            <form id="colorForm">
+
+                <input type="hidden" id="c-id">
+
+                <div class="form-group">
+                    <label>Mã màu</label>
+                    <input type="text" id="c-code" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Tên màu</label>
+                    <input type="text" id="c-name" class="form-control" required>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn-black" style="background:#ddd;color:black;" onclick="closeModal()">
+                        HỦY
+                    </button>
+
+                    <button type="submit" class="btn-black">
+                        LƯU
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+
+    <script>
+
+        let allColors = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadColors();
+        });
+
+        async function loadColors() {
+
+            try {
+
+                allColors = await apiGet('/colors');
+
+                renderColors();
+
+            } catch (err) {
+
+                Swal.fire('Lỗi', err.message, 'error');
+            }
+        }
+
+        function renderColors() {
+
+            const tbody = document.getElementById('color-body');
+
+            tbody.innerHTML = allColors.map(c => `
+            
+                <tr>
+
+                    <td>#${c.id}</td>
+
+                    <td>
+                        <strong>${c.colorCode}</strong>
+                    </td>
+
+                    <td>${c.colorName}</td>
+
+                    <td>
+
+                        <div style="display:flex;gap:8px;justify-content:flex-end;">
+
+                            <button class="btn-icon"
+                                    onclick="editColor(${c.id})">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </button>
+
+                            <button class="btn-icon"
+                                    onclick="deleteColor(${c.id})">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+            
+            `).join('');
+        }
+
+        function openModal() {
+
+            document.getElementById('colorModal').style.display = 'flex';
+
+            document.getElementById('colorForm').reset();
+
+            document.getElementById('c-id').value = '';
+
+            document.getElementById('modalTitle').innerText = 'THÊM MÀU';
+        }
+
+        function closeModal() {
+
+            document.getElementById('colorModal').style.display = 'none';
+        }
+
+        document.getElementById('colorForm').onsubmit = async (e) => {
+
+            e.preventDefault();
+
+            const id = document.getElementById('c-id').value;
+
+            const body = {
+                colorCode: document.getElementById('c-code').value.trim(),
+                colorName: document.getElementById('c-name').value.trim()
+            };
+
+            try {
+
+                if (id) {
+                    await apiPut(`/colors/${id}`, body);
+                } else {
+                    await apiPost('/colors', body);
+                }
+
+                closeModal();
+
+                loadColors();
+
+                Swal.fire('Thành công', 'Lưu dữ liệu thành công', 'success');
+
+            } catch (err) {
+
+                Swal.fire('Lỗi', err.message, 'error');
+            }
+        }
+
+        async function editColor(id) {
+
+            try {
+
+                const c = await apiGet(`/colors/${id}`);
+
+                openModal();
+
+                document.getElementById('modalTitle').innerText = 'CẬP NHẬT MÀU';
+
+                document.getElementById('c-id').value = c.id;
+                document.getElementById('c-code').value = c.colorCode;
+                document.getElementById('c-name').value = c.colorName;
+
+            } catch (err) {
+
+                Swal.fire('Lỗi', err.message, 'error');
+            }
+        }
+
+        async function deleteColor(id) {
+
+            const result = await Swal.fire({
+                title: 'Xóa màu này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            });
+
+            if (!result.isConfirmed) return;
+
+            try {
+
+                await apiDelete(`/colors/${id}`);
+
+                loadColors();
+
+                Swal.fire('Đã xóa', '', 'success');
+
+            } catch (err) {
+
+                Swal.fire('Lỗi', err.message, 'error');
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
