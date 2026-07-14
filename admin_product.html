@@ -39,20 +39,34 @@
       min-height: 100vh;
     }
 
-    /* SIDEBAR */
+    /* SIDEBAR RESPONSIVE ĐỒNG BỘ */
     .sidebar {
       width: 260px;
       background: var(--white);
       height: 100vh;
       position: fixed;
       border-right: 1px solid var(--gray-border);
-      z-index: 1000;
+      z-index: 1500;
+      transition: transform 0.3s ease;
     }
 
     .sidebar-header {
       padding: 40px 25px;
       font-size: 22px;
       font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Nút đóng menu khi ở trên điện thoại */
+    .close-sidebar-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--black);
     }
 
     .sidebar-menu {
@@ -76,11 +90,50 @@
       color: white;
     }
 
-    /* MAIN CONTENT */
+    /* MOBILE HEADER BAR ĐỒNG BỘ */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 20px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1400;
+    }
+
+    .mobile-brand {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .toggle-sidebar-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* SIDEBAR OVERLAY BACKGROUND */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1450;
+    }
+
+    /* MAIN CONTENT RESPONSIVE */
     .main-content {
       flex: 1;
       margin-left: 260px;
       padding: 40px;
+      min-width: 0;
+      /* Chống tràn layout */
     }
 
     .page-header {
@@ -88,6 +141,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 40px;
+      gap: 15px;
     }
 
     .header-title h2 {
@@ -104,9 +158,11 @@
       font-weight: 700;
       cursor: pointer;
       transition: var(--transition);
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      white-space: nowrap;
     }
 
     .btn-black:hover {
@@ -155,12 +211,13 @@
       font-weight: 600;
     }
 
-    /* CARD & TABLE WITH VERTICAL SCROLL */
+    /* CARD & TABLE WITH SCROLL RESPONSIVE */
     .card {
       background: var(--white);
       border-radius: var(--radius);
       border: 1px solid var(--gray-border);
-      overflow: hidden;
+      overflow-x: auto;
+      /* Tự động cuộn ngang trên mobile */
       box-shadow: var(--shadow);
     }
 
@@ -172,6 +229,8 @@
     .admin-table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 950px;
+      /* Chống vỡ cấu trúc cột sản phẩm khi màn hình nhỏ */
     }
 
     .admin-table th {
@@ -184,6 +243,7 @@
       top: 0;
       background: var(--white);
       z-index: 10;
+      white-space: nowrap;
     }
 
     .admin-table td {
@@ -191,6 +251,7 @@
       border-bottom: 1px solid var(--gray-border);
       font-size: 14px;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .product-img {
@@ -207,6 +268,10 @@
       font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
+      white-space: nowrap;
+      /* Thêm dòng này để chữ không bị xuống hàng */
+      display: inline-block;
+      /* Thêm dòng này để giữ padding ổn định */
     }
 
     .badge-success {
@@ -244,19 +309,18 @@
       gap: 5px;
     }
 
-    /* MODAL */
+    /* MODAL RESPONSIVE */
     .modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(4px);
       z-index: 2000;
       align-items: center;
       justify-content: center;
+      padding: 15px;
+      /* Tránh đè sát mép màn hình mobile */
     }
 
     .modal-content {
@@ -264,6 +328,7 @@
       padding: 40px;
       border-radius: var(--radius);
       width: 900px;
+      max-width: 100%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -313,6 +378,12 @@
       padding: 15px;
       border-radius: 4px;
       background: #fafafa;
+      overflow-x: auto;
+      /* Cuộn bảng chọn thuộc tính nếu bị tràn trên màn nhỏ */
+    }
+
+    .variant-table-container table {
+      min-width: 450px;
     }
 
     .preview-grid {
@@ -347,13 +418,90 @@
       height: 20px;
       cursor: pointer;
     }
+
+    /* ================= RESPONSIVE QUERIES ĐỒNG BỘ ================= */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .close-sidebar-btn {
+        display: block;
+      }
+
+      .mobile-header {
+        display: flex;
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 85px 20px 40px 20px;
+        /* Bù khoảng cách top bằng chiều cao mobile header */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .filter-toolbar {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .filter-control {
+        width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        /* Chuyển form thành 1 cột dọc */
+        gap: 0;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-header .btn-black {
+        width: 100%;
+        text-align: center;
+      }
+
+      .modal-content {
+        padding: 25px 20px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <aside class="sidebar">
-    <div class="sidebar-header">SPORTIFY ADMIN</div>
+  <!-- Lớp phủ màn hình khi bật Menu ở Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Thanh công cụ đầu trang trên điện thoại -->
+  <div class="mobile-header">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-brand">SPORTIFY ADMIN</div>
+    <div style="width: 20px;"></div>
+  </div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="logo-text">SPORTIFY ADMIN</div>
+      <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    </div>
     <nav class="sidebar-menu">
       <a href="adminDashboard.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> THỐNG KÊ</a>
       <a href="admin_product.html" class="menu-item active"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
@@ -504,8 +652,17 @@
 
   <script src="api.js"></script>
   <script>
-    const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const IMG_VIEW_BASE = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
+    // Hàm kích hoạt mở/đóng Sidebar trên Mobile (Đồng bộ từ admin_size)
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
+    // const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // const IMG_VIEW_BASE = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
+const IMG_VIEW_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
     // const IMG_VIEW_BASE = "/images/";
     const PLACEHOLDER = "https://dummyimage.com/200x200/f8f9fa/666666.png&text=Sportify";
 

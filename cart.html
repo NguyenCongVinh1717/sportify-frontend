@@ -583,9 +583,10 @@
 
   <script src="api.js"></script>
   <script>
-    const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const IMAGE_BASE_URL = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
+    // const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // const IMAGE_BASE_URL = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
     // const IMAGE_BASE_URL = "/images/";
+    const IMAGE_BASE_URL = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
     let hasItemsInCart = false; // Biến cờ kiểm tra giỏ hàng có đồ hay không
     let isFormVisible = false;  // Biến cờ quản lý trạng thái hiển thị Form đặt hàng
 

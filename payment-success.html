@@ -10,17 +10,21 @@
   <style>
     :root {
       --white: #ffffff;
+      --black: #000000;
       --gray-bg: #f8f9fa;
-      --gray-border: #e5e7eb;
-      --black: #111111;
-      --text-muted: #6b7280;
-      --success: #10b981;
-      --success-tint: #ecfdf5;
-      --danger: #ff4757;
-      --danger-tint: #fff1f2;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 20px 50px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --gray-border: #dee2e6;
+      --text-muted: #6c757d;
+      
+      /* Hệ màu thực tế chỉ nhấn khi có kết quả */
+      --success: #155724;
+      --success-bg: #d4edda;
+      --success-border: #c3e6cb;
+      --danger: #721c24;
+      --danger-bg: #f8d7da;
+      --danger-border: #f5c6cb;
+      
+      --radius: 4px; /* Giảm bo góc tối đa, vuông vắn, góc cạnh */
+      --transition: all 0.2s ease-in-out;
     }
 
     * {
@@ -30,8 +34,6 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
-
     body {
       background-color: var(--white);
       color: var(--black);
@@ -40,54 +42,58 @@
       flex-direction: column;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.6s ease;
     }
 
-    /* Sắc nền ấm dần theo kết quả giao dịch — trung tính lúc đang tải,
-       ngả xanh nhạt khi thành công, ngả đỏ nhạt khi thất bại */
-    body.is-success { background: linear-gradient(180deg, var(--success-tint) 0%, var(--white) 380px); }
-    body.is-danger { background: linear-gradient(180deg, var(--danger-tint) 0%, var(--white) 380px); }
+    /* Đổi nền nhẹ nhàng theo kết quả nhưng giữ tông sáng tối giản */
+    body.is-success { background-color: #fafdfb; }
+    body.is-danger { background-color: #fffbfa; }
 
-    a { text-decoration: none; color: inherit; }
-
-    /* ===== HEADER ĐỒNG BỘ VỚI PRODUCTS.HTML ===== */
+    /* ===== HEADER ĐEN TRẮNG ĐỒNG BỘ ===== */
     .header {
+      background: var(--white);
+      border-bottom: 2px solid var(--black); 
+      padding: 20px 0;
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.9);
-      border-bottom: 1px solid var(--gray-border);
-      padding: 16px 0;
-      backdrop-filter: blur(8px);
+      z-index: 100;
     }
 
     .header-inner {
-      max-width: 1440px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .logo {
-      font-size: 26px;
-      font-weight: 900;
-      font-style: italic;
-      letter-spacing: -1px;
-      color: var(--black);
-      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
     }
 
-    .logo .dot { color: var(--black); }
+    .brand-logo {
+      width: 32px; 
+      height: 32px;
+      background: var(--black); 
+      border-radius: var(--radius);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      margin-right: 10px;
+    }
+    
+    .brand-logo i { color: var(--white); font-size: 14px; }
+    .logo-text { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: var(--black); text-transform: uppercase; }
 
-    /* ===== KHUNG KẾT QUẢ ===== */
+    /* ===== CONTAINER ===== */
     .result-container {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 56px 20px;
+      padding: 60px 24px;
     }
 
     /* --- Trạng thái đang xác thực --- */
@@ -95,26 +101,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 22px;
+      gap: 16px;
       text-align: center;
     }
 
-    .loading-spinner {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      border: 3px solid var(--gray-border);
-      border-top-color: var(--black);
-      animation: spin 0.85s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     .loading-card p {
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--black);
       font-size: 14px;
-      letter-spacing: 0.2px;
     }
 
     .loading-dots span {
@@ -125,179 +119,140 @@
     .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
 
-    /* --- Thẻ kết quả kiểu vé/hoá đơn --- */
+    /* --- Thẻ kết quả kiểu khối vuông vắn --- */
     .result-card {
-      position: relative;
       background: var(--white);
-      border: 1px solid var(--gray-border);
-      border-radius: 20px;
-      box-shadow: var(--shadow-md);
-      padding: 48px 40px 36px;
-      max-width: 460px;
+      border: 1px solid var(--black);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 480px;
       width: 100%;
       text-align: center;
-      animation: riseIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: var(--transition);
     }
 
-    @keyframes riseIn {
-      from { opacity: 0; transform: translateY(18px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .result-card:hover {
+      box-shadow: 6px 6px 0px var(--black);
     }
-
-    /* Vết bấm lỗ 2 bên tạo cảm giác "vé/biên lai" ngay chỗ đường đứt nét */
-    .result-card::before,
-    .result-card::after {
-      content: "";
-      position: absolute;
-      width: 26px;
-      height: 26px;
-      background: var(--gray-bg);
-      border: 1px solid var(--gray-border);
-      border-radius: 50%;
-      top: 224px;
-    }
-    .result-card::before { left: -14px; }
-    .result-card::after { right: -14px; }
 
     .status-icon {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 22px;
-      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: var(--radius);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 40px;
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+      font-size: 28px;
     }
 
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.6); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .status-icon.success { background: var(--success-tint); color: var(--success); }
-    .status-icon.danger { background: var(--danger-tint); color: var(--danger); }
+    /* Đổ màu chuẩn thực tế cho box icon trạng thái */
+    .status-icon.success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+    .status-icon.danger { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-border); }
 
     .result-title {
       font-size: 22px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.5px;
       margin-bottom: 10px;
     }
 
     .result-message {
       color: var(--text-muted);
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 500;
-      margin-bottom: 28px;
-      padding: 0 6px;
+      margin-bottom: 24px;
     }
 
-    /* Đường đứt nét kiểu mép xé vé, ngay hàng với 2 lỗ tròn ở cạnh thẻ */
     .ticket-divider {
       border: none;
-      border-top: 1.5px dashed var(--gray-border);
-      margin: 0 -40px 26px;
+      border-top: 1px dashed var(--gray-border);
+      margin: 0 0 24px 0;
     }
 
     .info-list {
       text-align: left;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     .info-row {
       display: flex;
-      align-items: baseline;
-      gap: 8px;
-      font-size: 13px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
     }
 
     .info-row .label {
       color: var(--text-muted);
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .info-row .leader {
-      flex: 1;
-      border-bottom: 1px dotted var(--gray-border);
-      transform: translateY(-3px);
+      font-weight: 500;
     }
 
     .info-row .value {
       color: var(--black);
-      font-weight: 700;
-      white-space: nowrap;
-      max-width: 220px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-weight: 600;
+      text-align: right;
     }
 
     .info-row.amount .value {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 800;
     }
 
+    /* ===== BUTTONS ĐEN KHỐI ===== */
     .action-btn {
       display: block;
       width: 100%;
-      padding: 16px;
-      border: none;
+      padding: 14px;
       background: var(--black);
       color: var(--white);
       font-weight: 700;
-      border-radius: 10px;
+      border-radius: var(--radius);
       text-transform: uppercase;
       font-size: 13px;
-      letter-spacing: 1px;
+      border: 1px solid var(--black);
       transition: var(--transition);
       cursor: pointer;
+      margin-bottom: 12px;
     }
 
     .action-btn:hover {
-      background: #222222;
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      background: #212529;
     }
 
     .secondary-link {
       display: inline-block;
-      margin-top: 16px;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
-      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: var(--transition);
     }
 
-    .secondary-link:hover { color: var(--black); text-decoration: underline; }
+    .secondary-link:hover { 
+      color: var(--black); 
+      text-decoration: underline; 
+    }
 
     .trust-note {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin-top: 26px;
-      font-size: 11.5px;
+      gap: 6px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-bg);
+      font-size: 12px;
       color: var(--text-muted);
       font-weight: 600;
-      letter-spacing: 0.2px;
     }
 
-    .trust-note i { color: var(--success); }
-
-    @media (max-width: 480px) {
-      .result-card { padding: 40px 24px 30px; }
-      .ticket-divider { margin: 0 -24px 24px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, .result-card, .status-icon { animation: none !important; }
-    }
+    .trust-note i { color: var(--black); }
   </style>
 </head>
 
@@ -305,13 +260,18 @@
 
   <header class="header">
     <div class="header-inner">
-      <a href="products.html" class="logo">sportify<span class="dot">.</span></a>
+      <a href="products.html" class="logo">
+        <div class="brand-logo">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <span class="logo-text">SPORTIFY</span>
+      </a>
     </div>
   </header>
 
   <main class="result-container">
     <div class="loading-card" id="loading-card">
-      <div class="loading-spinner"></div>
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 28px; color: var(--black);"></i>
       <p>Đang xác thực bảo mật từ cổng VNPAY<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
     </div>
 
@@ -325,17 +285,14 @@
       <div class="info-list">
         <div class="info-row">
           <span class="label">Mã đơn hàng</span>
-          <span class="leader"></span>
           <span class="value" id="res-order-id">N/A</span>
         </div>
         <div class="info-row amount">
-          <span class="label">Số tiền</span>
-          <span class="leader"></span>
+          <span class="label">Số tiền đã trả</span>
           <span class="value" id="res-amount">0đ</span>
         </div>
         <div class="info-row">
-          <span class="label">Nội dung</span>
-          <span class="leader"></span>
+          <span class="label">Nội dung thanh toán</span>
           <span class="value" id="res-info">N/A</span>
         </div>
       </div>
@@ -344,16 +301,16 @@
       <a href="products.html" class="secondary-link">Về trang chủ Sportify</a>
 
       <div class="trust-note">
-        <i class="fa-solid fa-lock"></i>
-        <span>Giao dịch được xác thực và bảo mật qua cổng VNPAY</span>
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Giao dịch được bảo mật bởi VNPAY Gateway</span>
       </div>
     </div>
   </main>
 
-<script src="api.js"></script>
+  <script src="api.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async function () {
-      // 1. Đọc nhanh dữ liệu từ URL để hiển thị tạm lên giao diện hóa đơn
+      // 1. Đọc dữ liệu từ URL hiển thị lên bill
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get('vnp_TxnRef');
       const amount = urlParams.get('vnp_Amount');
@@ -368,41 +325,37 @@
       const messageP = document.getElementById('status-message');
       const nextBtn = document.getElementById('next-action-btn');
 
-      // 2. Gửi dữ liệu Callback sang Backend và HỨNG KẾT QUẢ JSON TRẢ VỀ
+      // 2. Gửi dữ liệu Callback sang Backend
       let backendResult = null;
       try {
-        // Hàm apiGet của bạn khi chạy xong sẽ return thẳng về Object JSON của Backend
         backendResult = await apiGet(`/order/vnpay-callback${window.location.search}`);
       } catch (err) {
         console.error("Lỗi kết nối đồng bộ callback sang Backend:", err);
       }
 
-      // 3. Ẩn màn hình xoay spinner loading, bật khung kết quả Sportify lên
+      // 3. Ẩn loading, hiện giao diện hoá đơn
       document.getElementById('loading-card').style.display = 'none';
       document.getElementById('result-card').style.display = 'block';
 
-      // 4. CHECK TRẠNG THÁI DỰA TRÊN ĐÚNG BẢN TIN JSON CỦA BACKEND
+      // 4. Kiểm tra trạng thái và nạp class màu tương ứng
       if (backendResult && backendResult.status === "SUCCESS") {
-        // Hợp lệ 100% -> Hiện giao diện TÍCH XANH THÀNH CÔNG
-        document.body.classList.add('is-success'); // ✨ THÊM MỚI: chỉ đổi màu nền, không đổi logic
+        document.body.classList.add('is-success');
         iconDiv.className = "status-icon success";
         iconDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
         titleH2.innerText = "Thanh toán thành công";
-        messageP.innerText = "🎉 Tuyệt vời! Đơn hàng của bạn đã được đối soát an toàn trên hệ thống Sportify và đang chờ chuẩn bị giao hàng.";
+        messageP.innerText = "Đơn hàng của bạn đã được đối soát an toàn trên hệ thống Sportify và đang chờ chuẩn bị giao hàng.";
         nextBtn.innerText = "Xem đơn hàng của tôi";
-        nextBtn.href = "my-orders.html"; // Trả tiền xong đá về trang lịch sử đơn hàng
+        nextBtn.href = "orders.html"; 
         
-        // Mẹo phụ: Nếu trang có hàm xóa sạch giỏ hàng Client thì gọi ở đây
         if (typeof clearCart === "function") { clearCart(); }
       } else {
-        // Thất bại hoặc sai chữ ký số -> Hiện giao diện DẤU X ĐỎ LỖI
-        document.body.classList.add('is-danger'); // ✨ THÊM MỚI: chỉ đổi màu nền, không đổi logic
+        document.body.classList.add('is-danger');
         iconDiv.className = "status-icon danger";
         iconDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
         titleH2.innerText = backendResult ? backendResult.message : "Thanh toán thất bại";
-        messageP.innerText = "❌ Giao dịch không thành công, sai chữ ký bảo mật hoặc đã bị hủy bỏ bởi người dùng.";
+        messageP.innerText = "Giao dịch không thành công, sai chữ ký bảo mật hoặc đã bị hủy bỏ bởi người dùng.";
         nextBtn.innerText = "Quay về giỏ hàng";
-        nextBtn.href = "cart.html"; // Thất bại thì đá về giỏ hàng để thao tác lại
+        nextBtn.href = "cart.html"; 
       }
     });
   </script>

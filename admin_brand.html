@@ -39,12 +39,27 @@
       height: 100vh;
       position: fixed;
       border-right: 1px solid var(--border);
+      z-index: 1500;
+      transition: transform 0.3s ease;
     }
 
     .sidebar-header {
       padding: 40px 25px;
       font-size: 22px;
       font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Nút đóng sidebar chỉ hiển thị trên mobile */
+    .close-sidebar-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--black);
     }
 
     .sidebar-menu {
@@ -68,11 +83,40 @@
       color: white;
     }
 
+    /* MOBILE HEADER BAR */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1400;
+    }
+
+    .mobile-brand {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .toggle-sidebar-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
     /* MAIN CONTENT SECTION */
     .main-content {
       flex: 1;
       margin-left: 260px;
       padding: 40px;
+      min-width: 0; /* Ngăn chặn flex item làm tràn phần tử con */
     }
 
     .page-header {
@@ -80,6 +124,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 35px;
+      gap: 15px;
     }
 
     .btn-black {
@@ -90,6 +135,7 @@
       cursor: pointer;
       border-radius: 4px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     /* TOOLBAR SEARCH */
@@ -125,11 +171,13 @@
     .card {
       background: white;
       border: 1px solid var(--border);
+      overflow-x: auto; /* Tự động xuất hiện thanh cuộn ngang khi bảng quá rộng */
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 500px; /* Đảm bảo bảng không bị bóp méo chữ trên màn hình nhỏ */
     }
 
     th {
@@ -171,11 +219,13 @@
       justify-content: center;
       z-index: 2000;
       align-items: center;
+      padding: 15px;
     }
 
     .modal-content {
       background: white;
       width: 500px;
+      max-width: 100%; /* Đảm bảo không tràn màn hình điện thoại */
       padding: 35px;
     }
 
@@ -195,21 +245,82 @@
       padding: 12px;
       border: 1px solid #ddd;
     }
+
+    /* SIDEBAR OVERLAY (Màn che khi mở menu trên mobile) */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1450;
+    }
+
+    /* ================= RESPONSIVE MEDIA QUERIES ================= */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%); /* Ẩn sidebar đi */
+      }
+      .sidebar.open {
+        transform: translateX(0); /* Hiện sidebar khi kích hoạt */
+      }
+      .close-sidebar-btn {
+        display: block; /* Hiện nút đóng sidebar */
+      }
+      .mobile-header {
+        display: flex; /* Hiện thanh bar trên cùng mobile */
+      }
+      .sidebar-overlay.open {
+        display: block;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 85px 20px 40px 20px; /* Chừa khoảng trống phía trên cho mobile header */
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .page-header .btn-black {
+        width: 100%;
+        text-align: center;
+      }
+      .modal-content {
+        padding: 25px 20px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <aside class="sidebar">
+  <!-- Màn che overlay phục vụ mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Thanh đầu trang dành riêng cho màn hình nhỏ -->
+  <div class="mobile-header">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-brand">SPORTIFY ADMIN</div>
+    <div style="width: 20px;"></div>
+  </div>
+
+  <aside class="sidebar" id="sidebarMenu">
     <div class="sidebar-header">
       SPORTIFY ADMIN
+      <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
     </div>
 
     <nav class="sidebar-menu">
       <a href="adminDashboard.html" class="menu-item">
         <i class="fa-solid fa-chart-line"></i> THỐNG KÊ
       </a>
-      <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
+      <a href="admin_product.html" class="menu-item">
+        <i class="fa-solid fa-shirt"></i> SẢN PHẨM
+      </a>
       <a href="admin_brand.html" class="menu-item active">
         <i class="fa-solid fa-award"></i> THƯƠNG HIỆU
       </a>
@@ -219,7 +330,9 @@
       <a href="admin_size.html" class="menu-item">
         <i class="fa-solid fa-ruler"></i> KÍCH THƯỚC
       </a>
-      <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
+      <a href="admin_order.html" class="menu-item">
+        <i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG
+      </a>
       <a href="admin_customer.html" class="menu-item">
         <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
       </a>
@@ -290,6 +403,14 @@
 
   <script src="api.js"></script>
   <script>
+    // Hàm bổ trợ đóng/mở sidebar trên môi trường màn hình di động/tablet
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
     let allBrands = [];
 
     document.addEventListener('DOMContentLoaded', () => {

@@ -39,20 +39,34 @@
       min-height: 100vh;
     }
 
-    /* SIDEBAR */
+    /* SIDEBAR RESPONSIVE ĐỒNG BỘ */
     .sidebar {
       width: 260px;
       background: var(--white);
       height: 100vh;
       position: fixed;
       border-right: 1px solid var(--gray-border);
-      z-index: 1000;
+      z-index: 1500;
+      transition: transform 0.3s ease;
     }
 
     .sidebar-header {
       padding: 40px 25px;
       font-size: 22px;
       font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Nút đóng menu khi ở trên điện thoại */
+    .close-sidebar-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--black);
     }
 
     .sidebar-menu {
@@ -76,11 +90,40 @@
       color: white;
     }
 
-    /* MAIN CONTENT */
+    /* MOBILE HEADER BAR ĐỒNG BỘ */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 20px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1400;
+    }
+
+    .mobile-brand {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .toggle-sidebar-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* MAIN CONTENT RESPONSIVE */
     .main-content {
       flex: 1;
       margin-left: 260px;
       padding: 40px;
+      min-width: 0; /* Chống tràn layout */
     }
 
     .page-header {
@@ -95,7 +138,7 @@
       font-weight: 800;
     }
 
-    /* FILTER TOOLBAR */
+    /* FILTER TOOLBAR RESPONSIVE */
     .filter-toolbar {
       display: flex;
       gap: 20px;
@@ -132,6 +175,8 @@
     .filter-tabs-container {
       display: flex;
       gap: 8px;
+      overflow-x: auto; /* Cho phép vuốt ngang các tabs lọc trên màn hình nhỏ */
+      padding-bottom: 5px;
     }
 
     .filter-tab {
@@ -145,6 +190,7 @@
       border: 1px solid var(--gray-border);
       background: var(--gray-bg);
       text-transform: uppercase;
+      white-space: nowrap; /* Tránh gãy chữ khi cuộn ngang */
     }
 
     .filter-tab.active {
@@ -158,7 +204,7 @@
       background: var(--white);
       border-radius: var(--radius);
       border: 1px solid var(--gray-border);
-      overflow: hidden;
+      overflow-x: auto; /* Tự động cuộn bảng khi bị màn hình hẹp */
       box-shadow: var(--shadow);
     }
 
@@ -170,6 +216,7 @@
     .admin-table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 850px; /* Đảm bảo cấu trúc cột thông tin không bị co bóp méo mó */
     }
 
     .admin-table th {
@@ -182,6 +229,7 @@
       top: 0;
       background: var(--white);
       z-index: 10;
+      white-space: nowrap;
     }
 
     .admin-table td {
@@ -189,6 +237,7 @@
       border-bottom: 1px solid var(--gray-border);
       font-size: 14px;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .admin-table tr:hover td {
@@ -227,7 +276,16 @@
       color: var(--black);
     }
 
-    /* ===== CSS MODAL CHI TIẾT ĐƠN HÀNG ===== */
+    /* LỚP PHỦ NỀN SIDEBAR OVERLAY */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1450;
+    }
+
+    /* ===== CSS MODAL CHI TIẾT ĐƠN HÀNG RESPONSIVE ===== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -239,11 +297,13 @@
       z-index: 2000;
       align-items: center;
       justify-content: center;
+      padding: 15px; /* Giữ khoảng cách an toàn viền màn hình nhỏ */
     }
 
     .modal-container {
       background: var(--white);
       width: 750px;
+      max-width: 100%;
       max-height: 85vh;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -290,7 +350,7 @@
       gap: 25px;
     }
 
-    /* Khối thông tin khách hàng */
+    /* Khối thông tin khách hàng grid chuyển layout tự động */
     .modal-info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -325,10 +385,15 @@
     }
 
     /* Bảng sản phẩm trong Modal */
+    .modal-table-wrapper {
+      overflow-x: auto; /* Cuộn bảng chi tiết sản phẩm nếu dài */
+    }
+
     .modal-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
+      min-width: 450px;
     }
 
     .modal-table th {
@@ -379,19 +444,7 @@
       color: var(--black);
     }
 
-    @keyframes modalFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-15px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .select-status {
+    select.select-status {
       padding: 8px 12px;
       border: 1px solid var(--gray-border);
       border-radius: var(--radius);
@@ -424,13 +477,99 @@
       font-weight: 700;
       font-size: 14px;
     }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ================= RESPONSIVE QUERIES ĐỒNG BỘ MÀU SẮC ================= */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .close-sidebar-btn {
+        display: block;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .sidebar-overlay.open {
+        display: block;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 85px 20px 40px 20px; /* Bù khoảng cách top bằng chiều cao header di động */
+      }
+      .filter-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+      }
+      .filter-tabs-container {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 25px;
+      }
+      .header-title h2 {
+        font-size: 24px;
+      }
+      .modal-info-grid {
+        grid-template-columns: 1fr; /* Chuyển thành 1 cột đứng trên mobile */
+        gap: 15px;
+        padding: 15px;
+      }
+      .modal-container {
+        max-height: 90vh;
+      }
+      .modal-body {
+        padding: 15px;
+        gap: 15px;
+      }
+      .modal-footer {
+        padding: 15px;
+      }
+      .total-price-value {
+        font-size: 18px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-  <aside class="sidebar">
-    <div class="sidebar-header">SPORTIFY ADMIN</div>
+  <!-- Lớp phủ màn hình khi bật Menu ở Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Thanh công cụ đầu trang trên điện thoại -->
+  <div class="mobile-header">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-brand">SPORTIFY ADMIN</div>
+    <div style="width: 20px;"></div>
+  </div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="logo-text">SPORTIFY ADMIN</div>
+      <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    </div>
     <nav class="sidebar-menu">
       <a href="adminDashboard.html" class="menu-item"><i class="fa-solid fa-chart-line"></i> THỐNG KÊ</a>
       <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
@@ -459,15 +598,11 @@
       </div>
       <div class="filter-tabs-container">
         <div class="filter-tab active" onclick="switchTab(this, 'ALL')">TẤT CẢ (<span id="count-all">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'UNPAID')">CHƯA THANH TOÁN (<span id="count-unpaid">0</span>)
-        </div>
+        <div class="filter-tab" onclick="switchTab(this, 'UNPAID')">CHƯA THANH TOÁN (<span id="count-unpaid">0</span>)</div>
         <div class="filter-tab" onclick="switchTab(this, 'PENDING')">CHỜ XỬ LÝ (<span id="count-pending">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'SHIPPING')">ĐANG GIAO (<span id="count-shipping">0</span>)
-        </div>
-        <div class="filter-tab" onclick="switchTab(this, 'DELIVERED')">ĐÃ GIAO ĐẾN (<span id="count-delivered">0</span>)
-        </div>
-        <div class="filter-tab" onclick="switchTab(this, 'CANCELLED')">ĐÃ HỦY (<span id="count-cancelled">0</span>)
-        </div>
+        <div class="filter-tab" onclick="switchTab(this, 'SHIPPING')">ĐANG GIAO (<span id="count-shipping">0</span>)</div>
+        <div class="filter-tab" onclick="switchTab(this, 'DELIVERED')">ĐÃ GIAO ĐẾN (<span id="count-delivered">0</span>)</div>
+        <div class="filter-tab" onclick="switchTab(this, 'CANCELLED')">ĐÃ HỦY (<span id="count-cancelled">0</span>)</div>
       </div>
     </div>
 
@@ -507,33 +642,32 @@
         <div class="modal-info-grid">
           <div>
             <p class="info-section-title">Thông tin nhận hàng</p>
-            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver"
-                style="font-weight: 800;"></span></p>
+            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver" style="font-weight: 800;"></span></p>
             <p class="info-text"><i class="fa-solid fa-phone"></i> SĐT: <span id="modal-phone"></span></p>
           </div>
           <div>
             <p class="info-section-title">Thanh toán & Địa chỉ</p>
-            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment"
-                style="font-weight: 800;"></span></p>
-            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot"
-                style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
+            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment" style="font-weight: 800;"></span></p>
+            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot" style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
           </div>
         </div>
 
         <div>
           <p class="info-section-title" style="margin-bottom: 12px;">Danh sách sản phẩm</p>
-          <table class="modal-table">
-            <thead>
-              <tr>
-                <th style="width: 50%;">SẢN PHẨM</th>
-                <th style="width: 20%; text-align: center;">PHÂN LOẠI</th>
-                <th style="width: 10%; text-align: center;">SL</th>
-                <th style="width: 20%; text-align: right;">ĐƠN GIÁ</th>
-              </tr>
-            </thead>
-            <tbody id="modal-products-body">
-            </tbody>
-          </table>
+          <div class="modal-table-wrapper">
+            <table class="modal-table">
+              <thead>
+                <tr>
+                  <th style="width: 50%;">SẢN PHẨM</th>
+                  <th style="width: 20%; text-align: center;">PHÂN LOẠI</th>
+                  <th style="width: 10%; text-align: center;">SL</th>
+                  <th style="width: 20%; text-align: right;">ĐƠN GIÁ</th>
+                </tr>
+              </thead>
+              <tbody id="modal-products-body">
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -548,6 +682,14 @@
 
   <script src="api.js"></script>
   <script>
+    // Hàm kích hoạt mở/đóng Sidebar trên Mobile (Đồng bộ với quản lý màu sắc)
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
     const API_ADMIN_ORDERS = "/admin/orders";
     let allOrders = []; // Lưu trữ danh sách TẤT CẢ đơn hàng để phục vụ đếm counters toàn cục
     let currentStatusFilter = "ALL";

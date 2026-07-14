@@ -13,16 +13,13 @@
 
   <style>
     :root {
-      --white: #ffffff;
-      --black: #000000;
-      --gray-bg: #f8f9fa;
-      --gray-border: #eeeeee;
+      --white: #fff;
+      --black: #000;
+      --gray: #f8f9fa;
+      --border: #eee;
       --text-muted: #666666;
       --success: #27ae60;
       --danger: #eb4d4b;
-      --radius: 4px;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      --transition: all 0.3s ease;
     }
 
     * {
@@ -33,27 +30,37 @@
     }
 
     body {
-      background-color: var(--gray-bg);
-      color: var(--black);
+      background: var(--gray);
       display: flex;
-      min-height: 100vh;
     }
 
-    /* ===== SIDEBAR ===== */
+    /* ===== SIDEBAR RESPONSIVE ĐỒNG BỘ 100% ADMIN_SIZE ===== */
     .sidebar {
       width: 260px;
-      background: var(--white);
+      background: white;
       height: 100vh;
       position: fixed;
-      border-right: 1px solid var(--gray-border);
-      z-index: 1000;
+      border-right: 1px solid var(--border);
+      z-index: 1500;
+      transition: transform 0.3s ease;
     }
 
     .sidebar-header {
       padding: 40px 25px;
       font-size: 22px;
       font-weight: 800;
-      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-sidebar-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--black);
     }
 
     .sidebar-menu {
@@ -64,49 +71,74 @@
       display: flex;
       gap: 12px;
       padding: 15px 20px;
-      border-radius: var(--radius);
+      border-radius: 4px;
       text-decoration: none;
       color: #666;
       font-weight: 700;
       margin-bottom: 5px;
-      transition: var(--transition);
     }
 
     .menu-item:hover,
     .menu-item.active {
-      background: var(--black);
-      color: var(--white);
+      background: black;
+      color: white;
     }
 
-    /* ===== MAIN CONTENT ===== */
+    /* ===== MOBILE HEADER BAR ĐỒNG BỘ 100% ADMIN_SIZE ===== */
+    .mobile-header {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1400;
+    }
+
+    .mobile-brand {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .toggle-sidebar-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* ===== MAIN CONTENT RESPONSIVE ===== */
     .main-content {
       flex: 1;
       margin-left: 260px;
       padding: 40px;
+      min-width: 0; /* Chống tràn layout */
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .header-title h2 {
-      font-size: 30px;
-      font-weight: 800;
-    }
-
-    /* User Profile */
-    .user-profile {
-      display: flex;
-      align-items: center;
+      margin-bottom: 35px;
       gap: 15px;
-      background: var(--white);
-      padding: 10px 20px;
-      border-radius: var(--radius);
-      border: 1px solid var(--gray-border);
-      box-shadow: var(--shadow);
+    }
+
+    .btn-black {
+      background: black;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: 700;
+      white-space: nowrap;
+      text-transform: uppercase;
+      font-size: 13px;
     }
 
     /* ===== KPI STATS GRID ===== */
@@ -118,11 +150,10 @@
     }
 
     .stat-card {
-      background: var(--white);
+      background: white;
       padding: 25px;
-      border-radius: var(--radius);
-      border: 1px solid var(--gray-border);
-      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      border-radius: 4px;
     }
 
     .stat-card h4 {
@@ -146,21 +177,19 @@
       color: var(--success);
     }
 
-    /* ===== CARD & TABLE SECTION ===== */
+    /* ===== CARD TABLE CONTAINER (SỬA LỖI VỠ BẢNG THEO ADMIN_SIZE) ===== */
     .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      border: 1px solid var(--gray-border);
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      background: white;
+      border: 1px solid var(--border);
+      overflow-x: auto; /* Kích hoạt cuộn ngang khi bảng vượt quá chiều rộng màn hình */
     }
 
     .section-header {
-      padding: 25px 30px;
+      padding: 25px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--gray-border);
+      border-bottom: 1px solid var(--border);
     }
 
     .section-header h3 {
@@ -169,56 +198,28 @@
       text-transform: uppercase;
     }
 
-    .add-btn {
-      background: var(--black);
-      color: var(--white);
-      padding: 10px 20px;
-      border-radius: var(--radius);
-      border: none;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      transition: var(--transition);
-      text-transform: uppercase;
-    }
-
-    .add-btn:hover {
-      opacity: 0.8;
-    }
-
-    .table-responsive {
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-
     .admin-table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 800px; /* Định vị chiều rộng tối thiểu cho luồng dữ liệu đơn hàng không bị dồn chữ */
     }
 
     .admin-table th {
-      padding: 20px 25px;
-      font-size: 12px;
-      font-weight: 800;
-      border-bottom: 2px solid var(--black);
+      padding: 20px;
       text-align: left;
-      position: sticky;
-      top: 0;
-      background: var(--white);
-      z-index: 10;
-      color: var(--black);
+      border-bottom: 2px solid black;
+      font-size: 12px;
       text-transform: uppercase;
+      background: white;
+      white-space: nowrap;
     }
 
     .admin-table td {
-      padding: 15px 25px;
-      border-bottom: 1px solid var(--gray-border);
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
       font-size: 14px;
       font-weight: 600;
-    }
-
-    .admin-table tr:hover td {
-      background-color: var(--gray-bg);
+      white-space: nowrap;
     }
 
     /* Custom Row Styles */
@@ -243,44 +244,24 @@
       text-transform: uppercase;
     }
 
-    .status-pill.unpaid {
-      background: #e2e8f0;
-      color: #475569;
-    }
-
-    .status-pill.pending {
-      background: #fff7ed;
-      color: #f97316;
-    }
-
-    .status-pill.shipping {
-      background: #eff6ff;
-      color: #3b82f6;
-    }
-
-    .status-pill.delivered {
-      background: #ecfdf5;
-      color: var(--success);
-    }
-
-    .status-pill.cancelled {
-      background: #fef2f2;
-      color: var(--danger);
-    }
+    .status-pill.unpaid { background: #e2e8f0; color: #475569; }
+    .status-pill.pending { background: #fff7ed; color: #f97316; }
+    .status-pill.shipping { background: #eff6ff; color: #3b82f6; }
+    .status-pill.delivered { background: #ecfdf5; color: var(--success); }
+    .status-pill.cancelled { background: #fef2f2; color: var(--danger); }
 
     .btn-icon {
       width: 35px;
       height: 35px;
-      border-radius: var(--radius);
-      border: 1px solid var(--gray-border);
-      background: var(--white);
+      border: 1px solid #ddd;
+      background: white;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.2s ease;
     }
 
     .btn-icon:hover {
-      background: var(--black);
-      color: var(--white);
+      background: black;
+      color: white;
     }
 
     .loading-row {
@@ -288,79 +269,45 @@
       padding: 40px !important;
       color: var(--text-muted);
       font-weight: 700;
-      font-size: 14px;
     }
 
-    /* ===== CSS MODAL CHI TIẾT ĐƠN HÀNG ===== */
-    .modal-overlay {
+    /* ===== MODAL CHI TIẾT ĐƠN HÀNG RESPONSIVE ===== */
+    .modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 2000;
-      align-items: center;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
       justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 15px;
     }
 
-    .modal-container {
-      background: var(--white);
-      width: 750px;
-      max-height: 85vh;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .modal-content {
+      background: white;
+      width: 700px;
+      max-width: 100%;
+      padding: 35px;
+      max-height: 90vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      animation: modalFadeIn 0.2s ease;
-    }
-
-    .modal-header {
-      padding: 20px 25px;
-      border-bottom: 2px solid var(--black);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h3 {
-      font-size: 18px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .modal-close-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: var(--black);
-      transition: var(--transition);
-    }
-
-    .modal-close-btn:hover {
-      transform: scale(1.1);
     }
 
     .modal-body {
-      padding: 25px;
       overflow-y: auto;
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
+      margin-bottom: 20px;
     }
 
     .modal-info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      background: var(--gray-bg);
+      background: var(--gray);
       padding: 20px;
-      border: 1px solid var(--gray-border);
-      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 25px;
     }
 
     .info-section-title {
@@ -381,15 +328,9 @@
       gap: 8px;
     }
 
-    .info-text i {
-      color: var(--text-muted);
-      width: 16px;
-    }
-
     .modal-table {
       width: 100%;
       border-collapse: collapse;
-      text-align: left;
     }
 
     .modal-table th {
@@ -397,63 +338,93 @@
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      border-bottom: 2px solid var(--black);
-      color: var(--black);
+      border-bottom: 2px solid black;
     }
 
     .modal-table td {
       padding: 15px 0;
       font-size: 14px;
-      border-bottom: 1px solid var(--gray-border);
+      border-bottom: 1px solid var(--border);
     }
 
     .variant-badge {
-      background: var(--white);
-      border: 1px solid var(--gray-border);
+      background: white;
+      border: 1px solid var(--border);
       padding: 4px 10px;
-      border-radius: var(--radius);
       text-transform: uppercase;
       font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
     }
 
-    .modal-footer {
-      padding: 20px 25px;
-      border-top: 1px solid var(--gray-border);
-      background: var(--gray-bg);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* ===== SIDEBAR OVERLAY BACKGROUND ĐỒNG BỘ ===== */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1450;
     }
 
-    .total-label {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--text-muted);
-    }
-
-    .total-price-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--black);
-    }
-
-    @keyframes modalFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-15px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    /* ================= RESPONSIVE QUERIES ĐỒNG BỘ 100% ADMIN_SIZE ================= */
     @media (max-width: 1200px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .close-sidebar-btn {
+        display: block;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .sidebar-overlay.open {
+        display: block;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 85px 20px 40px 20px; /* Bù khoảng cách top bằng chiều cao header di động */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      .section-header .btn-black {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .page-header .btn-black {
+        width: 100%;
+        text-align: center;
+      }
+      .modal-content {
+        padding: 25px 20px;
+      }
+      .modal-info-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
       }
     }
   </style>
@@ -461,19 +432,42 @@
 
 <body>
 
-  <aside class="sidebar">
-    <div class="sidebar-header">SPORTIFY ADMIN</div>
+  <!-- Lớp phủ màn hình khi bật Menu ở Mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Thanh công cụ đầu trang trên điện thoại -->
+  <div class="mobile-header">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="mobile-brand">SPORTIFY ADMIN</div>
+    <div style="width: 20px;"></div>
+  </div>
+
+  <aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+      <div class="logo-text">SPORTIFY ADMIN</div>
+      <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    </div>
+
     <nav class="sidebar-menu">
-      <a href="adminDashboard.html" class="menu-item active"><i class="fa-solid fa-chart-line"></i> THỐNG KÊ</a>
+      <a href="adminDashboard.html" class="menu-item active">
+        <i class="fa-solid fa-chart-line"></i> THỐNG KÊ
+      </a>
       <a href="admin_product.html" class="menu-item"><i class="fa-solid fa-shirt"></i> SẢN PHẨM</a>
-      <a href="admin_brand.html" class="menu-item"><i class="fa-solid fa-award"></i> THƯƠNG HIỆU</a>
-      <a href="admin_color.html" class="menu-item"><i class="fa-solid fa-palette"></i> MÀU SẮC</a>
-      <a href="admin_size.html" class="menu-item"><i class="fa-solid fa-ruler"></i> KÍCH THƯỚC</a>
+      <a href="admin_brand.html" class="menu-item">
+        <i class="fa-solid fa-award"></i> THƯƠNG HIỆU
+      </a>
+      <a href="admin_color.html" class="menu-item">
+        <i class="fa-solid fa-palette"></i> MÀU SẮC
+      </a>
+      <a href="admin_size.html" class="menu-item">
+        <i class="fa-solid fa-ruler"></i> KÍCH THƯỚC
+      </a>
       <a href="admin_order.html" class="menu-item"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
       <a href="admin_customer.html" class="menu-item">
         <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
       </a>
-
       <a href="#" class="menu-item" id="btnAdminLogout" style="color: var(--danger); margin-top: 30px;">
         <i class="fa-solid fa-right-from-bracket"></i> ĐĂNG XUẤT
       </a>
@@ -483,17 +477,8 @@
   <main class="main-content">
     <header class="page-header">
       <div class="header-title">
-        <h2>Tổng Quan Hệ Thống</h2>
-        <!-- <p style="color:#666; margin-top:5px;">Báo cáo số liệu kinh doanh realtime và kiểm soát vận hành.</p> -->
-      </div>
-      <div class="user-profile">
-        <div style="text-align: right;">
-          <div style="font-size: 14px; font-weight: 700;">Admin</div>
-          <!-- <div style="font-size: 11px; color: var(--text-muted);">Quản trị viên tối cao</div> -->
-        </div>
-        <div
-          style="width: 35px; height: 35px; background: var(--black); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
-          A</div>
+        <h2 style="font-size:30px;font-weight:800;">Tổng Quan Hệ Thống</h2>
+        <p style="color:#666;margin-top:5px;">Số liệu hiển thị đơn hàng mới phát sinh.</p>
       </div>
     </header>
 
@@ -523,52 +508,50 @@
     <div class="card">
       <div class="section-header">
         <h3>Đơn hàng mới phát sinh</h3>
-        <button class="add-btn" onclick="window.location.href='admin_order.html'">Sổ đơn hàng →</button>
+        <button class="btn-black" onclick="window.location.href='admin_order.html'">Sổ đơn hàng →</button>
       </div>
-      <div class="table-responsive">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th style="width: 15%;">MÃ ĐƠN HÀNG</th>
-              <th style="width: 25%;">NGƯỜI NHẬN</th>
-              <th style="width: 20%;">SỐ ĐIỆN THOẠI</th>
-              <th style="width: 15%;">TỔNG TIỀN BÁN</th>
-              <th style="width: 20%;">TRẠNG THÁI</th>
-              <th style="width: 5%; text-align: right;">XEM</th>
-            </tr>
-          </thead>
-          <tbody id="dashboard-orders-body">
-            <tr>
-              <td colspan="6" class="loading-row">Đang kết nối API cơ sở dữ liệu Sportify...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width: 15%;">MÃ ĐƠN HÀNG</th>
+            <th style="width: 25%;">NGƯỜI NHẬN</th>
+            <th style="width: 20%;">SỐ ĐIỆN THOẠI</th>
+            <th style="width: 15%;">TỔNG TIỀN BÁN</th>
+            <th style="width: 20%;">TRẠNG THÁI</th>
+            <th style="width: 5%; text-align: right;">XEM</th>
+          </tr>
+        </thead>
+        <tbody id="dashboard-orders-body">
+          <tr>
+            <td colspan="6" class="loading-row">Đang kết nối API cơ sở dữ liệu Sportify...</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </main>
 
-  <div id="order-detail-modal" class="modal-overlay">
-    <div class="modal-container">
-      <div class="modal-header">
+  <!-- MODAL CHI TIẾT ĐƠN HÀNG -->
+  <div class="modal" id="order-detail-modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
         <h3 id="modal-order-title">CHI TIẾT ĐƠN HÀNG</h3>
-        <button onclick="closeModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeModal()" style="border:none;background:none;font-size:22px;cursor:pointer;">×</button>
       </div>
+      
       <div class="modal-body">
         <div class="modal-info-grid">
           <div>
             <p class="info-section-title">Thông tin nhận hàng</p>
-            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver"
-                style="font-weight: 800;"></span></p>
+            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver" style="font-weight: 800;"></span></p>
             <p class="info-text"><i class="fa-solid fa-phone"></i> SĐT: <span id="modal-phone"></span></p>
           </div>
           <div>
             <p class="info-section-title">Thanh toán & Địa chỉ</p>
-            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment"
-                style="font-weight: 800;"></span></p>
-            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot"
-                style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
+            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment" style="font-weight: 800;"></span></p>
+            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot" style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
           </div>
         </div>
+
         <div>
           <p class="info-section-title" style="margin-bottom: 12px;">Danh sách sản phẩm mua</p>
           <table class="modal-table">
@@ -580,14 +563,14 @@
                 <th style="width: 20%; text-align: right;">ĐƠN GIÁ</th>
               </tr>
             </thead>
-            <tbody id="modal-products-body">
-            </tbody>
+            <tbody id="modal-products-body"></tbody>
           </table>
         </div>
       </div>
-      <div class="modal-footer">
-        <span class="total-label">TỔNG GIÁ TRỊ ĐƠN HÀNG</span>
-        <span id="modal-total-price" class="total-price-value">0đ</span>
+
+      <div style="display:flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 20px;">
+        <span style="font-size: 12px; font-weight: 800; color: var(--text-muted);">TỔNG GIÁ TRỊ ĐƠN HÀNG</span>
+        <span id="modal-total-price" style="font-size: 22px; font-weight: 800;">0đ</span>
       </div>
     </div>
   </div>
@@ -596,34 +579,35 @@
   <script>
     const API_ADMIN_ORDERS = "/admin/orders";
 
+    // Hàm kích hoạt mở/đóng Sidebar trên Mobile (Đồng bộ chuẩn xác theo admin_size)
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initDashboard();
+      initLogoutLogic();
     });
 
-    // 1. Khởi tạo dữ liệu Dashboard: Tính toán KPI động và tải bảng đơn hàng mới nhất
     async function initDashboard() {
       try {
         const allOrders = await apiGet(API_ADMIN_ORDERS);
-
-        // Tính toán các chỉ số KPI động từ Backend đưa về
         calculateKPIs(allOrders);
-
-        // Đổ danh sách 5 đơn hàng phát sinh mới nhất lên bảng
         renderDashboardTable(allOrders);
-
       } catch (err) {
-        console.error("Lỗi đồng bộ Dashboard: ", err);
+        console.error("Lỗi hệ thống: ", err);
         document.getElementById('dashboard-orders-body').innerHTML = `
-          <tr><td colspan="6" class="loading-row" style="color:var(--danger)">⚠️ Thất bại khi đồng bộ API hệ thống!</td></tr>
+          <tr><td colspan="6" class="loading-row" style="color:var(--danger)">⚠️ Thất bại khi đồng bộ dữ liệu hệ thống!</td></tr>
         `;
       }
     }
 
-    // 2. Hàm tính toán và cập nhật số liệu KPI tự động
     function calculateKPIs(orders) {
       if (!orders || orders.length === 0) return;
 
-      // Tính tổng doanh thu từ các đơn hàng có trạng thái thành công 'DELIVERED'
       const totalRevenue = orders
         .filter(o => o.status === 'DELIVERED')
         .reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
@@ -631,14 +615,12 @@
       const pendingCount = orders.filter(o => o.status === 'PENDING').length;
       const shippingCount = orders.filter(o => o.status === 'SHIPPING').length;
 
-      // Đưa dữ liệu thực vào cấu trúc thẻ
       document.getElementById('kpi-revenue').innerText = totalRevenue.toLocaleString() + "đ";
       document.getElementById('kpi-orders-count').innerText = orders.length.toLocaleString();
       document.getElementById('kpi-shipping-count').innerText = shippingCount.toLocaleString();
       document.getElementById('kpi-pending-count').innerText = pendingCount.toLocaleString();
     }
 
-    // 3. Render danh sách đơn hàng tĩnh/động ra bảng
     function renderDashboardTable(data) {
       const tbody = document.getElementById('dashboard-orders-body');
       if (!data || data.length === 0) {
@@ -646,7 +628,6 @@
         return;
       }
 
-      // Sắp xếp ID lớn lên trước để lấy đơn mới nhất, giới hạn lấy tối đa 5 đơn
       const latestOrders = [...data]
         .sort((a, b) => b.id - a.id)
         .slice(0, 5);
@@ -654,12 +635,11 @@
       tbody.innerHTML = latestOrders.map(order => {
         const formattedPrice = Number(order.totalPrice).toLocaleString() + "đ";
 
-        // Map class CSS phù hợp với màu sắc của Sportify Admin
         let statusClass = "unpaid";
         let statusTxt = "Chưa thanh toán";
         if (order.status === 'PENDING') { statusClass = "pending"; statusTxt = "Chờ xử lý"; }
         if (order.status === 'SHIPPING') { statusClass = "shipping"; statusTxt = "Đang giao"; }
-        if (order.status === 'DELIVERED') { statusClass = "delivered"; statusTxt = "Đã giao đến"; }
+        if (order.status === 'DELIVERED') { statusClass = "delivered"; statusTxt = "Đã giao"; }
         if (order.status === 'CANCELLED') { statusClass = "cancelled"; statusTxt = "Đã hủy"; }
 
         return `
@@ -686,7 +666,6 @@
           didOpen: () => { Swal.showLoading(); }
         });
 
-        // Gọi API Backend theo tham số id
         const order = await apiGet(`admin/orders/orderById?id=${orderId}`);
         Swal.close();
 
@@ -695,7 +674,6 @@
           return;
         }
 
-        // Điền dữ liệu vào các thẻ ID trên Modal
         document.getElementById('modal-order-title').innerText = `CHI TIẾT ĐƠN HÀNG #ORD-${order.id}`;
         document.getElementById('modal-receiver').innerText = order.receiver || 'Không có tên';
         document.getElementById('modal-phone').innerText = order.phone || 'N/A';
@@ -703,47 +681,34 @@
         document.getElementById('modal-address').innerText = order.address || 'N/A';
         document.getElementById('modal-total-price').innerText = Number(order.totalPrice).toLocaleString() + "đ";
 
-        // Thiết lập phối màu linh động cho phương thức thanh toán công nghệ
-        document.getElementById('modal-payment').style.color = order.paymentMethod === 'VNPAY' ? '#3b82f6' : '#000000';
+        document.getElementById('modal-payment').style.color = order.paymentMethod === 'VNPAY' ? '#3b82f6' : '#000';
 
-        // Đổ danh sách sản phẩm phẳng (items) chứa tên, màu sắc, size từ Backend
         const productsBody = document.getElementById('modal-products-body');
         if (!order.items || order.items.length === 0) {
-          productsBody.innerHTML = `<tr><td colspan="4" style="padding: 20px 0; text-align: center; color: var(--text-muted);">Đơn hàng rỗng không có sản phẩm.</td></tr>`;
+          productsBody.innerHTML = `<tr><td colspan="4" style="padding: 20px 0; text-align: center; color: var(--text-muted);">Đơn hàng trống.</td></tr>`;
         } else {
-          productsBody.innerHTML = order.items.map(item => {
-            const productName = item.productName || 'Sản phẩm không tồn tại';
-            const color = item.colorName || 'N/A';
-            const size = item.sizeName || 'N/A';
-            const quantity = item.quantity || 0;
-            const price = item.price || 0;
-
-            return `
-              <tr>
-                <td style="font-weight: 700; color: var(--black);">${productName}</td>
-                <td style="text-align: center;"><span class="variant-badge">${color} - ${size}</span></td>
-                <td style="text-align: center; font-weight: 700;">${quantity}</td>
-                <td style="text-align: right; font-weight: 800; color: var(--black);">${Number(price).toLocaleString()}đ</td>
-              </tr>
-            `;
-          }).join('');
+          productsBody.innerHTML = order.items.map(item => `
+            <tr>
+              <td style="font-weight: 700; color: var(--black);">${item.productName || 'N/A'}</td>
+              <td style="text-align: center;"><span class="variant-badge">${item.colorName || 'N/A'} - ${item.sizeName || 'N/A'}</span></td>
+              <td style="text-align: center; font-weight: 700;">${item.quantity || 0}</td>
+              <td style="text-align: right; font-weight: 800; color: var(--black);">${Number(item.price || 0).toLocaleString()}đ</td>
+            </tr>
+          `).join('');
         }
 
-        // Bật Modal lên màn hình
         document.getElementById('order-detail-modal').style.display = 'flex';
 
       } catch (err) {
         Swal.close();
-        Swal.fire('Lỗi đồng bộ', 'Không thể kết nối với máy chủ Backend: ' + err.message, 'error');
+        Swal.fire('Lỗi đồng bộ', 'Không thể kết nối với máy chủ: ' + err.message, 'error');
       }
     }
 
-    // Đóng Modal ẩn đi
     function closeModal() {
       document.getElementById('order-detail-modal').style.display = 'none';
     }
 
-    // Đóng nhanh khi Click ra ngoài vùng xám overlay của Modal
     window.onclick = function (event) {
       const modal = document.getElementById('order-detail-modal');
       if (event.target === modal) {
@@ -751,34 +716,23 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      initDashboard();
-
-      // 🌟 THÊM TOÀN BỘ ĐOẠN LOGIC ĐĂNG XUẤT NÀY VÀO 🌟
+    function initLogoutLogic() {
       const btnAdminLogout = document.getElementById('btnAdminLogout');
       if (btnAdminLogout) {
         btnAdminLogout.addEventListener('click', async (e) => {
           e.preventDefault();
-          e.stopPropagation();
-
-          // Thay đổi trạng thái nút để tạo hiệu ứng trực quan cao cấp giống trang User
           btnAdminLogout.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ĐANG THOÁT...`;
           btnAdminLogout.style.pointerEvents = 'none';
 
-          // Gọi hàm dọn dẹp Cookie ở Backend và dọn dẹp bộ nhớ RAM/LocalStorage ở Client ròng từ api.js
           if (typeof window.apiLogout === 'function') {
             await window.apiLogout();
           } else {
-            console.warn("Hàm apiLogout chưa kịp nạp! Tiến hành xóa cứng tại chỗ.");
             localStorage.clear();
           }
-
-          // Điều hướng Admin về trang đăng nhập hệ thống sau khi dọn dẹp sạch sẽ
-          console.log("Admin đã đăng xuất an toàn.");
           window.location.href = 'login.html';
         });
       }
-    });
+    }
   </script>
 </body>
 

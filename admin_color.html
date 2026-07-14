@@ -8,9 +8,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
         rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -33,18 +31,34 @@
             display: flex;
         }
 
+        /* SIDEBAR RESPONSIVE SỬA ĐỔI */
         .sidebar {
             width: 260px;
             background: white;
             height: 100vh;
             position: fixed;
             border-right: 1px solid var(--border);
+            z-index: 1500;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-header {
             padding: 40px 25px;
             font-size: 22px;
             font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Nút đóng menu khi ở trên điện thoại */
+        .close-sidebar-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--black);
         }
 
         .sidebar-menu {
@@ -68,10 +82,40 @@
             color: white;
         }
 
+        /* MOBILE HEADER BAR */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1400;
+        }
+
+        .mobile-brand {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .toggle-sidebar-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* MAIN CONTENT RESPONSIVE */
         .main-content {
             flex: 1;
             margin-left: 260px;
             padding: 40px;
+            min-width: 0; /* Chống tràn layout */
         }
 
         .page-header {
@@ -79,6 +123,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 35px;
+            gap: 15px;
         }
 
         .btn-black {
@@ -89,16 +134,20 @@
             cursor: pointer;
             border-radius: 4px;
             font-weight: 700;
+            white-space: nowrap;
         }
 
+        /* CARD TABLE CONTAINER */
         .card {
             background: white;
             border: 1px solid var(--border);
+            overflow-x: auto; /* Tự động cuộn bảng khi bị màn hình hẹp */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 500px; /* Chống gãy chữ và co hẹp cột quá đà */
         }
 
         th {
@@ -128,6 +177,7 @@
             color: white;
         }
 
+        /* MODAL RESPONSIVE */
         .modal {
             display: none;
             position: fixed;
@@ -135,11 +185,14 @@
             background: rgba(0, 0, 0, .7);
             justify-content: center;
             align-items: center;
+            z-index: 2000;
+            padding: 15px;
         }
 
         .modal-content {
             background: white;
             width: 500px;
+            max-width: 100%;
             padding: 35px;
         }
 
@@ -159,14 +212,73 @@
             padding: 12px;
             border: 1px solid #ddd;
         }
+
+        /* SIDEBAR OVERLAY BACKGROUND */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1450;
+        }
+
+        /* ================= RESPONSIVE QUERIES ================= */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .close-sidebar-btn {
+                display: block;
+            }
+            .mobile-header {
+                display: flex;
+            }
+            .sidebar-overlay.open {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 85px 20px 40px 20px; /* Bù khoảng cách top bằng chiều cao header di động */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .page-header .btn-black {
+                width: 100%;
+                text-align: center;
+            }
+            .modal-content {
+                padding: 25px 20px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <aside class="sidebar">
+    <!-- Lớp phủ màn hình khi bật Menu ở Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Thanh công cụ đầu trang trên điện thoại -->
+    <div class="mobile-header">
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="mobile-brand">SPORTIFY ADMIN</div>
+        <div style="width: 20px;"></div>
+    </div>
+
+    <aside class="sidebar" id="sidebarMenu">
         <div class="sidebar-header">
             <div class="logo-text">SPORTIFY ADMIN</div>
+            <button class="close-sidebar-btn" onclick="toggleSidebar()">×</button>
         </div>
 
         <nav class="sidebar-menu">
@@ -195,7 +307,6 @@
     </aside>
 
     <main class="main-content">
-
         <header class="page-header">
             <div class="header-title">
                 <h2>Quản lý màu sắc</h2>
@@ -217,7 +328,6 @@
                         <th style="text-align:right;">THAO TÁC</th>
                     </tr>
                 </thead>
-
                 <tbody id="color-body"></tbody>
             </table>
         </div>
@@ -225,17 +335,14 @@
 
     <div class="modal" id="colorModal">
         <div class="modal-content">
-
             <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
                 <h3 id="modalTitle">THÊM MÀU</h3>
-
                 <button onclick="closeModal()" style="border:none;background:none;font-size:22px;cursor:pointer;">
                     ×
                 </button>
             </div>
 
             <form id="colorForm">
-
                 <input type="hidden" id="c-id">
 
                 <div class="form-group">
@@ -252,12 +359,10 @@
                     <button type="button" class="btn-black" style="background:#ddd;color:black;" onclick="closeModal()">
                         HỦY
                     </button>
-
                     <button type="submit" class="btn-black">
                         LƯU
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -265,6 +370,13 @@
     <script src="api.js"></script>
 
     <script>
+        // Hàm kích hoạt mở/đóng Sidebar trên Mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
 
         let allColors = [];
 
@@ -273,131 +385,84 @@
         });
 
         async function loadColors() {
-
             try {
-
                 allColors = await apiGet('/colors');
-
                 renderColors();
-
             } catch (err) {
-
                 Swal.fire('Lỗi', err.message, 'error');
             }
         }
 
         function renderColors() {
-
             const tbody = document.getElementById('color-body');
-
             tbody.innerHTML = allColors.map(c => `
-            
                 <tr>
-
                     <td>#${c.id}</td>
-
                     <td>
                         <strong>${c.colorCode}</strong>
                     </td>
-
                     <td>${c.colorName}</td>
-
                     <td>
-
                         <div style="display:flex;gap:8px;justify-content:flex-end;">
-
-                            <button class="btn-icon"
-                                    onclick="editColor(${c.id})">
-
+                            <button class="btn-icon" onclick="editColor(${c.id})">
                                 <i class="fa-solid fa-pen"></i>
-
                             </button>
-
-                            <button class="btn-icon"
-                                    onclick="deleteColor(${c.id})">
-
+                            <button class="btn-icon" onclick="deleteColor(${c.id})">
                                 <i class="fa-solid fa-trash"></i>
-
                             </button>
-
                         </div>
-
                     </td>
-
                 </tr>
-            
             `).join('');
         }
 
         function openModal() {
-
             document.getElementById('colorModal').style.display = 'flex';
-
             document.getElementById('colorForm').reset();
-
             document.getElementById('c-id').value = '';
-
             document.getElementById('modalTitle').innerText = 'THÊM MÀU';
         }
 
         function closeModal() {
-
             document.getElementById('colorModal').style.display = 'none';
         }
 
         document.getElementById('colorForm').onsubmit = async (e) => {
-
             e.preventDefault();
-
             const id = document.getElementById('c-id').value;
-
             const body = {
                 colorCode: document.getElementById('c-code').value.trim(),
                 colorName: document.getElementById('c-name').value.trim()
             };
 
             try {
-
                 if (id) {
                     await apiPut(`/colors/${id}`, body);
                 } else {
                     await apiPost('/colors', body);
                 }
-
                 closeModal();
-
                 loadColors();
-
                 Swal.fire('Thành công', 'Lưu dữ liệu thành công', 'success');
-
             } catch (err) {
-
                 Swal.fire('Lỗi', err.message, 'error');
             }
         }
 
         async function editColor(id) {
-
             try {
-
                 const c = await apiGet(`/colors/${id}`);
-
                 openModal();
-
                 document.getElementById('modalTitle').innerText = 'CẬP NHẬT MÀU';
-
                 document.getElementById('c-id').value = c.id;
                 document.getElementById('c-code').value = c.colorCode;
                 document.getElementById('c-name').value = c.colorName;
-
             } catch (err) {
-
                 Swal.fire('Lỗi', err.message, 'error');
             }
         }
 
         async function deleteColor(id) {
-
             const result = await Swal.fire({
                 title: 'Xóa màu này?',
                 icon: 'warning',
@@ -409,21 +474,14 @@
             if (!result.isConfirmed) return;
 
             try {
-
                 await apiDelete(`/colors/${id}`);
-
                 loadColors();
-
                 Swal.fire('Đã xóa', '', 'success');
-
             } catch (err) {
-
                 Swal.fire('Lỗi', err.message, 'error');
             }
         }
-
     </script>
-
 </body>
 
 </html>

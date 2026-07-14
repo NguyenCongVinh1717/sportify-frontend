@@ -127,22 +127,14 @@
     }
 
     .auth-header h2 {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
-      color: var(--black);
+      color: var(--text-main);
       margin-bottom: 10px;
       letter-spacing: -0.5px;
+      text-align: center;
       text-transform: uppercase;
     }
-
-    .auth-header p {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-bottom: 25px;
-      font-weight: 500;
-      line-height: 1.5;
-    }
-
     .msg {
       font-size: 13px;
       font-weight: 600;
@@ -275,6 +267,25 @@
         font-size: 24px;
       }
     }
+
+    /* ----- THÊM BỔ SUNG RESPONSIVE MÀN HÌNH MÁY TÍNH BẢNG & DI ĐỘNG ----- */
+    @media (max-width: 768px) {
+      .topbar-inner {
+        padding: 0 24px;
+      }
+      .auth-container {
+        padding: 40px 16px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .auth-links a span {
+        display: none; /* Ẩn chữ "Quay lại cửa hàng" chỉ giữ icon trên màn hình quá nhỏ để tránh tràn vỡ */
+      }
+      .google-btn-container div {
+        max-width: 100% !important; /* Ép nút Google co giãn theo khung card */
+      }
+    }
   </style>
 </head>
 
@@ -293,7 +304,7 @@
         <div class="brand-title">SPORTIFY</div>
       </a>
       <div class="auth-links">
-        <a href="products.html"><i class="fa-solid fa-arrow-left-long"></i> Quay lại cửa hàng</a>
+        <a href="products.html"><i class="fa-solid fa-arrow-left-long"></i> <span>Quay lại cửa hàng</span></a>
       </div>
     </div>
   </header>
@@ -302,7 +313,7 @@
     <div class="auth-card">
       <div class="auth-header">
         <h2>Tạo tài khoản</h2>
-        <p>Tham gia cộng đồng Sportify để nhận những đặc quyền và bộ sưu tập thể thao mới nhất.</p>
+        <!-- <p>Tham gia cộng đồng Sportify để nhận những đặc quyền và bộ sưu tập thể thao mới nhất.</p> -->
       </div>
 
       <div id="msg" class="msg"></div>
@@ -311,7 +322,7 @@
         <form id="registerForm">
           <div class="form-group">
             <label for="email">Địa chỉ Email</label>
-            <input type="email" id="email" placeholder="A@gmail.com" required>
+            <input type="email" id="email" placeholder="nguyenvana@gmail.com" required>
           </div>
 
           <div class="form-group">
@@ -353,7 +364,7 @@
   </main>
 
   <footer class="footer">
-    <div class="footer-bottom">© 2026 Sportify Premium Store. Crafted for Excellence.</div>
+    <div class="footer-bottom">© 2026 Sportify Premium Store</div>
   </footer>
 
   <script src="api.js"></script>
@@ -368,12 +379,10 @@
     let countdownTimer = null;
     let timeLeft = 60;
 
-    // Khi vào trang, dọn sạch dữ liệu cũ như trang Login
     window.addEventListener('load', () => {
       localStorage.clear();
     });
 
-    // 🌟 THÊM: Hàm kiểm tra cấu trúc Email bằng biểu thức chính quy (Regex)
     function validateEmail(email) {
       const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return re.test(String(email).toLowerCase());
@@ -429,7 +438,6 @@
         const password = document.getElementById('password').value.trim();
         const confirmPassword = document.getElementById('confirm-password').value.trim();
 
-        // 🔴 BẮT ĐẦU THÊM KIỂM TRA RÀNG BUỘC (VALIDATION) ĐẦU VÀO Ở ĐÂY
         if (!fullName) {
           msg.textContent = 'Vui lòng nhập họ và tên!';
           msg.className = 'msg error-msg';
@@ -479,7 +487,6 @@
           return;
         }
 
-        // 🟢 NẾU ĐÃ ĐẠT ĐỦ ĐIỀU KIỆN RÀNG BUỘC -> LUỒNG ĐĂNG KÝ/OTP CHẠY TIẾP NHƯ CŨ
         currentEmail = email;
         currentFullName = fullName;
         currentPassword = password;
@@ -514,7 +521,6 @@
             ev.preventDefault();
             const otp = document.getElementById('otpCode').value.trim();
 
-            // Tiện tay check nhanh mã OTP ở Client luôn (tránh gõ thiếu)
             if (otp.length !== 6) {
               msg.textContent = 'Mã OTP phải có độ dài chính xác là 6 ký tự!';
               msg.className = 'msg error-msg';
@@ -541,9 +547,7 @@
           msg.className = 'msg error-msg';
           msg.style.color = '#e11d48';
 
-          // 1. Nếu Backend trả về object chứa danh sách lỗi phân theo trường (Validation Map)
           if (err && typeof err === 'object' && !err.message) {
-            // Lấy ra thông điệp lỗi đầu tiên tìm thấy trong Object (Ví dụ: lỗi của trường password hoặc email)
             const firstErrorKey = Object.keys(err)[0];
             if (firstErrorKey) {
               msg.textContent = err[firstErrorKey];
@@ -553,7 +557,6 @@
               msg.style.color = '#e11d48';
             }
           }
-          // 2. Nếu Backend trả về dạng chuỗi hoặc object lỗi thông thường có thuộc tính .message
           else {
             msg.textContent = err.message || 'Đăng ký thất bại! Vui lòng kiểm tra lại.';
             msg.style.color = '#e11d48';
@@ -562,7 +565,6 @@
       });
     }
 
-    // Xử lý Google Auth token trả về từ Pop-up chuẩn của Google
     async function handleCredentialResponse(response) {
       msg.textContent = 'Đang liên kết tài khoản Google...';
       msg.className = 'msg';
@@ -570,7 +572,6 @@
       try {
         const data = await apiPost('/auth/google', { token: response.credential });
         localStorage.setItem('role', data.role);
-        // Khi dùng Google login thì lấy trực tiếp fullName từ backend trả về thay vì biến tạm currentFullName trống
         localStorage.setItem('fullName', data.fullName || 'Google User');
         window.location.href = 'products.html';
       } catch (err) {

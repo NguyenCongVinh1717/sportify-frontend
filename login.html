@@ -120,14 +120,9 @@
         .login-header h2 {
             font-size: 30px;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
+            text-align: center;
             color: var(--text-main);
-        }
-
-        .login-header p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 35px;
         }
 
         .form-group {
@@ -263,12 +258,26 @@
             text-align: center;
         }
 
-        /* Thêm style cho phần nhắc nhở định dạng password */
         .pwd-hint {
             font-size: 11px;
             color: var(--text-muted);
             margin-top: 6px;
             line-height: 1.4;
+        }
+
+        /* ----- PHẦN BỔ SUNG RESPONSIVE MÀN HÌNH ----- */
+        @media (max-width: 1024px) {
+            .left-panel { padding: 60px 40px; }
+            .left-content h1 { font-size: 34px; }
+            .right-panel { padding: 40px; }
+        }
+
+        @media (max-width: 850px) {
+            body { overflow: auto; } /* Cho phép cuộn dọc nếu màn hình quá thấp */
+            .left-panel { display: none; } /* Ẩn ảnh bên trái khi vào màn hình mobile */
+            .right-panel { padding: 20px 16px; min-height: 100vh; }
+            .login-card { padding: 40px 24px; } /* Thu nhỏ padding card cho vừa màn hình điện thoại */
+            .google-btn-container div { max-width: 100% !important; } /* Ép nút google ko tràn viền */
         }
     </style>
 </head>
@@ -291,7 +300,7 @@
         <div class="login-card" id="mainLoginSection">
             <div class="login-header">
                 <h2>Đăng nhập</h2>
-                <p>Chào mừng bạn quay trở lại với Sportify Admin</p>
+                <!-- <p>Chào mừng bạn quay trở lại với Sportify Admin</p> -->
             </div>
 
             <div id="msg" class="msg"></div>
@@ -301,7 +310,7 @@
                     <label>Địa chỉ Email</label>
                     <div class="input-group">
                         <i class="fa-regular fa-envelope"></i> 
-                        <input type="email" id="email" class="form-control" placeholder="example@gmail.com" required>
+                        <input type="email" id="email" class="form-control" placeholder="nguyenvana@gmail.com" required>
                     </div>
                 </div>
 
@@ -395,7 +404,6 @@
         const form = document.getElementById('loginForm');
         const msg = document.getElementById('msg');
 
-        // Các biến điều khiển luồng Quên mật khẩu
         const mainLoginSection = document.getElementById('mainLoginSection');
         const forgotPasswordSection = document.getElementById('forgotPasswordSection');
         const resetPasswordSection = document.getElementById('resetPasswordSection');
@@ -405,14 +413,13 @@
         const forgotMsg = document.getElementById('forgotMsg');
         const resetMsg = document.getElementById('resetMsg');
         
-        let savedEmailForReset = ""; // Biến toàn cục lưu email tạm giữa bước 1 và bước 2
+        let savedEmailForReset = ""; 
 
         window.onload = () => {
             localStorage.clear();
             console.log("Đã dọn sạch localStorage khi tải trang đăng nhập.");
         };
 
-        // Ẩn / Hiện mật khẩu Form Login
         togglePasswordBtn.addEventListener('click', () => {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
@@ -423,7 +430,6 @@
             }
         });
 
-        // Ẩn / Hiện mật khẩu Form Reset
         const resetNewPasswordInput = document.getElementById('resetNewPassword');
         const toggleResetPasswordBtn = document.getElementById('toggleResetPasswordBtn');
         toggleResetPasswordBtn.addEventListener('click', () => {
@@ -436,7 +442,6 @@
             }
         });
 
-        // ĐIỀU HƯỚNG HIỂN THỊ CÁC FORM (CHUYỂN GIAO DIỆN)
         document.getElementById('linkToForgotPassword').addEventListener('click', () => {
             mainLoginSection.style.display = 'none';
             forgotPasswordSection.style.display = 'block';
@@ -457,9 +462,6 @@
             return re.test(String(email).toLowerCase());
         }
 
-        // ==========================================
-        // 1. LOGIC XỬ LÝ ĐĂNG NHẬP THÔNG THƯỜNG
-        // ==========================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
@@ -500,9 +502,6 @@
             }
         });
 
-        // ==========================================
-        // 2. LOGIC BƯỚC 1: GỬI YÊU CẦU QUÊN MẬT KHẨU
-        // ==========================================
         forgotForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const emailInput = document.getElementById('forgotEmail').value.trim();
@@ -517,12 +516,8 @@
             forgotMsg.style.color = '#111111';
 
             try {
-                // Gọi API sang endpoint /auth/forgot-password bọc Object Request chuẩn
                 const response = await apiPost('/auth/forgot-password', { email: emailInput });
-                
-                savedEmailForReset = emailInput; // Lưu giữ email để phục vụ bước reset tiếp theo
-                
-                // Đổi form hiển thị sang form nhập OTP
+                savedEmailForReset = emailInput; 
                 forgotPasswordSection.style.display = 'none';
                 resetPasswordSection.style.display = 'block';
                 resetMsg.textContent = response.message || 'Mã OTP đã được gửi thành công!';
@@ -533,9 +528,6 @@
             }
         });
 
-        // ==========================================
-        // 3. LOGIC BƯỚC 2: XÁC THỰC OTP & RESET PASSWORD
-        // ==========================================
         resetForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const otp = document.getElementById('resetOtp').value.trim();
@@ -547,7 +539,6 @@
                 return;
             }
 
-            // Regex kiểm tra độ mạnh password khớp 100% với Backend validation
             const pwdRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
             if (!pwdRegex.test(newPassword)) {
                 resetMsg.textContent = 'Mật khẩu yếu! Cần ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số.';
@@ -559,7 +550,6 @@
             resetMsg.style.color = '#111111';
 
             try {
-                // Gọi API sang endpoint /auth/reset-password bọc Object Request chuẩn
                 const response = await apiPost('/auth/reset-password', {
                     email: savedEmailForReset,
                     otp: otp,
@@ -569,7 +559,6 @@
                 resetMsg.textContent = response.message || 'Đổi mật khẩu thành công!';
                 resetMsg.style.color = 'var(--success)';
 
-                // Đổi mật khẩu thành công -> Chờ 2 giây sau đó đẩy tự động về form Đăng Nhập
                 setTimeout(() => {
                     resetPasswordSection.style.display = 'none';
                     mainLoginSection.style.display = 'block';
@@ -584,7 +573,6 @@
             }
         });
 
-        // Xử lý phản hồi từ Google Auth
         async function handleCredentialResponse(response) {
             msg.textContent = 'Đang xác thực Google...';
             msg.style.color = '#111111';
@@ -607,7 +595,6 @@
             }
         }
 
-        // Điều hướng phân quyền
         function handleNavigation(role) {
             const userRole = role ? role.toUpperCase() : '';
             if (userRole.includes('ADMIN')) {

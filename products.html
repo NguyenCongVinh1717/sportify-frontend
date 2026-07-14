@@ -1559,19 +1559,23 @@
   <div class="ai-chat-panel" id="aiChatPanel">
     <div class="ai-chat-header">
       <div class="title"><i class="fa-solid fa-robot"></i> Trợ lý tư vấn Sportify</div>
-      <button type="button" class="ai-chat-close" id="aiChatClose" aria-label="Đóng" onclick="toggleAiChat(false)"><i class="fa-solid fa-xmark"></i></button>
+      <button type="button" class="ai-chat-close" id="aiChatClose" aria-label="Đóng" onclick="toggleAiChat(false)"><i
+          class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="ai-chat-messages" id="aiChatMessages">
-      <div class="ai-msg bot">Chào bạn! Mình là trợ lý AI của Sportify, bạn cần tư vấn sản phẩm nào (áo, quần, giày, size, màu, mức giá...)?</div>
+      <div class="ai-msg bot">Chào bạn! Mình là trợ lý AI của Sportify, bạn cần tư vấn sản phẩm nào (áo, quần, giày,
+        size, màu, mức giá...)?</div>
     </div>
     <div class="ai-chat-input-row">
-      <input type="text" id="aiChatInput" placeholder="Nhập câu hỏi..." onkeydown="if(event.key==='Enter') sendAiMessage()">
+      <input type="text" id="aiChatInput" placeholder="Nhập câu hỏi..."
+        onkeydown="if(event.key==='Enter') sendAiMessage()">
       <button type="button" id="aiChatSendBtn" onclick="sendAiMessage()">Gửi</button>
     </div>
   </div>
 
   <script src="api.js"></script>
   <script>
+    const IMG_VIEW_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
     let globalCartCount = 0;
     let currentP = null;
     let selColor = null;
@@ -1690,8 +1694,7 @@
 
       container.innerHTML = products.map(p => {
         const img = Array.isArray(p.images) ? p.images[0] : p.images;
-        const displayImg = img?.startsWith('http') ? img : `/images/${img}`;
-        return `
+        const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`; return `
           <article class="product-card">
             <div class="img-box" onclick="location.href='product_detail.html?id=${p.id}'" style="cursor:pointer">
               <img src="${displayImg}">
@@ -1715,8 +1718,8 @@
 
       document.getElementById('m-name').innerText = currentP.productName;
       document.getElementById('m-price').innerText = currentP.price.toLocaleString('vi-VN') + 'đ';
-      const img = currentP.images[0];
-      document.getElementById('m-img').src = img?.startsWith('http') ? img : `/images/${img}`;
+      const img = currentP.images && currentP.images.length > 0 ? currentP.images[0] : '';
+      document.getElementById('m-img').src = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
 
       document.getElementById('m-stock').innerHTML = '';
 
@@ -2132,7 +2135,7 @@
       input.value = '';
       input.disabled = true;
       sendBtn.disabled = true;
-                                           
+
       const typingMsg = appendAiMessage('Đang soạn câu trả lời...', 'typing');
 
       try {

@@ -10,17 +10,14 @@
   <style>
     :root {
       --white: #ffffff;
-      --gray-bg: #f6f8fa;
-      --gray-light: #f8fafc;
-      --gray-border: #e2e8f0;
-      --black: #0f172a;
-      --text-muted: #64748b;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --info: #3b82f6;
-      --radius: 16px;
-      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --black: #000000;
+      --gray-bg: #f8f9fa;
+      --gray-light: #f1f3f5;
+      --gray-border: #dee2e6;
+      --gray-dark: #212529;
+      --text-muted: #6c757d;
+      --radius: 4px; /* Giảm bo góc tối đa, vuông vắn cá tính */
+      --transition: all 0.2s ease-in-out;
     }
 
     * { 
@@ -31,7 +28,7 @@
     }
 
     body { 
-      background-color: var(--gray-bg); 
+      background-color: var(--white); 
       color: var(--black); 
       line-height: 1.6;
       display: flex;
@@ -42,11 +39,9 @@
 
     /* ===== HEADER ===== */
     .topbar {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--gray-border); 
-      padding: 16px 0; 
+      background: var(--white);
+      border-bottom: 2px solid var(--black); 
+      padding: 20px 0; 
       width: 100%;
       position: sticky;
       top: 0;
@@ -54,9 +49,9 @@
     }
 
     .topbar-inner {
-      max-width: 800px; 
+      max-width: 900px; 
       margin: 0 auto; 
-      padding: 0 20px;
+      padding: 0 24px;
       display: flex; 
       align-items: center; 
       justify-content: space-between;
@@ -69,36 +64,71 @@
     }
 
     .brand-logo {
-      width: 36px; 
-      height: 36px;
+      width: 32px; 
+      height: 32px;
       background: var(--black); 
-      border-radius: 10px;
+      border-radius: var(--radius);
       display: flex; 
       align-items: center; 
       justify-content: center;
     }
     
     .brand-logo i { color: var(--white); font-size: 14px; }
-    .brand-title { font-size: 20px; font-weight: 900; font-style: italic; letter-spacing: -1px; color: var(--black); margin-left: 10px; text-transform: uppercase; }
+    .brand-title { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: var(--black); margin-left: 10px; text-transform: uppercase; }
 
     /* ===== CONTAINER ===== */
     .container {
       flex: 1;
-      max-width: 800px;
+      max-width: 900px;
       width: 100%;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 40px 24px;
     }
 
     .page-header {
-      margin-bottom: 28px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--gray-border);
+      padding-bottom: 12px;
     }
 
     .page-title {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ===== TABS FILTER ===== */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--gray-border);
+      padding-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
       color: var(--black);
+    }
+
+    .tab-btn.active {
+      color: var(--black);
+      border-bottom: 2px solid var(--black);
+      font-weight: 700;
     }
 
     .status-view {
@@ -107,74 +137,67 @@
       background: var(--white);
       border: 1px solid var(--gray-border);
       border-radius: var(--radius);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     }
 
-    /* ===== CARD ĐƠN HÀNG TỐI GIẢN CHUẨN PREMIUM ===== */
+    /* ===== ĐƠN HÀNG BLOCK GÓC CẠNH ===== */
     .orders-list {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px;
     }
 
     .order-card {
       background: var(--white);
-      border: 1px solid var(--gray-border);
+      border: 1px solid var(--black);
       border-radius: var(--radius);
-      padding: 28px;
+      padding: 24px;
       transition: var(--transition);
-      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.02);
     }
 
     .order-card:hover {
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-      border-color: #cbd5e1;
+      box-shadow: 4px 4px 0px var(--black);
     }
 
     .order-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 18px;
-      border-bottom: 1px dashed var(--gray-border);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--gray-border);
       margin-bottom: 20px;
     }
 
     .order-tag {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
-      background: #f1f5f9;
-      color: #334155;
-      padding: 6px 14px;
-      border-radius: 8px;
-      letter-spacing: -0.2px;
+      color: var(--black);
     }
 
     .order-status {
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      padding: 6px 14px;
-      border-radius: 50px;
-      letter-spacing: 0.5px;
-      display: flex;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      display: inline-flex;
       align-items: center;
       gap: 6px;
+      letter-spacing: 0.3px;
     }
 
-    /* Badges Status mượt mà */
-    .status-unpaid { background: #fff7ed; color: #ea580c; }
-    .status-pending { background: #f0fdf4; color: #16a34a; } /* Chờ duyệt đổi màu dịu hơn */
-    .status-shipping { background: #fef9c3; color: #ca8a04; }
-    .status-delivered { background: #ecfdf5; color: var(--success); }
-    .status-cancelled { background: #fef2f2; color: var(--danger); }
+    /* Hệ màu thực tế trực quan theo từng trạng thái */
+    .status-unpaid { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }       /* Cam/Vàng nhạt - Chưa thanh toán */
+    .status-pending { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }      /* Xám - Chờ duyệt */
+    .status-shipping { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }     /* Xanh dương - Đang giao */
+    .status-delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }    /* Xanh lá - Đã giao */
+    .status-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }    /* Đỏ - Đã hủy đơn */
 
     /* Layout hàng thông tin */
     .order-body {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin-bottom: 22px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .info-row {
@@ -187,7 +210,6 @@
     .info-label {
       color: var(--text-muted);
       font-weight: 500;
-      min-width: 150px;
     }
 
     .info-value {
@@ -196,38 +218,28 @@
       text-align: right;
     }
 
-    /* Khu vực thanh toán tinh gọn bên dưới */
+    /* Footer đơn hàng */
     .order-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 18px;
-      border-top: 1px dashed var(--gray-border);
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-border);
     }
 
     .method-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: var(--gray-light);
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--gray-border);
-    }
-
-    .method-badge i {
       font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
     }
 
-    .method-vnpay i {
-      color: #005baa; /* Màu xanh đặc trưng VNPay */
-    }
-
-    .method-cod i {
-      color: #ea580c;
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
 
     .total-container {
@@ -235,54 +247,120 @@
     }
 
     .total-label {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      font-weight: 500;
+      text-transform: uppercase;
+      font-weight: 600;
       display: block;
-      margin-bottom: 2px;
     }
 
     .total-price {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--black);
-      letter-spacing: -0.5px;
     }
 
-    /* ===== BUTTONS ===== */
+    /* ===== BUTTONS KHỐI ===== */
     .action-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 20px;
+      padding: 10px 18px;
       background: var(--black);
       color: var(--white);
       font-weight: 700;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: var(--radius);
       text-transform: uppercase;
       font-size: 12px;
-      letter-spacing: 0.5px;
-      transition: var(--transition);
-      border: none;
+      border: 1px solid var(--black);
       cursor: pointer;
+      transition: var(--transition);
     }
 
     .action-btn:hover {
-      background: #1e293b;
+      background: #212529;
     }
 
     .btn-secondary {
       background: var(--white);
       color: var(--black);
-      border: 1px solid var(--gray-border);
-      font-size: 11px;
-      padding: 8px 14px;
+      border: 1px solid var(--black);
     }
+    
     .btn-secondary:hover {
-      background: var(--gray-light);
-      border-color: #cbd5e1;
+      background: var(--black);
+      color: var(--white);
     }
+
+    /* ===== MODAL TRẮNG ĐEN TỐI GIẢN ===== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border: 2px solid var(--black);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 550px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 30px;
+      transform: translateY(10px);
+      transition: var(--transition);
+    }
+
+    .modal-backdrop.open .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 10px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .close-modal-btn {
+      background: none; border: none;
+      font-size: 22px; color: var(--black);
+      cursor: pointer;
+    }
+
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--gray-border);
+    }
+    
+    .product-info-name { font-weight: 700; font-size: 14px; color: var(--black); }
+    .product-info-qty { font-size: 13px; color: var(--text-muted); margin-top: 2px; display: block; }
+    .product-info-price { font-weight: 700; font-size: 14px; color: var(--black); }
   </style>
 </head>
 
@@ -307,139 +385,238 @@
       <h1 class="page-title">Đơn hàng của tôi</h1>
     </div>
 
+    <!-- Thanh bộ lọc trạng thái -->
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="switchTab('ALL')">Tất cả</button>
+      <button class="tab-btn" onclick="switchTab('UNPAID')">Chờ thanh toán</button>
+      <button class="tab-btn" onclick="switchTab('PENDING')">Chờ duyệt</button>
+      <button class="tab-btn" onclick="switchTab('SHIPPING')">Đang giao</button>
+      <button class="tab-btn" onclick="switchTab('DELIVERED')">Đã giao</button>
+      <button class="tab-btn" onclick="switchTab('CANCELLED')">Đã hủy</button>
+    </div>
+
     <div id="loading-view" class="status-view">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size: 28px; color: var(--black); margin-bottom: 14px;"></i>
-      <p style="font-weight: 600; color: var(--text-muted); font-size: 14px;">Đang tải lịch sử mua sắm của bạn...</p>
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--black); margin-bottom: 14px;"></i>
+      <p style="font-weight: 600; color: var(--black); font-size: 14px;">Đang tải lịch sử mua sắm của bạn...</p>
     </div>
 
     <div id="empty-view" class="status-view" style="display: none;">
-      <i class="fa-solid fa-bag-shopping" style="font-size: 36px; color: var(--text-muted); margin-bottom: 14px;"></i>
-      <p style="font-weight: 600; color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">Bạn chưa thực hiện đơn hàng nào.</p>
+      <i class="fa-solid fa-bag-shopping" style="font-size: 32px; color: var(--text-muted); margin-bottom: 14px;"></i>
+      <p style="font-weight: 600; color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">Không tìm thấy đơn hàng nào.</p>
       <a href="products.html" class="action-btn" style="font-size: 11px;">Khám phá sản phẩm ngay</a>
     </div>
 
     <div id="orders-container" class="orders-list" style="display: none;"></div>
   </main>
 
+  <!-- Cửa sổ hiển thị chi tiết (Modal) -->
+  <div id="detail-modal" class="modal-backdrop" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-order-id">Chi tiết đơn hàng</h3>
+        <button class="close-modal-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="order-body" style="border-bottom: 1px solid var(--black); padding-bottom: 16px;">
+        <div class="info-row"><span class="info-label">Người nhận hàng</span><span class="info-value" id="modal-receiver"></span></div>
+        <div class="info-row"><span class="info-label">Số điện thoại</span><span class="info-value" id="modal-phone"></span></div>
+        <div class="info-row"><span class="info-label">Địa chỉ nhận</span><span class="info-value" id="modal-address"></span></div>
+        <div class="info-row"><span class="info-label">Phương thức TT</span><span class="info-value" id="modal-method"></span></div>
+        <div class="info-row" id="modal-payurl-row" style="display:none;"><span class="info-label">Link thanh toán</span><span class="info-value"><a id="modal-payurl" href="#" target="_blank" style="color:var(--black); font-weight:800; text-decoration: underline;">Thanh toán ngay</a></span></div>
+      </div>
+      <h4 style="font-size: 13px; font-weight: 800; margin: 20px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Danh sách sản phẩm</h4>
+      <div id="modal-products-list" style="margin-bottom: 24px;">
+        <!-- JS render danh sách hàng ở đây -->
+      </div>
+      <div class="info-row" style="padding-top: 12px; border-top: 1px solid var(--black);">
+        <span class="info-label" style="font-size: 14px; font-weight: 700; color: var(--black);">Tổng thanh toán</span>
+        <span class="info-value" id="modal-total-price" style="font-size: 22px; font-weight: 800; color: var(--black);"></span>
+      </div>
+    </div>
+  </div>
+
   <script src="api.js"></script>
   <script>
+    let globalOrdersArray = [];
+    let currentFilterStatus = "ALL";
+
     document.addEventListener("DOMContentLoaded", async function() {
       const loadingView = document.getElementById("loading-view");
-      const emptyView = document.getElementById("empty-view");
-      const ordersContainer = document.getElementById("orders-container");
 
       try {
-        // Gọi API qua core api.js dùng chung
-        const orders = await apiGet("/order/myOrders");
-
+        const responseOrders = await apiGet("/order/myOrders");
         loadingView.style.display = "none";
 
-        if (!orders || orders.length === 0) {
-          emptyView.style.display = "block";
+        if (!responseOrders || responseOrders.length === 0) {
+          document.getElementById("empty-view").style.display = "block";
           return;
         }
 
-        ordersContainer.style.display = "flex";
-        ordersContainer.innerHTML = ""; 
-
-        // Sắp xếp đơn hàng mới nhất lên trên đầu
-        orders.reverse().forEach(order => {
-          
-          let statusClass = "";
-          let statusText = "";
-          let statusIcon = "";
-
-          // Phân định trạng thái mượt mà dựa trên Enum OrderStatus của bạn
-          switch (order.status) {
-            case "UNPAID":
-              statusClass = "status-unpaid";
-              statusText = "Chưa thanh toán";
-              statusIcon = '<i class="fa-regular fa-clock"></i>';
-              break;
-            case "PENDING":
-              statusClass = "status-pending";
-              statusText = "Chờ duyệt";
-              statusIcon = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-              break;
-            case "SHIPPING":
-              statusClass = "status-shipping";
-              statusText = "Đang giao hàng";
-              statusIcon = '<i class="fa-solid fa-truck-fast"></i>';
-              break;
-            case "DELIVERED":
-              statusClass = "status-delivered";
-              statusText = "Đã giao";
-              statusIcon = '<i class="fa-solid fa-circle-check"></i>';
-              break;
-            case "CANCELLED":
-              statusClass = "status-cancelled";
-              statusText = "Đã hủy đơn";
-              statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
-              break;
-            default:
-              statusClass = "status-unpaid";
-              statusText = order.status || "Đang xử lý";
-              statusIcon = '<i class="fa-solid fa-circle-question"></i>';
-          }
-
-          // Phân loại hiển thị Phương thức thanh toán linh động từ DB nhả ra
-          // (Dựa vào thuộc tính paymentMethod hoặc tương đương của bạn như VNPAY / COD)
-          let methodIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
-          let methodText = "Thanh toán COD";
-          let methodClass = "method-cod";
-
-          if (order.paymentMethod === "VNPAY" || order.paymentMethod === "ONLINE" || order.vnpTxnRef) {
-            methodIcon = '<i class="fa-solid fa-credit-card"></i>';
-            methodText = "Cổng VNPay";
-            methodClass = "method-vnpay";
-          }
-
-          const orderCard = document.createElement("div");
-          orderCard.className = "order-card";
-          orderCard.innerHTML = `
-            <div class="order-header">
-              <span class="order-tag">#${order.id}</span>
-              <span class="order-status ${statusClass}">
-                ${statusIcon} ${statusText}
-              </span>
-            </div>
-            
-            <div class="order-body">
-              <div class="info-row">
-                <span class="info-label">Người nhận hàng</span>
-                <span class="info-value">${order.receiver || "Chưa cập nhật"}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Số điện thoại</span>
-                <span class="info-value">${order.phone || "Chưa cập nhật"}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Địa chỉ giao tới</span>
-                <span class="info-value">${order.address || "Chưa cập nhật"}</span>
-              </div>
-            </div>
-            
-            <div class="order-footer">
-              <div class="method-badge ${methodClass}">
-                ${methodIcon} <span>${methodText}</span>
-              </div>
-              <div class="total-container">
-                <span class="total-label">Tổng số tiền</span>
-                <span class="total-price">${(order.totalPrice || 0).toLocaleString('vi-VN')}đ</span>
-              </div>
-            </div>
-          `;
-          ordersContainer.appendChild(orderCard);
-        });
+        globalOrdersArray = responseOrders.reverse();
+        renderOrders();
 
       } catch (error) {
         console.error("Lỗi nạp danh sách đơn hàng:", error);
         loadingView.innerHTML = `
-          <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; color: var(--danger); margin-bottom: 12px;"></i>
-          <p style="font-weight: 600; color: var(--danger); font-size: 14px;">Không thể đồng bộ: ${error.message || "Phiên làm việc hết hạn"}</p>
+          <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px; color: var(--black); margin-bottom: 12px;"></i>
+          <p style="font-weight: 600; color: var(--black); font-size: 14px;">Không thể đồng bộ: ${error.message || "Phiên làm việc hết hạn"}</p>
         `;
       }
     });
+
+    function switchTab(status) {
+      currentFilterStatus = status;
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const emptyView = document.getElementById("empty-view");
+      const ordersContainer = document.getElementById("orders-container");
+      
+      ordersContainer.innerHTML = "";
+
+      const filteredOrders = currentFilterStatus === "ALL" 
+        ? globalOrdersArray 
+        : globalOrdersArray.filter(order => order.status === currentFilterStatus);
+
+      if (filteredOrders.length === 0) {
+        emptyView.style.display = "block";
+        ordersContainer.style.display = "none";
+        return;
+      }
+
+      emptyView.style.display = "none";
+      ordersContainer.style.display = "flex";
+
+      filteredOrders.forEach(order => {
+        let statusClass = "";
+        let statusText = "";
+        let statusIcon = "";
+
+        switch (order.status) {
+          case "UNPAID":
+            statusClass = "status-unpaid"; statusText = "Chưa thanh toán";
+            statusIcon = '<i class="fa-regular fa-clock"></i>';
+            break;
+          case "PENDING":
+            statusClass = "status-pending"; statusText = "Chờ duyệt";
+            statusIcon = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+            break;
+          case "SHIPPING":
+            statusClass = "status-shipping"; statusText = "Đang giao";
+            statusIcon = '<i class="fa-solid fa-truck-fast"></i>';
+            break;
+          case "DELIVERED":
+            statusClass = "status-delivered"; statusText = "Đã giao";
+            statusIcon = '<i class="fa-solid fa-circle-check"></i>';
+            break;
+          case "CANCELLED":
+            statusClass = "status-cancelled"; statusText = "Đã hủy đơn";
+            statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+            break;
+          default:
+            statusClass = "status-unpaid"; statusText = order.status || "Đang xử lý";
+            statusIcon = '<i class="fa-solid fa-circle-question"></i>';
+        }
+
+        let methodIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
+        let methodText = "COD";
+
+        if (order.paymentMethod === "VNPAY" || order.paymentMethod === "ONLINE") {
+          methodIcon = '<i class="fa-solid fa-credit-card"></i>';
+          methodText = "VNPay";
+        }
+
+        const orderCard = document.createElement("div");
+        orderCard.className = "order-card";
+        orderCard.innerHTML = `
+          <div class="order-header">
+            <span class="order-tag">ĐƠN HÀNG #${order.id}</span>
+            <span class="order-status ${statusClass}">
+              ${statusIcon} ${statusText}
+            </span>
+          </div>
+          
+          <div class="order-body">
+            <div class="info-row">
+              <span class="info-label">Người nhận</span>
+              <span class="info-value">${order.receiver || "---"}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Số điện thoại</span>
+              <span class="info-value">${order.phone || "---"}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Địa chỉ giao hàng</span>
+              <span class="info-value">${order.address || "---"}</span>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <button class="action-btn btn-secondary" onclick="openOrderDetailModal(${order.id})">
+              Xem chi tiết
+            </button>
+            <div class="footer-right">
+              <div class="method-badge">
+                ${methodIcon} <span>${methodText}</span>
+              </div>
+              <div class="total-container">
+                <span class="total-label">Tổng tiền</span>
+                <span class="total-price">${(order.totalPrice || 0).toLocaleString('vi-VN')}đ</span>
+              </div>
+            </div>
+          </div>
+        `;
+        ordersContainer.appendChild(orderCard);
+      });
+    }
+
+    function openOrderDetailModal(orderId) {
+      const order = globalOrdersArray.find(o => o.id === orderId);
+      if (!order) return;
+
+      document.getElementById("modal-order-id").innerText = `ĐƠN HÀNG #${order.id}`;
+      document.getElementById("modal-receiver").innerText = order.receiver || "---";
+      document.getElementById("modal-phone").innerText = order.phone || "---";
+      document.getElementById("modal-address").innerText = order.address || "---";
+      document.getElementById("modal-method").innerText = order.paymentMethod || "COD";
+      document.getElementById("modal-total-price").innerText = `${(order.totalPrice || 0).toLocaleString('vi-VN')}đ`;
+
+      const payRow = document.getElementById("modal-payurl-row");
+      if (order.status === "UNPAID" && order.paymentUrl) {
+        payRow.style.display = "flex";
+        document.getElementById("modal-payurl").href = order.paymentUrl;
+      } else {
+        payRow.style.display = "none";
+      }
+
+      const productsListContainer = document.getElementById("modal-products-list");
+      productsListContainer.innerHTML = "";
+
+      if (order.items && order.items.length > 0) {
+        order.items.forEach(item => {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "product-item";
+          itemDiv.innerHTML = `
+            <div>
+              <span class="product-info-name">${item.productName || "Sản phẩm"}</span>
+              <span class="product-info-qty">Số lượng: x${item.quantity || 1}</span>
+            </div>
+            <span class="product-info-price">${((item.price || 0) * (item.quantity || 1)).toLocaleString('vi-VN')}đ</span>
+          `;
+          productsListContainer.appendChild(itemDiv);
+        });
+      } else {
+        productsListContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding: 10px 0;">Không có dữ liệu chi tiết mặt hàng.</p>`;
+      }
+
+      document.getElementById("detail-modal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("detail-modal").classList.remove("open");
+    }
   </script>
 </body>
 
