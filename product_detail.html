@@ -809,10 +809,27 @@
       return Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
     }
 
+    function getCurrentUserIdentity() {
+      return {
+        fullName: (localStorage.getItem('fullName') || '').trim().toLowerCase(),
+        email: (localStorage.getItem('email') || '').trim().toLowerCase()
+      };
+    }
+
+    function isOwnComment(comment) {
+      const currentUser = getCurrentUserIdentity();
+      const commentName = (comment.userName || comment.username || comment.user?.fullName || comment.user?.name || '').trim().toLowerCase();
+      const commentEmail = (comment.userEmail || comment.email || comment.user?.email || '').trim().toLowerCase();
+
+      return Boolean(currentUser.fullName && commentName && currentUser.fullName === commentName)
+        || Boolean(currentUser.email && commentEmail && currentUser.email === commentEmail);
+    }
+
     function updateReviewFormState() {
       const textareaEl = document.getElementById('comment-input-text');
       const submitBtnEl = document.querySelector('.comment-form .btn-submit-comment');
       const noticeEl = document.getElementById('comment-login-notice');
+      const starPickerEl = document.getElementById('star-picker-container');
       const canComment = isUserLoggedIn();
 
       if (!textareaEl || !submitBtnEl) return;
@@ -822,10 +839,19 @@
         ? 'Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển...'
         : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
 
+      submitBtnEl.disabled = !canComment;
+      submitBtnEl.style.opacity = canComment ? '1' : '0.65';
+      submitBtnEl.style.cursor = canComment ? 'pointer' : 'not-allowed';
       submitBtnEl.textContent = canComment ? 'Gửi đánh giá' : 'Đăng nhập để đánh giá';
       submitBtnEl.onclick = canComment
         ? () => submitProductComment()
         : () => requireLoginForReview();
+
+      if (starPickerEl) {
+        starPickerEl.style.pointerEvents = canComment ? 'auto' : 'none';
+        starPickerEl.style.opacity = canComment ? '1' : '0.6';
+        starPickerEl.style.filter = canComment ? 'none' : 'grayscale(0.2)';
+      }
 
       if (noticeEl) {
         noticeEl.style.display = canComment ? 'none' : 'block';
@@ -1042,6 +1068,11 @@
        ========================================================= */
 
     function handleStarSelect(score) {
+      if (!isUserLoggedIn()) {
+        requireLoginForReview();
+        return;
+      }
+
       currentSelectedRating = score;
       const stars = document.querySelectorAll('#star-picker-container i');
       stars.forEach(star => {
@@ -1059,27 +1090,29 @@
     async function loadCommentsUI() {
       const listTarget = document.getElementById('comment-list-target');
       try {
-        const response = await fetch(`${API_BASE}/comments/product/${productId}`, {
+        const fetchComments = async (withCredentials) => fetch(`${API_BASE}/comments/product/${productId}`, {
           method: 'GET',
-          credentials: 'include',
+          credentials: withCredentials ? 'include' : 'omit',
           headers: { 'Accept': 'application/json' }
         });
 
-        if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
-            listTarget.innerHTML = `
-              <div style="padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 14px;">
-                <i class="fa-regular fa-comment-dots" style="font-size: 24px; display:block; margin-bottom: 10px;"></i>
-                Chưa có đánh giá nào cho sản phẩm này.
-              </div>`;
-            return;
+        let response = await fetchComments(true);
+
+        let comments = [];
+        if (response.ok) {
+          const data = await response.json();
+          comments = Array.isArray(data) ? data : (data && Array.isArray(data.comments) ? data.comments : []);
+        } else if (response.status === 401 || response.status === 403) {
+          response = await fetchComments(false);
+          if (response.ok) {
+            const data = await response.json();
+            comments = Array.isArray(data) ? data : (data && Array.isArray(data.comments) ? data.comments : []);
+          } else if (response.status !== 401 && response.status !== 403) {
+            throw new Error(`Lỗi ${response.status}`);
           }
+        } else {
           throw new Error(`Lỗi ${response.status}`);
         }
-
-        const data = await response.json();
-        const comments = Array.isArray(data) ? data : (data && Array.isArray(data.comments) ? data.comments : []);
-        const currentUser = (localStorage.getItem('fullName') || '').trim().toLowerCase();
 
         if (!comments || comments.length === 0) {
           listTarget.innerHTML = `
@@ -1093,14 +1126,12 @@
         listTarget.innerHTML = comments.map(c => {
           let starGroupHtml = '';
           for (let i = 1; i <= 5; i++) {
-            starGroupHtml += i <= c.rating
+            starGroupHtml += i <= Number(c.rating || 0)
               ? `<i class="fa-solid fa-star"></i>`
               : `<i class="fa-regular fa-star"></i>`;
           }
 
-          const commentUser = (c.userName || c.username || '').trim().toLowerCase();
-          const loggedUser = currentUser;
-          const isOwner = loggedUser !== '' && loggedUser === commentUser;
+          const isOwner = isOwnComment(c);
 
           let actionButtonsHtml = '';
           if (isOwner) {
@@ -1110,28 +1141,31 @@
         `;
           }
 
+          const safeContent = (c.content || '').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          const safeName = (c.userName || c.username || c.user?.fullName || c.user?.name || 'Khách hàng ẩn danh').toString().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
           return `
         <div class="comment-card-item" id="comment-block-${c.id}">
           <div class="comment-user-row">
             <div>
-              <span class="comment-user-name">${c.userName || c.username || 'Khách hàng ẩn danh'}</span>
+              <span class="comment-user-name">${safeName}</span>
               ${actionButtonsHtml}
             </div>
             <div class="comment-stars-view">${starGroupHtml}</div>
           </div>
           
-          <p class="comment-text-content" id="comment-text-${c.id}">${c.content}</p>
+          <p class="comment-text-content" id="comment-text-${c.id}">${safeContent}</p>
           
           <div id="edit-form-${c.id}" style="display: none; margin-top: 10px;">
             <div class="star-rating-picker" id="edit-star-picker-${c.id}" style="margin-bottom: 8px;">
               ${[1, 2, 3, 4, 5].map(star => `
-                <i class="${star <= c.rating ? 'fa-solid' : 'fa-regular'} fa-star active" 
+                <i class="${star <= Number(c.rating || 0) ? 'fa-solid' : 'fa-regular'} fa-star active" 
                    data-star="${star}" 
                    onclick="changeEditStar(${c.id}, ${star})"
-                   style="font-size: 16px; color: ${star <= c.rating ? 'var(--star-color)' : '#ddd'}"></i>
+                   style="font-size: 16px; color: ${star <= Number(c.rating || 0) ? 'var(--star-color)' : '#ddd'}"></i>
               `).join('')}
             </div>
-            <textarea id="edit-input-${c.id}" style="width:100%; height:70px; padding:10px; border:1px solid var(--gray-border); border-radius:6px; font-size:14px; resize:none; outline:none; font-weight:500; margin-bottom:8px;">${c.content}</textarea>
+            <textarea id="edit-input-${c.id}" style="width:100%; height:70px; padding:10px; border:1px solid var(--gray-border); border-radius:6px; font-size:14px; resize:none; outline:none; font-weight:500; margin-bottom:8px;">${safeContent}</textarea>
             <div style="display: flex; gap: 8px;">
               <button class="btn-submit-comment" onclick="saveUpdatedComment(${c.id})" style="padding: 6px 15px; font-size: 12px;">Lưu</button>
               <button class="btn-submit-comment" onclick="toggleEditRow(${c.id})" style="padding: 6px 15px; font-size: 12px; background: #6b7280;">Hủy</button>
@@ -1175,12 +1209,12 @@
       const inputEl = document.getElementById('comment-input-text');
       const content = inputEl.value.trim();
 
-      if (!content) {
-        Swal.fire({ icon: 'warning', title: 'Nội dung trống', text: 'Vui lòng nhập nội dung cảm nghĩ trước khi gửi đánh giá!' });
+      if (!requireLoginForReview()) {
         return;
       }
 
-      if (!requireLoginForReview()) {
+      if (!content) {
+        Swal.fire({ icon: 'warning', title: 'Nội dung trống', text: 'Vui lòng nhập nội dung cảm nghĩ trước khi gửi đánh giá!' });
         return;
       }
 
