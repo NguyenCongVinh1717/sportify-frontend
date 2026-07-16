@@ -1059,8 +1059,27 @@
     async function loadCommentsUI() {
       const listTarget = document.getElementById('comment-list-target');
       try {
-        const comments = await apiGet(`/comments/product/${productId}`);
-        const currentUser = localStorage.getItem('fullName');
+        const response = await fetch(`${API_BASE}/comments/product/${productId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            listTarget.innerHTML = `
+              <div style="padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 14px;">
+                <i class="fa-regular fa-comment-dots" style="font-size: 24px; display:block; margin-bottom: 10px;"></i>
+                Chưa có đánh giá nào cho sản phẩm này.
+              </div>`;
+            return;
+          }
+          throw new Error(`Lỗi ${response.status}`);
+        }
+
+        const data = await response.json();
+        const comments = Array.isArray(data) ? data : (data && Array.isArray(data.comments) ? data.comments : []);
+        const currentUser = (localStorage.getItem('fullName') || '').trim().toLowerCase();
 
         if (!comments || comments.length === 0) {
           listTarget.innerHTML = `
@@ -1080,7 +1099,7 @@
           }
 
           const commentUser = (c.userName || c.username || '').trim().toLowerCase();
-          const loggedUser = (currentUser || '').trim().toLowerCase();
+          const loggedUser = currentUser;
           const isOwner = loggedUser !== '' && loggedUser === commentUser;
 
           let actionButtonsHtml = '';
