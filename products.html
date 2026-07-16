@@ -751,11 +751,13 @@
       height: 100%;
     }
 
+    /* Thay đổi phần khung chứa ảnh sản phẩm */
     .img-box {
       position: relative;
       background: var(--gray-bg);
       border-radius: 12px;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 3 / 4;
+      /* Chuyển từ 1:1 sang tỉ lệ vàng dọc 3:4 giúp ôm dáng giày dép, quần áo cực đẹp */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -764,10 +766,16 @@
       transition: var(--transition);
     }
 
+    /* Thay đổi thuộc tính ảnh để phủ kín khung mà không lo méo/lệch hình */
     .img-box img {
-      width: 85%;
-      height: 85%;
-      object-fit: contain;
+      width: 100%;
+      /* Đầy 100% khung */
+      height: 100%;
+      /* Đầy 100% khung */
+      object-fit: cover;
+      /* Tự động cắt tỉa thông minh lấp đầy khung ảnh */
+      object-position: center;
+      /* Luôn giữ tâm điểm sản phẩm ở giữa */
       transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
@@ -903,14 +911,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      aspect-ratio: 1/1;
+      aspect-ratio: 3 / 4;
+      /* Đồng bộ tỷ lệ 3:4 với danh sách bên ngoài */
       width: 100%;
+      overflow: hidden;
+      /* Cắt phần ảnh thừa */
     }
 
     .modal-img-container img {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Phủ kín ảnh mượt mà, không bị bóp méo */
+      object-position: center;
     }
 
     .modal-details-box {
@@ -1954,11 +1967,12 @@
 
       container.innerHTML = products.map(p => {
         const img = Array.isArray(p.images) ? p.images[0] : p.images;
-        const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`; return `
+        const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
+        return `
           <article class="product-card">
             <div class="img-box" onclick="location.href='product_detail.html?id=${p.id}'" style="cursor:pointer">
               <img src="${displayImg}">
-              <button class="quick-add-overlay" onclick="event.stopPropagation(); openModal(${p.id})">+ Thêm vào giỏ</button>
+              <button class="quick-add-overlay" onclick="event.stopPropagation(); openModal(${p.id})"><i class="fa-solid fa-cart-plus" style="margin-right: 6px;"></i>Thêm vào giỏ</button>
             </div>
             <div class="p-info">
               <p class="p-brand-tag">${p.brandName || 'SPORTIFY'}</p>
@@ -2047,7 +2061,14 @@
         document.getElementById('cart-count').innerText = globalCartCount;
         Swal.fire({ icon: 'success', title: 'Đã thêm vào giỏ!', timer: 1000, showConfirmButton: false });
         closeModal();
-      } catch (err) { alert("Vui lòng đăng nhập"); }
+      } catch (err) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'YÊU CẦU ĐĂNG NHẬP',
+          text: 'Vui lòng đăng nhập để thực hiện thêm sản phẩm vào giỏ hàng.',
+          confirmButtonColor: '#111111'
+        });
+      }
     }
 
     function closeModal() { document.getElementById('quickViewModal').style.display = 'none'; }

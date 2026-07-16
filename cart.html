@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Tích hợp SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
       --white: #ffffff;
@@ -143,19 +145,24 @@
       transition: var(--transition);
     }
 
-    .product-info {
+ .product-info {
       display: flex;
       align-items: center;
       gap: 20px;
     }
 
     .product-img {
-      width: 85px;
-      height: 105px;
+      width: 80px; /* Chiều rộng cố định */
+      height: 106px; /* Chiều cao tự động tính chuẩn theo tỷ lệ dọc 3:4 (80 * 4 / 3 = 106.6px) */
       background: var(--gray-bg);
       border-radius: var(--radius);
-      object-fit: contain;
-      padding: 8px;
+      
+      /* Cấu hình phủ kín toàn bộ khung giống như trang danh sách sản phẩm */
+      object-fit: cover; 
+      object-position: center;
+      
+      /* Bỏ padding để ảnh tràn viền bo góc cực kỳ đẹp mắt và đồng bộ */
+      padding: 0; 
       border: 1px solid var(--gray-border);
     }
 
@@ -445,6 +452,17 @@
       background: #1877f2;
     }
 
+    /* SweetAlert2 custom CSS override (Chỉnh màu chữ tiêu đề cho đẹp mắt) */
+    .swal2-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 800 !important;
+    }
+
+    .swal2-html-container {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      font-weight: 500 !important;
+    }
+
     /* ===== PHẢN HỒI DI ĐỘNG ===== */
     @media (max-width: 1024px) {
       .cart-page {
@@ -583,12 +601,9 @@
 
   <script src="api.js"></script>
   <script>
-    // const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    // const IMAGE_BASE_URL = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
-    // const IMAGE_BASE_URL = "/images/";
     const IMAGE_BASE_URL = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
-    let hasItemsInCart = false; // Biến cờ kiểm tra giỏ hàng có đồ hay không
-    let isFormVisible = false;  // Biến cờ quản lý trạng thái hiển thị Form đặt hàng
+    let hasItemsInCart = false;
+    let isFormVisible = false;
 
     document.addEventListener('DOMContentLoaded', loadCart);
 
@@ -669,23 +684,41 @@
         await apiPut('/cart/update', { productColorSizeId: vId, quantity: newQty });
         loadCart();
       } catch (err) {
-        alert("Không thể cập nhật số lượng.");
+        // Thông báo lỗi tự biến mất khi cập nhật số lượng không thành công
+        Swal.fire({
+          title: 'CẬP NHẬT THẤT BẠI',
+          text: 'Không thể cập nhật số lượng sản phẩm.',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
       }
     }
 
     async function deleteItem(vId) {
-      if (!confirm("Xóa sản phẩm này khỏi túi đồ của bạn?")) return;
+      // 1. Dùng Swal thay confirm truyền thống (có nút Đồng ý và Hủy)
+      const result = await Swal.fire({
+        title: 'XÓA SẢN PHẨM?',
+        text: "Bạn có chắc chắn muốn xóa sản phẩm này khỏi túi đồ không?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#111111', // Đen Sportify
+        cancelButtonColor: '#ef4444',  // Đỏ nguy hiểm
+        confirmButtonText: 'ĐỒNG Ý XÓA',
+        cancelButtonText: 'QUAY LẠI'
+      });
+
+      if (!result.isConfirmed) return;
+
       try {
-        // 1. Gọi API xóa đến Backend (sẽ thực hiện xóa thực tế trong DB)
         await apiDelete(`/cart/remove/${vId}`);
 
-        // 2. Tìm phần tử HTML của sản phẩm này bằng ID và xóa trực tiếp trên màn hình
         const itemElement = document.getElementById(`cart-item-${vId}`);
         if (itemElement) {
           itemElement.remove();
         }
 
-        // 3. Kiểm tra xem giỏ hàng còn sản phẩm nào không để hiển thị trạng thái trống
         const container = document.getElementById('cart-items-container');
         const remainingItems = container.querySelectorAll('.cart-item');
 
@@ -701,23 +734,38 @@
           document.getElementById('checkout-form-container').style.display = 'none';
           document.getElementById('main-action-btn').style.display = 'none';
         } else {
-          // 4. Nếu vẫn còn sản phẩm, tính toán và cập nhật lại Tổng tiền ngay trên giao diện
           recalculateTotal();
         }
 
+        // 2. Thông báo xóa thành công tự biến mất sau 1.5 giây
+        Swal.fire({
+          title: 'ĐÃ XÓA SẢN PHẨM',
+          text: 'Sản phẩm đã được loại khỏi túi đồ của bạn.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true
+        });
+
       } catch (err) {
         console.error(err);
-        alert("Lỗi khi xóa sản phẩm.");
+        // Thông báo lỗi tự biến mất sau 1.5 giây
+        Swal.fire({
+          title: 'LỖI HỆ THỐNG',
+          text: 'Không thể xóa sản phẩm vào lúc này.',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
       }
     }
 
-    // Hàm bổ trợ tính lại tổng tiền từ các sản phẩm còn hiển thị
     function recalculateTotal() {
       let total = 0;
       const subtotalElements = document.querySelectorAll('.cart-item .subtotal');
 
       subtotalElements.forEach(el => {
-        // Lọc bỏ ký tự chữ và dấu chấm định dạng để lấy con số thuần túy (ví dụ: "500.000đ" -> 500000)
         const value = parseInt(el.textContent.replace(/[^\d]/g, '')) || 0;
         total += value;
       });
@@ -731,14 +779,12 @@
       document.getElementById('total-amount').innerText = formattedTotal;
     }
 
-    // LUỒNG XỬ LÝ ĐẶT HÀNG & THANH TOÁN KÉP (TIẾN HÀNH THANH TOÁN -> ĐẶT HÀNG THỰC TẾ)
     async function processCheckout() {
       if (!hasItemsInCart) return;
 
       const formContainer = document.getElementById('checkout-form-container');
       const actionBtn = document.getElementById('main-action-btn');
 
-      // Bước 1: Nếu chưa mở form, ấn nút sẽ hiển thị vùng nhập thông tin
       if (!isFormVisible) {
         formContainer.style.display = 'block';
         actionBtn.innerText = "Hoàn tất đặt hàng";
@@ -746,18 +792,24 @@
         return;
       }
 
-      // Bước 2: Thu thập thông tin và validate khi form đã mở
       const receiver = document.getElementById('order-receiver').value.trim();
       const phone = document.getElementById('order-phone').value.trim();
       const address = document.getElementById('order-address').value.trim();
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
       if (!receiver || !phone || !address) {
-        alert("Vui lòng điền đầy đủ số điện thoại và địa chỉ nhận hàng.");
+        // Báo lỗi điền thiếu thông tin (tự biến mất sau 2 giây)
+        Swal.fire({
+          title: 'THIẾU THÔNG TIN',
+          text: 'Vui lòng điền đầy đủ thông tin giao hàng để tiến hành đặt hàng.',
+          icon: 'warning',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
         return;
       }
 
-      // Vô hiệu hóa nút để tránh khách bấm spam gửi nhiều đơn cùng lúc
       actionBtn.disabled = true;
       actionBtn.innerText = "Đang xử lý đơn hàng...";
 
@@ -769,32 +821,52 @@
           paymentMethod: paymentMethod
         };
 
-        // Gửi lệnh checkout sang API `/order/checkout` của Spring Boot
         const response = await apiPost('/order/checkout', orderRequestData);
 
         if (paymentMethod === 'VNPAY' && response.paymentUrl) {
-          alert("Hệ thống đang chuyển hướng bạn sang cổng thanh toán an toàn VNPAY...");
+          // Thông báo chuyển hướng tự biến mất
+          Swal.fire({
+            title: 'ĐANG CHUYỂN HƯỚNG',
+            text: 'Hệ thống đang chuyển hướng bạn sang cổng thanh toán an toàn VNPAY...',
+            icon: 'info',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+          });
 
-          // =========================================================================
-          // MẸO QUAN TRỌNG: Giải mã HTML Entity và các ký tự trốn (escape) trong chuỗi JSON
-          // =========================================================================
           const parser = new DOMParser();
           const decodedDocument = parser.parseFromString(response.paymentUrl, 'text/html');
           const cleanUrl = decodedDocument.body.textContent;
 
-          console.log("Link VNPay thuần khiết gửi đi:", cleanUrl);
-
-          // Thực hiện điều hướng bằng URL đã được làm sạch hoàn toàn
-          window.location.href = cleanUrl;
-          // =========================================================================
+          setTimeout(() => {
+            window.location.href = cleanUrl;
+          }, 1500);
 
         } else {
-          // Nếu chọn COD, báo thành công và đá về trang lịch sử đơn hàng
-          alert("🎉 Chúc mừng bạn đã đặt hàng thành công tại Sportify!");
-          window.location.href = "orders.html";
+          // Đặt hàng COD thành công tự động biến mất và chuyển trang
+          Swal.fire({
+            title: 'ĐẶT HÀNG THÀNH CÔNG',
+            text: 'Chúc mừng bạn đã đặt hàng thành công tại Sportify!',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1000,
+            timerProgressBar: true
+          });
+
+          setTimeout(() => {
+            window.location.href = "orders.html";
+          }, 2000);
         }
       } catch (err) {
-        alert("Xảy ra lỗi trong quá trình đặt hàng: " + err.message);
+        // Thông báo lỗi thanh toán tự động biến mất
+        Swal.fire({
+          title: 'ĐẶT HÀNG THẤT BẠI',
+          text: err.message || "Xảy ra lỗi trong quá trình đặt hàng. Vui lòng thử lại sau.",
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        });
         actionBtn.disabled = false;
         actionBtn.innerText = "Hoàn tất đặt hàng";
       }

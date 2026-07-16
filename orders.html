@@ -7,6 +7,10 @@
   <title>Đơn hàng của tôi | Sportify Premium Store</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tích hợp SweetAlert2 để đồng bộ thông báo và xác nhận đẹp mắt -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <style>
     :root {
       --white: #ffffff;
@@ -16,7 +20,7 @@
       --gray-border: #dee2e6;
       --gray-dark: #212529;
       --text-muted: #6c757d;
-      --radius: 4px; /* Giảm bo góc tối đa, vuông vắn cá tính */
+      --radius: 4px; /* Bo góc nhẹ kiểu cá tính, vuông vắn */
       --transition: all 0.2s ease-in-out;
     }
 
@@ -98,7 +102,7 @@
       text-transform: uppercase;
     }
 
-    /* ===== TABS FILTER ===== */
+    /* ===== TABS FILTER & BADGES ===== */
     .filter-tabs {
       display: flex;
       gap: 4px;
@@ -109,7 +113,10 @@
     }
 
     .tab-btn {
-      padding: 12px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
@@ -131,6 +138,27 @@
       font-weight: 700;
     }
 
+    /* Badge số lượng đơn hàng */
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--black);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 18px;
+      line-height: 1;
+    }
+
+    .tab-btn.active .tab-badge {
+      background-color: var(--black);
+      color: var(--white);
+    }
+
     .status-view {
       text-align: center;
       padding: 60px 20px;
@@ -139,7 +167,7 @@
       border-radius: var(--radius);
     }
 
-    /* ===== ĐƠN HÀNG BLOCK GÓC CẠNH ===== */
+    /* ===== ĐƠN HÀNG BLOCK ===== */
     .orders-list {
       display: flex;
       flex-direction: column;
@@ -185,12 +213,11 @@
       letter-spacing: 0.3px;
     }
 
-    /* Hệ màu thực tế trực quan theo từng trạng thái */
-    .status-unpaid { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }       /* Cam/Vàng nhạt - Chưa thanh toán */
-    .status-pending { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }      /* Xám - Chờ duyệt */
-    .status-shipping { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }     /* Xanh dương - Đang giao */
-    .status-delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }    /* Xanh lá - Đã giao */
-    .status-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }    /* Đỏ - Đã hủy đơn */
+    .status-unpaid { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .status-pending { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+    .status-shipping { background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+    .status-delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .status-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
     /* Layout hàng thông tin */
     .order-body {
@@ -218,13 +245,31 @@
       text-align: right;
     }
 
-    /* Footer đơn hàng */
+    /* ===== TỐI ƯU RESPONSIVE FOOTER ===== */
     .order-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-top: 16px;
       border-top: 1px solid var(--gray-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-left: auto; /* Đẩy cụm thông tin tổng tiền luôn bám sang lề phải cực chuẩn */
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .method-badge {
@@ -234,12 +279,6 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--black);
-    }
-
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
     }
 
     .total-container {
@@ -260,7 +299,7 @@
       color: var(--black);
     }
 
-    /* ===== BUTTONS KHỐI ===== */
+    /* ===== BUTTONS ===== */
     .action-btn {
       display: inline-flex;
       align-items: center;
@@ -293,7 +332,18 @@
       color: var(--white);
     }
 
-    /* ===== MODAL TRẮNG ĐEN TỐI GIẢN ===== */
+    .btn-danger {
+      background: #dc3545;
+      color: var(--white);
+      border: 1px solid #dc3545;
+    }
+
+    .btn-danger:hover {
+      background: #bb2d3b;
+      border-color: #b02a37;
+    }
+
+    /* ===== MODAL ===== */
     .modal-backdrop {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -361,6 +411,54 @@
     .product-info-name { font-weight: 700; font-size: 14px; color: var(--black); }
     .product-info-qty { font-size: 13px; color: var(--text-muted); margin-top: 2px; display: block; }
     .product-info-price { font-weight: 700; font-size: 14px; color: var(--black); }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 2px solid var(--black);
+    }
+
+    /* ĐÈ PHONG CÁCH SWEETALERT2 CHO PHÙ HỢP BRAND SPORTIFY */
+    .swal2-popup {
+      border: 2px solid var(--black) !important;
+      border-radius: var(--radius) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    .swal2-styled.swal2-confirm {
+      background-color: var(--black) !important;
+      border-radius: var(--radius) !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      font-size: 13px !important;
+    }
+    .swal2-styled.swal2-cancel {
+      border-radius: var(--radius) !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      font-size: 13px !important;
+    }
+
+    /* Responsive cho màn hình nhỏ hơn 600px */
+    @media (max-width: 600px) {
+      .order-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .footer-left {
+        justify-content: space-between;
+        width: 100%;
+      }
+      .footer-right {
+        width: 100%;
+        justify-content: space-between;
+        margin-left: 0;
+        border-top: 1px dashed var(--gray-border);
+        padding-top: 12px;
+      }
+    }
   </style>
 </head>
 
@@ -386,13 +484,13 @@
     </div>
 
     <!-- Thanh bộ lọc trạng thái -->
-    <div class="filter-tabs">
-      <button class="tab-btn active" onclick="switchTab('ALL')">Tất cả</button>
-      <button class="tab-btn" onclick="switchTab('UNPAID')">Chờ thanh toán</button>
-      <button class="tab-btn" onclick="switchTab('PENDING')">Chờ duyệt</button>
-      <button class="tab-btn" onclick="switchTab('SHIPPING')">Đang giao</button>
-      <button class="tab-btn" onclick="switchTab('DELIVERED')">Đã giao</button>
-      <button class="tab-btn" onclick="switchTab('CANCELLED')">Đã hủy</button>
+    <div class="filter-tabs" id="filter-tabs-container">
+      <button class="tab-btn active" onclick="switchTab('ALL')">Tất cả <span class="tab-badge" id="badge-ALL" style="display: none;">0</span></button>
+      <button class="tab-btn" onclick="switchTab('UNPAID')">Chờ thanh toán <span class="tab-badge" id="badge-UNPAID" style="display: none;">0</span></button>
+      <button class="tab-btn" onclick="switchTab('PENDING')">Chờ duyệt <span class="tab-badge" id="badge-PENDING" style="display: none;">0</span></button>
+      <button class="tab-btn" onclick="switchTab('SHIPPING')">Đang giao <span class="tab-badge" id="badge-SHIPPING" style="display: none;">0</span></button>
+      <button class="tab-btn" onclick="switchTab('DELIVERED')">Đã giao <span class="tab-badge" id="badge-DELIVERED" style="display: none;">0</span></button>
+      <button class="tab-btn" onclick="switchTab('CANCELLED')">Đã hủy <span class="tab-badge" id="badge-CANCELLED" style="display: none;">0</span></button>
     </div>
 
     <div id="loading-view" class="status-view">
@@ -409,7 +507,7 @@
     <div id="orders-container" class="orders-list" style="display: none;"></div>
   </main>
 
-  <!-- Cửa sổ hiển thị chi tiết (Modal) -->
+  <!-- Chi tiết đơn hàng (Modal) -->
   <div id="detail-modal" class="modal-backdrop" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -424,13 +522,13 @@
         <div class="info-row" id="modal-payurl-row" style="display:none;"><span class="info-label">Link thanh toán</span><span class="info-value"><a id="modal-payurl" href="#" target="_blank" style="color:var(--black); font-weight:800; text-decoration: underline;">Thanh toán ngay</a></span></div>
       </div>
       <h4 style="font-size: 13px; font-weight: 800; margin: 20px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">Danh sách sản phẩm</h4>
-      <div id="modal-products-list" style="margin-bottom: 24px;">
-        <!-- JS render danh sách hàng ở đây -->
-      </div>
+      <div id="modal-products-list" style="margin-bottom: 20px;"></div>
       <div class="info-row" style="padding-top: 12px; border-top: 1px solid var(--black);">
         <span class="info-label" style="font-size: 14px; font-weight: 700; color: var(--black);">Tổng thanh toán</span>
         <span class="info-value" id="modal-total-price" style="font-size: 22px; font-weight: 800; color: var(--black);"></span>
       </div>
+
+      <div class="modal-footer" id="modal-action-footer"></div>
     </div>
   </div>
 
@@ -440,7 +538,34 @@
     let currentFilterStatus = "ALL";
 
     document.addEventListener("DOMContentLoaded", async function() {
+      await loadMyOrders();
+    });
+
+    // HÀM HIỂN THỊ THÔNG BÁO ĐỒNG BỘ QUA SWEETALERT2 TOAST (Dùng cho các thông báo nhỏ góc màn hình nếu cần)
+    function showToast(message, type = "success") {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+
+      Toast.fire({
+        icon: type,
+        title: message
+      });
+    }
+
+    async function loadMyOrders() {
       const loadingView = document.getElementById("loading-view");
+      loadingView.style.display = "block";
+      document.getElementById("orders-container").style.display = "none";
+      document.getElementById("empty-view").style.display = "none";
 
       try {
         const responseOrders = await apiGet("/order/myOrders");
@@ -448,10 +573,13 @@
 
         if (!responseOrders || responseOrders.length === 0) {
           document.getElementById("empty-view").style.display = "block";
+          globalOrdersArray = [];
+          updateTabBadges();
           return;
         }
 
         globalOrdersArray = responseOrders.reverse();
+        updateTabBadges();
         renderOrders();
 
       } catch (error) {
@@ -461,12 +589,43 @@
           <p style="font-weight: 600; color: var(--black); font-size: 14px;">Không thể đồng bộ: ${error.message || "Phiên làm việc hết hạn"}</p>
         `;
       }
-    });
+    }
+
+    // ĐẾM SỐ LƯỢNG ĐƠN HÀNG VÀ HIỂN THỊ BADGE (NẾU > 0)
+    function updateTabBadges() {
+      const counts = {
+        ALL: globalOrdersArray.length,
+        UNPAID: 0,
+        PENDING: 0,
+        SHIPPING: 0,
+        DELIVERED: 0,
+        CANCELLED: 0
+      };
+
+      globalOrdersArray.forEach(order => {
+        if (counts.hasOwnProperty(order.status)) {
+          counts[order.status]++;
+        }
+      });
+
+      Object.keys(counts).forEach(status => {
+        const badgeElement = document.getElementById(`badge-${status}`);
+        if (badgeElement) {
+          const count = counts[status];
+          if (count > 0) {
+            badgeElement.innerText = count;
+            badgeElement.style.display = "inline-flex";
+          } else {
+            badgeElement.style.display = "none";
+          }
+        }
+      });
+    }
 
     function switchTab(status) {
       currentFilterStatus = status;
       document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-      event.target.classList.add("active");
+      event.currentTarget.classList.add("active");
       renderOrders();
     }
 
@@ -528,6 +687,15 @@
           methodText = "VNPay";
         }
 
+        let cancelBtnHtml = "";
+        if (order.status === "UNPAID" || order.status === "PENDING") {
+          cancelBtnHtml = `
+            <button class="action-btn btn-danger" onclick="cancelOrder(${order.id}, event)">
+              <i class="fa-solid fa-ban"></i> Hủy đơn
+            </button>
+          `;
+        }
+
         const orderCard = document.createElement("div");
         orderCard.className = "order-card";
         orderCard.innerHTML = `
@@ -554,9 +722,12 @@
           </div>
           
           <div class="order-footer">
-            <button class="action-btn btn-secondary" onclick="openOrderDetailModal(${order.id})">
-              Xem chi tiết
-            </button>
+            <div class="footer-left">
+              <button class="action-btn btn-secondary" onclick="openOrderDetailModal(${order.id})">
+                Xem chi tiết
+              </button>
+              ${cancelBtnHtml}
+            </div>
             <div class="footer-right">
               <div class="method-badge">
                 ${methodIcon} <span>${methodText}</span>
@@ -611,11 +782,83 @@
         productsListContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding: 10px 0;">Không có dữ liệu chi tiết mặt hàng.</p>`;
       }
 
+      const modalActionFooter = document.getElementById("modal-action-footer");
+      if (order.status === "UNPAID" || order.status === "PENDING") {
+        modalActionFooter.style.display = "flex";
+        modalActionFooter.innerHTML = `
+          <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Bạn có thể hủy đơn hàng trước khi giao.</span>
+          <button class="action-btn btn-danger" onclick="cancelOrder(${order.id}, event, true)">
+            <i class="fa-solid fa-ban"></i> Hủy đơn hàng
+          </button>
+        `;
+      } else {
+        modalActionFooter.style.display = "none";
+      }
+
       document.getElementById("detail-modal").classList.add("open");
     }
 
     function closeModal() {
       document.getElementById("detail-modal").classList.remove("open");
+    }
+
+   // SỬA HÀM HỦY ĐƠN - THÀNH CÔNG TỰ ĐỘNG BIẾN MẤT KHÔNG CẦN NÚT
+    async function cancelOrder(orderId, event, isFromModal = false) {
+      if (event) event.stopPropagation();
+
+      // 1. Hộp thoại xác nhận hủy đơn (To ở giữa, cần bấm xác nhận)
+      const result = await Swal.fire({
+        title: 'XÁC NHẬN HỦY ĐƠN?',
+        text: `Bạn có chắc chắn muốn hủy Đơn hàng #${orderId} không? Hành động này không thể hoàn tác.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#000000', // Màu đen thương hiệu Sportify
+        cancelButtonColor: '#dc3545',  // Màu đỏ nguy hiểm
+        confirmButtonText: 'ĐỒNG Ý HỦY',
+        cancelButtonText: 'QUAY LẠI'
+      });
+
+      if (!result.isConfirmed) return;
+
+      try {
+        // Gọi API hủy đơn
+        await apiPut(`/order/cancel-order/${orderId}`);
+        
+        // 2. Hộp thoại thông báo THÀNH CÔNG (To ở giữa, tự biến mất sau 2 giây)
+        await Swal.fire({
+          title: 'HỦY ĐƠN THÀNH CÔNG!',
+          text: `Đơn hàng #${orderId} của bạn đã được hủy thành công khỏi hệ thống.`,
+          icon: 'success',
+          showConfirmButton: false, // Ẩn nút "Đồng ý"
+          timer: 1000,              // Tự động đóng sau 2000 mili-giây (2 giây)
+          timerProgressBar: true    // Hiển thị thanh thời gian chạy phía dưới cho đẹp mắt
+        });
+
+        if (isFromModal) {
+          closeModal();
+        }
+
+        // Cập nhật cấu trúc mảng cục bộ
+        const index = globalOrdersArray.findIndex(o => o.id === orderId);
+        if (index !== -1) {
+          globalOrdersArray[index].status = "CANCELLED";
+        }
+
+        updateTabBadges();
+        renderOrders();
+
+      } catch (error) {
+        console.error("Lỗi khi hủy đơn:", error);
+        
+        // 3. Hộp thoại thông báo THẤT BẠI (Vẫn giữ nút ĐỒNG Ý để người dùng kịp đọc lỗi)
+        await Swal.fire({
+          title: 'HỦY ĐƠN THẤT BẠI',
+          text: error.message || "Không thể hủy đơn hàng vào lúc này. Vui lòng thử lại sau.",
+          icon: 'error',
+          confirmButtonColor: '#000000',
+          confirmButtonText: 'ĐỒNG Ý'
+        });
+      }
     }
   </script>
 </body>

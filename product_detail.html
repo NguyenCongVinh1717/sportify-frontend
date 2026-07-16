@@ -165,7 +165,12 @@
       background: var(--gray-bg);
       border-radius: var(--radius);
       overflow: hidden;
-      aspect-ratio: 1/1;
+      /* Bỏ aspect-ratio: 3/4 hoặc 1/1 cố định */
+      width: 100%;
+      height: auto;
+      /* Để chiều cao tự động co giãn theo ảnh */
+      min-height: 300px;
+      /* Giới hạn chiều cao tối thiểu để khung không bị sụp khi chưa có ảnh */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -174,10 +179,11 @@
     }
 
     .main-img-view img {
-      width: 85%;
-      height: auto;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      transition: transform 0.5s ease;
+      /* Giúp ảnh hiển thị trọn vẹn */
+      display: block;
     }
 
     .thumbnail-grid {
@@ -187,14 +193,25 @@
     }
 
     .thumb-item {
-      aspect-ratio: 1/1;
+      /* Bỏ aspect-ratio cố định */
       border-radius: 6px;
       background: var(--gray-bg);
       cursor: pointer;
       border: 1px solid var(--gray-border);
       overflow: hidden;
-      padding: 4px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: var(--transition);
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: auto;
+      /* Để ảnh nhỏ tự co giãn theo tỉ lệ thực tế */
+      object-fit: contain;
+      display: block;
     }
 
     .thumb-item:hover,
@@ -206,11 +223,57 @@
       box-shadow: var(--shadow-sm);
     }
 
-    .thumb-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    /* Mặc định trên Điện thoại/Tablet (thiết bị cảm ứng): Nút luôn hiện để chạm */
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.85);
+      /* Tăng độ đậm nền một chút trên điện thoại cho dễ nhìn */
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      /* Mặc định luôn hiện */
+      opacity: 1;
+      visibility: visible;
+      transition: all 0.2s ease;
     }
+
+    .prev-btn {
+      left: 15px;
+    }
+
+    .next-btn {
+      right: 15px;
+    }
+
+    /* CHỈ ÁP DỤNG ẨN/HOVER TRÊN MÁY TÍNH (thiết bị dùng chuột) */
+    @media (hover: hover) {
+      .nav-btn {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .main-img-view:hover .nav-btn {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .nav-btn:hover {
+        background: var(--black, #000);
+        color: #fff;
+      }
+    }
+
 
     .brand-label {
       font-weight: 800;
@@ -349,9 +412,9 @@
     }
 
     .related-header-wrapper {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 25px;
     }
 
@@ -382,7 +445,8 @@
     .related-img-wrapper {
       background: var(--gray-bg);
       border-radius: 6px;
-      aspect-ratio: 1/1;
+      aspect-ratio: 3 / 4;
+      /* Đổi từ 1/1 sang tỉ lệ dọc 3:4 */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -391,9 +455,13 @@
     }
 
     .related-img-wrapper img {
-      width: 85%;
-      height: 85%;
-      object-fit: contain;
+      width: 100%;
+      /* Đổi từ 85% lên 100% */
+      height: 100%;
+      /* Đổi từ 85% lên 100% */
+      object-fit: cover;
+      /* Đổi từ contain sang cover để tràn viền hoàn toàn */
+      object-position: center;
       transition: var(--transition);
     }
 
@@ -663,22 +731,26 @@
 
   <main class="main-detail" id="product-content">
     <div style="padding: 100px 0; text-align: center; grid-column: 1/-1; color: var(--text-muted); font-weight: 500;">
-      <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản phẩm...
+      <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản
+      phẩm...
     </div>
   </main>
 
   <section class="related-section">
     <div class="related-header-wrapper">
-      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên quan</h3>
+      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên
+        quan</h3>
     </div>
-    
+
     <div class="related-grid" id="related-list-target"></div>
-    
+
     <div class="view-more-container">
-      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()" style="display: none;">
+      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()"
+        style="display: none;">
         Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
-      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()" style="display: none;">
+      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()"
+        style="display: none;">
         Thu gọn <i class="fa-solid fa-chevron-up" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
     </div>
@@ -740,7 +812,7 @@
       if (productId) {
         await loadProduct();
         await loadCommentsUI();
-        
+
         // Tạo hiệu ứng loading cho sản phẩm liên quan ban đầu
         document.getElementById('related-list-target').innerHTML = `
           <div id="related-loading-spinner" style="padding: 30px 0; text-align: center; color: var(--text-muted); grid-column: 1/-1;">
@@ -783,57 +855,89 @@
 
       const container = document.getElementById('product-content');
       container.innerHTML = `
-        <div class="gallery-container">
-          <div class="main-img-view">
-            <img src="${mainImgSrc}" id="mainImg">
-          </div>
-          <div class="thumbnail-grid">
-            ${images.map((img, idx) => {
+    <div class="gallery-container">
+      <!-- Thêm style position: relative trực tiếp vào đây hoặc viết trong CSS -->
+      <div class="main-img-view" style="position: relative;">
+        <!-- NÚT CHUYỂN ẢNH TRÁI -->
+        <button class="nav-btn prev-btn" onclick="navigateImg(-1)">&#10094;</button>
+        
+        <img src="${mainImgSrc}" id="mainImg">
+        
+        <!-- NÚT CHUYỂN ẢNH PHẢI -->
+        <button class="nav-btn next-btn" onclick="navigateImg(1)">&#10095;</button>
+      </div>
+      
+      <div class="thumbnail-grid">
+        ${images.map((img, idx) => {
         const src = img.startsWith('http') ? img : IMG_BASE + img;
         return `
-                <div class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="switchImg(this, '${src}')">
-                  <img src="${src}">
-                </div>`;
+            <div class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="switchImg(this, '${src}')">
+              <img src="${src}">
+            </div>`;
       }).join('')}
-          </div>
+      </div>
+    </div>
+
+    <div class="info-container">
+      <span class="brand-label">${p.brandName}</span>
+      <h1 class="p-name">${p.productName}</h1>
+      <div class="p-price">${p.price.toLocaleString('vi-VN')}đ</div>
+      
+      <div class="variant-selector">
+        <span class="variant-title">Màu sắc</span>
+        <div class="options-grid" id="color-options">
+          ${colors.map(c => `<button class="option-btn" onclick="selectColor(${c.id}, this)">${c.name}</button>`).join('')}
         </div>
+      </div>
 
-        <div class="info-container">
-          <span class="brand-label">${p.brandName}</span>
-          <h1 class="p-name">${p.productName}</h1>
-          <div class="p-price">${p.price.toLocaleString('vi-VN')}đ</div>
-          
-          <div class="variant-selector">
-            <span class="variant-title">Màu sắc</span>
-            <div class="options-grid" id="color-options">
-              ${colors.map(c => `<button class="option-btn" onclick="selectColor(${c.id}, this)">${c.name}</button>`).join('')}
-            </div>
-          </div>
-
-          <div class="variant-selector">
-            <span class="variant-title">Kích thước</span>
-            <div class="options-grid" id="size-options">
-              ${sizes.map(s => `<button class="option-btn" onclick="selectSize(${s.id}, this)">${s.name}</button>`).join('')}
-            </div>
-          </div>
-
-          <div id="variant-error" class="error-msg">
-            <i class="fa-solid fa-circle-exclamation"></i> Vui lòng chọn đầy đủ Màu sắc và Kích thước trước khi mua.
-          </div>
-
-          <div class="stock-status" id="stock-info">
-            <div class="dot"></div> Chọn biến thể để xem tình trạng hàng
-          </div>
-
-          <button class="btn-add-cart" id="add-btn" onclick="handleAddToCart()">Thêm vào giỏ hàng</button>
+      <div class="variant-selector">
+        <span class="variant-title">Kích thước</span>
+        <div class="options-grid" id="size-options">
+          ${sizes.map(s => `<button class="option-btn" onclick="selectSize(${s.id}, this)">${s.name}</button>`).join('')}
         </div>
-      `;
+      </div>
+
+      <div id="variant-error" class="error-msg">
+        <i class="fa-solid fa-circle-exclamation"></i> Vui lòng chọn đầy đủ Màu sắc và Kích thước trước khi mua.
+      </div>
+
+      <div class="stock-status" id="stock-info">
+        <div class="dot"></div> Chọn biến thể để xem tình trạng hàng
+      </div>
+
+      <button class="btn-add-cart" id="add-btn" onclick="handleAddToCart()">Thêm vào giỏ hàng</button>
+    </div>
+  `;
     }
 
     function switchImg(el, src) {
       document.getElementById('mainImg').src = src;
       document.querySelectorAll('.thumb-item').forEach(i => i.classList.remove('active'));
       el.classList.add('active');
+    }
+    function navigateImg(direction) {
+      const thumbs = document.querySelectorAll('.thumb-item');
+      if (thumbs.length <= 1) return;
+
+      let activeIndex = -1;
+      thumbs.forEach((thumb, idx) => {
+        if (thumb.classList.contains('active')) {
+          activeIndex = idx;
+        }
+      });
+
+      let nextIndex = activeIndex + direction;
+      if (nextIndex >= thumbs.length) {
+        nextIndex = 0;
+      } else if (nextIndex < 0) {
+        nextIndex = thumbs.length - 1;
+      }
+
+      const nextThumb = thumbs[nextIndex];
+      const nextImgSrc = nextThumb.querySelector('img').src;
+
+      // Gọi trực tiếp hàm switchImg gọn của bạn bằng cách truyền phần tử DOM (nextThumb) và link ảnh
+      switchImg(nextThumb, nextImgSrc);
     }
 
     function selectColor(id, el) {
@@ -1106,7 +1210,7 @@
       const viewMoreBtn = document.getElementById('btn-load-more-related');
       const collapseBtn = document.getElementById('btn-collapse-related');
       const spinner = document.getElementById('related-loading-spinner');
-      
+
       try {
         const response = await apiGet(`/products/${productId}/related?page=${currentRelatedPage}&size=${RELATED_PAGE_SIZE}`);
         const relatedProducts = response.content || [];
@@ -1128,8 +1232,8 @@
         // Tạo HTML chuỗi sản phẩm
         const itemsHtml = relatedProducts.map(p => {
           const images = p.images && p.images.length > 0 ? p.images : [];
-          const imgSrc = images.length > 0 
-            ? (images[0].startsWith('http') ? images[0] : IMG_BASE + images[0]) 
+          const imgSrc = images.length > 0
+            ? (images[0].startsWith('http') ? images[0] : IMG_BASE + images[0])
             : 'https://via.placeholder.com/300';
 
           return `
@@ -1180,15 +1284,15 @@
     // Sự kiện khi bấm "Xem thêm"
     async function loadNextRelatedPage() {
       currentRelatedPage += 1;
-      
+
       const viewMoreBtn = document.getElementById('btn-load-more-related');
       const originalText = viewMoreBtn.innerHTML;
-      
+
       viewMoreBtn.disabled = true;
       viewMoreBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...`;
-      
+
       await fetchRelatedProducts();
-      
+
       viewMoreBtn.disabled = false;
       viewMoreBtn.innerHTML = originalText;
     }
@@ -1196,11 +1300,11 @@
     // ✨ Sự kiện khi bấm "Thu gọn" quay về trạng thái 4 sản phẩm ban đầu
     async function collapseRelatedToDefault() {
       currentRelatedPage = 0; // Đưa số trang quản lý về lại 0
-      
+
       const target = document.getElementById('related-list-target');
       const collapseBtn = document.getElementById('btn-collapse-related');
       const viewMoreBtn = document.getElementById('btn-load-more-related');
-      
+
       // Tạm ẩn các nút đi và xóa sạch lưới sản phẩm cũ để tải lại trang đầu
       collapseBtn.style.display = 'none';
       viewMoreBtn.style.display = 'none';
@@ -1208,9 +1312,9 @@
         <div id="related-loading-spinner" style="padding: 30px 0; text-align: center; color: var(--text-muted); grid-column: 1/-1;">
           <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Đang thu gọn...
         </div>`;
-      
+
       await fetchRelatedProducts();
-      
+
       // Cuộn màn hình mượt mà về lại đầu khu vực sản phẩm liên quan để người dùng dễ theo dõi
       document.querySelector('.related-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
