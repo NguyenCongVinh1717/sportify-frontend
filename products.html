@@ -37,7 +37,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== HEADER ĐƯỢC LÀM MỚI TINH TẾ ===== */
+    /* ===== HEADER ===== */
     .header {
       position: sticky;
       top: 0;
@@ -55,6 +55,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 20px;
     }
 
     .logo {
@@ -65,17 +66,18 @@
       text-decoration: none;
       color: var(--black);
       text-transform: uppercase;
+      flex-shrink: 0;
     }
 
     .search-bar-top {
       flex: 0 1 500px;
       position: relative;
-      margin: 0 40px;
+      margin: 0 20px;
     }
 
     .search-bar-top input {
       width: 100%;
-      padding: 12px 24px 12px 24px;
+      padding: 12px 60px 12px 20px;
       border-radius: 8px;
       border: 1px solid var(--gray-border);
       background: var(--gray-bg);
@@ -108,9 +110,9 @@
       display: flex;
       align-items: center;
       gap: 20px;
+      flex-shrink: 0;
     }
 
-    /* Định dạng đồng bộ cho khu vực AuthZone không làm lệch hàng flex */
     #authZone {
       display: flex;
       align-items: center;
@@ -184,7 +186,7 @@
       border: 2px solid var(--black);
     }
 
-    /* ===== PREMIUM CSS DROPDOWN PROFILE ===== */
+    /* ===== DROPDOWN PROFILE ===== */
     .profile-dropdown {
       position: relative;
       display: inline-block;
@@ -310,7 +312,7 @@
       }
     }
 
-    /* ===== HERO BANNER FULL-BLEED (SLIDER TỰ ĐỘNG) ===== */
+    /* ===== HERO BANNER ===== */
     .hero-container {
       position: relative;
       width: 100%;
@@ -438,15 +440,35 @@
       box-shadow: var(--shadow-md);
     }
 
-    /* ===== THANH THƯƠNG HIỆU MINIMALIST ===== */
+    /* ===== LỚP PHỦ NỀN MỜ (OVERLAY CHO MOBILE DRAWER) ===== */
+    .filter-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 2900;
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .filter-overlay.show {
+      display: block;
+    }
+
+    /* ===== THANH THƯƠNG HIỆU (BRAND STRIP - MẶC ĐỊNH TRÊN PC) ===== */
     .brand-strip {
-      display: flex;
+      display: flex !important;
+      /* Đảm bảo luôn hiện ngang trên máy tính */
+      flex-direction: row !important;
       justify-content: center;
       align-items: center;
-      gap: 60px;
-      padding: 30px 0;
-      background: var(--white);
+      gap: 40px;
+      padding: 20px 40px;
+      background: var(--gray-bg);
       border-bottom: 1px solid var(--gray-border);
+      margin-bottom: 30px;
     }
 
     .brand-item {
@@ -464,29 +486,41 @@
       font-weight: 800;
     }
 
-    /* ===== BỐ CỤC KHU VỰC CHÍNH CỦA CỬA HÀNG ===== */
+    /* ===== BỐ CỤC KHU VỰC CỬA HÀNG CHÍNH ===== */
     .main-wrapper {
       max-width: 1440px;
-      margin: 60px auto;
+      margin: 40px auto;
       padding: 0 40px;
       display: grid;
       grid-template-columns: 280px 1fr;
-      gap: 60px;
+      /* 2 cột trên máy tính */
+      gap: 40px;
     }
 
+    /* ===== BỘ LỌC (SIDEBAR - THIẾT KẾ CÓ ĐIỂM NHẤN TRÊN PC) ===== */
     .sidebar {
-      background: var(--white);
-      border: 1.5px solid var(--black);
-      padding: 26px 24px;
-      border-radius: 14px;
-      height: fit-content;
+      position: static;
+      width: 100%;
+      height: auto;
+      background: #fdfdfd;
+      /* Màu nền trắng sáng nhẹ */
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #eaeaea;
+      /* Viền mỏng nhạt màu tinh tế */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      /* Đổ bóng nhẹ tạo chiều sâu */
+      z-index: 1;
+      overflow-y: visible;
     }
 
     .sidebar-header {
-      display: flex;
+      display: flex !important;
       justify-content: space-between;
+      /* Đẩy chữ BỘ LỌC sang trái, nút X sang phải */
       align-items: center;
-      margin-bottom: 4px;
+      width: 100%;
+      margin-bottom: 20px;
     }
 
     .sidebar-header h3 {
@@ -512,7 +546,16 @@
       color: var(--black);
     }
 
-    /* ===== ACCORDION BỘ LỌC (thu gọn, bấm + để mở) ===== */
+    /* Mặc định trên PC: Ẩn nút Hamburger và nút Đóng bộ lọc */
+    .toggle-filter-btn {
+      display: none !important;
+    }
+
+    .close-sidebar-btn {
+      display: none !important;
+    }
+
+    /* ===== ACCORDION BỘ LỌC ===== */
     .filter-accordion {
       border-top: 1px solid var(--gray-border);
       padding: 18px 0;
@@ -645,7 +688,7 @@
       border-color: var(--black);
     }
 
-    /* ===== THANH CÔNG CỤ: TIÊU ĐỀ + SẮP XẾP ===== */
+    /* ===== PRODUCT TOOLBAR ===== */
     .product-toolbar {
       display: flex;
       justify-content: space-between;
@@ -690,6 +733,7 @@
       outline: none;
     }
 
+    /* ===== PRODUCT GRID ===== */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -701,6 +745,10 @@
       background: transparent;
       transition: var(--transition);
       position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .img-box {
@@ -734,6 +782,9 @@
 
     .p-info {
       padding: 0 4px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
     }
 
     .p-brand-tag {
@@ -759,7 +810,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 6px;
+      margin-top: auto;
+      padding-top: 6px;
     }
 
     .price {
@@ -768,7 +820,7 @@
       color: var(--black);
     }
 
-    /* ===== NÚT THÊM VÀO GIỎ HIỆN KHI HOVER (giống bản demo ban đầu) ===== */
+    /* ===== QUICK ADD OVERLAY ===== */
     .quick-add-overlay {
       position: absolute;
       left: 0;
@@ -784,7 +836,7 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       cursor: pointer;
-      transform: translateY(100%);
+      transform: translateY(101%);
       transition: transform 0.22s ease, background 0.2s ease;
       z-index: 4;
     }
@@ -797,7 +849,7 @@
       background: #222222;
     }
 
-    /* ===== MODAL CHI TIẾT NHANH ===== */
+    /* ===== QUICK VIEW MODAL ===== */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -810,11 +862,12 @@
       align-items: center;
       justify-content: center;
       backdrop-filter: blur(8px);
+      padding: 20px;
     }
 
     .modal-content {
       background: var(--white);
-      width: 90%;
+      width: 100%;
       max-width: 760px;
       border-radius: 16px;
       padding: 40px;
@@ -823,7 +876,8 @@
       gap: 40px;
       position: relative;
       box-shadow: var(--shadow-md);
-      overflow: hidden;
+      overflow-y: auto;
+      max-height: 90vh;
     }
 
     .close-modal {
@@ -850,6 +904,7 @@
       align-items: center;
       justify-content: center;
       aspect-ratio: 1/1;
+      width: 100%;
     }
 
     .modal-img-container img {
@@ -923,7 +978,7 @@
       border-radius: 8px;
       font-weight: 700;
       font-size: 13px;
-      margin-top: auto;
+      margin-top: 20px;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -992,7 +1047,7 @@
       background: var(--gray-bg);
     }
 
-    /* TIỆN ÍCH FLOATING */
+    /* ===== FLOATING TOOLS ===== */
     .floating-tools {
       position: fixed;
       right: 30px;
@@ -1031,7 +1086,7 @@
       background: var(--white);
     }
 
-    /* ===== WIDGET TƯ VẤN AI (RAG) ===== */
+    /* ===== AI CHAT PANEL ===== */
     .ai-chat-toggle {
       width: 54px;
       height: 54px;
@@ -1186,14 +1241,6 @@
       cursor: not-allowed;
     }
 
-    @media (max-width: 480px) {
-      .ai-chat-panel {
-        right: 16px;
-        left: 16px;
-        width: auto;
-      }
-    }
-
     /* ===== FOOTER ===== */
     .site-footer {
       background: var(--gray-bg);
@@ -1335,16 +1382,220 @@
       margin-left: 6px;
     }
 
+    /* ==========================================================================
+     ĐỊNH DẠNG RESPONSIVE CHO CỬA HÀNG (MOBILE / TABLET < 1024PX)
+     ========================================================================== */
+
+    @media (max-width: 1024px) {
+      .header-inner {
+        padding: 0 20px;
+      }
+
+      /* Thanh thương hiệu ngang: Ẩn hoàn toàn trên di động */
+      .brand-strip {
+        display: none !important;
+      }
+
+      /* Đưa layout chính về 1 cột */
+      .main-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+        margin: 30px auto;
+      }
+
+      /* Nút Hamburger mở bộ lọc trên Mobile: Chỉ hiển thị ở màn hình nhỏ */
+      .toggle-filter-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        background: var(--white);
+        color: var(--black);
+        border: 1px solid var(--gray-border);
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-right: 15px;
+        /* Giữ khoảng cách gọn gàng */
+      }
+
+      .toggle-filter-btn:hover {
+        background: var(--gray-bg);
+        border-color: var(--black);
+      }
+
+      /* Biến Bộ lọc (Sidebar) thành Ngăn kéo trượt (Drawer) */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -340px;
+        /* Ẩn sang trái màn hình */
+        width: 320px;
+        height: 100%;
+        background: var(--white);
+        padding: 30px 24px;
+        z-index: 3000;
+        overflow-y: auto;
+        box-shadow: var(--shadow-md);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-right: 1px solid var(--gray-border);
+        border-radius: 0;
+        /* Bỏ border-radius và shadow nhẹ của bản PC */
+        box-shadow: var(--shadow-md);
+      }
+
+      .sidebar.active {
+        left: 0;
+        /* Đẩy ra màn hình */
+      }
+
+      /* Nút đóng bộ lọc (X-Mark): Chỉ hiện bên trong Drawer */
+      .close-sidebar-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        font-size: 22px;
+        /* Tăng kích thước nút X để dễ chạm */
+        color: var(--black);
+        cursor: pointer;
+        padding: 4px;
+        margin-bottom: 0 !important;
+        /* Xóa khoảng trống thừa phía dưới */
+      }
+
+      .hero-slider {
+        padding: 0 20px;
+      }
+
+      .hero-text h1 {
+        font-size: 50px;
+      }
+    }
+
+    /* Màn hình dưới 900px */
     @media (max-width: 900px) {
       .footer-top {
         grid-template-columns: repeat(2, 1fr);
       }
     }
 
+    /* Màn hình dưới 768px */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 10px 15px;
+      }
+
+      .search-bar-top {
+        order: 3;
+        flex: 1 1 100%;
+        margin: 10px 0 0 0;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .hero-container {
+        min-height: 450px;
+      }
+
+      .hero-text h1 {
+        font-size: 38px;
+      }
+
+      .hero-text p.desc {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 15px;
+      }
+
+      /* Modal Xem nhanh chuyển thành dạng 1 cột dọc */
+      .modal-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .close-modal {
+        top: 10px;
+        right: 10px;
+      }
+    }
+
+    /* Màn hình dưới 560px */
     @media (max-width: 560px) {
       .footer-top {
         grid-template-columns: 1fr;
         padding: 40px 24px;
+      }
+
+      .pagination-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+    }
+
+    /* Màn hình nhỏ dưới 480px */
+    @media (max-width: 480px) {
+      .logo {
+        font-size: 18px;
+      }
+
+      .user-actions {
+        gap: 10px;
+      }
+
+      .dropdown-trigger {
+        padding: 4px 6px;
+        font-size: 12px;
+      }
+
+      .cart-btn-wrapper {
+        padding: 8px 14px;
+        font-size: 11px;
+      }
+
+      .cart-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 9px;
+        top: -10px;
+        right: -10px;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px 10px;
+      }
+
+      .p-info h5 {
+        font-size: 13.5px;
+      }
+
+      .price {
+        font-size: 13.5px;
+      }
+
+      .quick-add-overlay {
+        display: none !important;
+        /* Tắt di chuột chọn nhanh trên màn hình cảm ứng */
+      }
+
+      .ai-chat-panel {
+        right: 16px;
+        left: 16px;
+        width: auto;
       }
     }
   </style>
@@ -1394,6 +1645,11 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <h3>BỘ LỌC</h3>
+        <button type="button" class="close-sidebar-btn">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
         <button type="button" class="clear-filters-btn" onclick="clearAllFilters()">Xóa hết</button>
       </div>
 
@@ -1441,6 +1697,10 @@
 
     <section>
       <div class="product-toolbar">
+        <button id="toggleFilterBtn" class="toggle-filter-btn" aria-label="Mở bộ lọc">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
         <h3 id="collection-title"
           style="font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.5px; text-transform: uppercase;">
           SẢN PHẨM NỔI BẬT</h3>
@@ -1929,23 +2189,24 @@
 
       if (storedName && storedName.trim() !== "") {
         authZone.innerHTML = `
-      <div class="profile-dropdown">
-        <div class="dropdown-trigger" id="dropdownTrigger">
-          <i class="fa-solid fa-circle-user"></i>
-          <span>Hi, ${storedName}</span>
-          <i class="fa-solid fa-chevron-down arrow-icon"></i>
-        </div>
-        <div class="dropdown-menu" id="dropdownMenu">
-          <div class="user-info-header">
-            <p class="user-name">${storedName}</p>
-            <p class="user-email">${storedEmail}</p>
-          </div>
-          <hr class="menu-divider">
-          <a href="orders.html" class="menu-item"><i class="fa-solid fa-box-open"></i> Đơn hàng của tôi</a>
-          <a href="#" class="menu-item logout-item" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
-        </div>
+    <div class="profile-dropdown">
+      <div class="dropdown-trigger" id="dropdownTrigger">
+        <i class="fa-solid fa-circle-user"></i>
+        <span>Hi, ${storedName}</span>
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
       </div>
-    `;
+      <div class="dropdown-menu" id="dropdownMenu">
+        <div class="user-info-header">
+          <p class="user-name">${storedName}</p>
+          <p class="user-email">${storedEmail}</p>
+        </div>
+        <hr class="menu-divider">
+        <a href="profile.html" class="menu-item"><i class="fa-solid fa-user-gear"></i> Hồ sơ cá nhân</a>
+        <a href="orders.html" class="menu-item"><i class="fa-solid fa-box-open"></i> Đơn hàng của tôi</a>
+        <a href="#" class="menu-item logout-item" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+      </div>
+    </div>
+  `;
 
         const trigger = document.getElementById('dropdownTrigger');
         const menu = document.getElementById('dropdownMenu');
@@ -1963,7 +2224,6 @@
           }
         });
 
-        // 🌟 ĐOẠN ĐỒNG BỘ ĐÃ ĐƯỢC CẢI TIẾN 🌟
         document.getElementById('btnLogout').addEventListener('click', async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -1975,20 +2235,17 @@
           if (typeof window.apiLogout === 'function') {
             await window.apiLogout();
           } else {
-            console.warn("Hàm apiLogout chưa kịp nạp! Tiến hành xóa cứng tại chỗ.");
             localStorage.clear();
           }
-
-          console.log("Đã dọn dẹp hệ thống. Chuyển hướng về Login.");
           window.location.href = 'login.html';
         });
-
       } else {
+        // Giữ nguyên phần render Đăng nhập mặc định của bạn
         authZone.innerHTML = `
-      <a href="login.html" style="color: var(--black); font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-        <i class="fa-solid fa-user"></i> Đăng nhập
-      </a>
-    `;
+    <a href="login.html" style="color: var(--black); font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-user"></i> Đăng nhập
+    </a>
+  `;
       }
 
       if (typeof loadBrands === "function") loadBrands();
@@ -2078,6 +2335,15 @@
 
       // Gọi API kèm toàn bộ bộ lọc đang chọn (giá, thương hiệu, kích cỡ, màu sắc)
       fetchFilteredProducts(0);
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.querySelector(".filter-overlay");
+
+      if (sidebar && window.innerWidth <= 1024) {
+        sidebar.classList.remove("active");
+        if (overlay) {
+          overlay.classList.remove("show");
+        }
+      }
     }
 
     // ✨ THÊM MỚI: Xóa hết bộ lọc và quay về danh sách sản phẩm mặc định
@@ -2152,6 +2418,51 @@
         input.focus();
       }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggleBtn = document.getElementById("toggleFilterBtn");
+      const sidebar = document.querySelector(".sidebar");
+      const closeSidebarBtn = document.querySelector(".close-sidebar-btn");
+
+      // Tạo overlay nền mờ khi mở Drawer trên điện thoại nếu chưa tồn tại
+      let overlay = document.querySelector(".filter-overlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.className = "filter-overlay";
+        document.body.appendChild(overlay);
+      }
+
+      // Mở bộ lọc Drawer (khi click nút Hamburger trên mobile)
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+          if (sidebar) {
+            sidebar.classList.add("active");
+            overlay.classList.add("show");
+          }
+        });
+      }
+
+      // Đóng bộ lọc Drawer
+      function closeFilter() {
+        if (sidebar) {
+          sidebar.classList.remove("active");
+        }
+        overlay.classList.remove("show");
+      }
+
+      if (closeSidebarBtn) {
+        closeSidebarBtn.addEventListener("click", closeFilter);
+      }
+
+      overlay.addEventListener("click", closeFilter);
+
+      // Khi người dùng co giãn màn hình lớn hơn 1024px (PC), tự động tắt Drawer & Overlay
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 1024) {
+          closeFilter();
+        }
+      });
+    });
   </script>
 </body>
 

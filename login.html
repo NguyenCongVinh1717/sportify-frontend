@@ -516,7 +516,7 @@
             forgotMsg.style.color = '#111111';
 
             try {
-                const response = await apiPost('/auth/forgot-password', { email: emailInput });
+                const response = await apiPost('/users/forgot-password', { email: emailInput });
                 savedEmailForReset = emailInput; 
                 forgotPasswordSection.style.display = 'none';
                 resetPasswordSection.style.display = 'block';
@@ -550,7 +550,7 @@
             resetMsg.style.color = '#111111';
 
             try {
-                const response = await apiPost('/auth/reset-password', {
+                const response = await apiPost('/users/reset-password', {
                     email: savedEmailForReset,
                     otp: otp,
                     newPassword: newPassword

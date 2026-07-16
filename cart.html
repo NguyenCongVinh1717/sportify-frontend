@@ -635,7 +635,7 @@
         const imgUrl = item.image ? (item.image.startsWith('http') ? item.image : `${IMAGE_BASE_URL}${item.image}`) : 'https://via.placeholder.com/200';
 
         return `
-          <div class="cart-item">
+          <div class="cart-item" id="cart-item-${item.productColorSizeId}">
             <div class="product-info">
               <img src="${imgUrl}" alt="${item.productName}" class="product-img">
               <div class="product-details">
@@ -676,11 +676,53 @@
     async function deleteItem(vId) {
       if (!confirm("Xóa sản phẩm này khỏi túi đồ của bạn?")) return;
       try {
+        // 1. Gọi API xóa đến Backend (sẽ thực hiện xóa thực tế trong DB)
         await apiDelete(`/cart/remove/${vId}`);
-        loadCart();
+
+        // 2. Tìm phần tử HTML của sản phẩm này bằng ID và xóa trực tiếp trên màn hình
+        const itemElement = document.getElementById(`cart-item-${vId}`);
+        if (itemElement) {
+          itemElement.remove();
+        }
+
+        // 3. Kiểm tra xem giỏ hàng còn sản phẩm nào không để hiển thị trạng thái trống
+        const container = document.getElementById('cart-items-container');
+        const remainingItems = container.querySelectorAll('.cart-item');
+
+        if (remainingItems.length === 0) {
+          hasItemsInCart = false;
+          container.innerHTML = `
+            <div style="text-align: center; padding: 80px 0;">
+              <i class="fa-solid fa-bag-shopping" style="font-size: 48px; color: #d1d5db; margin-bottom: 20px;"></i>
+              <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 25px;">Túi đồ của bạn đang trống.</p>
+              <a href="products.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 14px 35px; text-decoration: none;">MUA SẮM NGAY</a>
+            </div>`;
+          updateSummary(0);
+          document.getElementById('checkout-form-container').style.display = 'none';
+          document.getElementById('main-action-btn').style.display = 'none';
+        } else {
+          // 4. Nếu vẫn còn sản phẩm, tính toán và cập nhật lại Tổng tiền ngay trên giao diện
+          recalculateTotal();
+        }
+
       } catch (err) {
+        console.error(err);
         alert("Lỗi khi xóa sản phẩm.");
       }
+    }
+
+    // Hàm bổ trợ tính lại tổng tiền từ các sản phẩm còn hiển thị
+    function recalculateTotal() {
+      let total = 0;
+      const subtotalElements = document.querySelectorAll('.cart-item .subtotal');
+
+      subtotalElements.forEach(el => {
+        // Lọc bỏ ký tự chữ và dấu chấm định dạng để lấy con số thuần túy (ví dụ: "500.000đ" -> 500000)
+        const value = parseInt(el.textContent.replace(/[^\d]/g, '')) || 0;
+        total += value;
+      });
+
+      updateSummary(total);
     }
 
     function updateSummary(total) {
@@ -749,7 +791,7 @@
         } else {
           // Nếu chọn COD, báo thành công và đá về trang lịch sử đơn hàng
           alert("🎉 Chúc mừng bạn đã đặt hàng thành công tại Sportify!");
-          window.location.href = "my-orders.html";
+          window.location.href = "orders.html";
         }
       } catch (err) {
         alert("Xảy ra lỗi trong quá trình đặt hàng: " + err.message);
