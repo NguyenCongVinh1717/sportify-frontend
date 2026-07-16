@@ -38,7 +38,7 @@ async function doRefresh() {
     }
 }
 
-async function apiFetch(path, { method = 'GET', body = null } = {}) {
+async function apiFetch(path, { method = 'GET', body = null, redirectOnAuthError = false } = {}) {
     const headers = { 'Content-Type': 'application/json' };
 
     // Tự động gắn AccessToken từ bộ nhớ vào Header
@@ -62,10 +62,14 @@ async function apiFetch(path, { method = 'GET', body = null } = {}) {
             headers['Authorization'] = `Bearer ${newToken}`;
             res = await fetch(url, { ...opts, headers });
         } catch (e) {
-            // Xóa triệt để cả RAM lẫn LocalStorage trước khi chuyển hướng
+            // Chỉ xoá dữ liệu xác thực, không ép redirect cho các trang công khai
             accessToken = null;
-            localStorage.clear();
-            window.location.href = 'login.html';
+            ['role', 'fullName', 'email'].forEach(key => localStorage.removeItem(key));
+
+            if (redirectOnAuthError) {
+                const redirectUrl = encodeURIComponent(window.location.href);
+                window.location.href = `login.html?redirect=${redirectUrl}`;
+            }
             throw new Error("Phiên đăng nhập đã hết hạn.");
         }
     }
@@ -110,10 +114,10 @@ window.apiLogout = async () => {
     } finally {
         // Chỉ dọn dẹp biến và bộ nhớ lưu trữ
         accessToken = null;
-        localStorage.clear();
+        ['role', 'fullName', 'email'].forEach(key => localStorage.removeItem(key));
     }
 };
-window.apiGet = (path) => apiFetch(path, { method: 'GET' });
-window.apiPost = (path, body) => apiFetch(path, { method: 'POST', body });
-window.apiPut = (path, body) => apiFetch(path, { method: 'PUT', body });
-window.apiDelete = (path) => apiFetch(path, { method: 'DELETE' });
+window.apiGet = (path, options = {}) => apiFetch(path, { method: 'GET', ...options });
+window.apiPost = (path, body, options = {}) => apiFetch(path, { method: 'POST', body, ...options });
+window.apiPut = (path, body, options = {}) => apiFetch(path, { method: 'PUT', body, ...options });
+window.apiDelete = (path, options = {}) => apiFetch(path, { method: 'DELETE', ...options });
