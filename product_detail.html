@@ -767,6 +767,9 @@
     <div>
       <h3 class="comment-header-title"><i class="fa-regular fa-pen-to-square"></i> Viết đánh giá của bạn</h3>
       <div class="comment-form">
+        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 8px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
+          <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i> Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.
+        </div>
         <div class="variant-title">Xếp hạng của bạn</div>
         <div class="star-rating-picker" id="star-picker-container">
           <i class="fa-solid fa-star active" data-value="1" onclick="handleStarSelect(1)"></i>
@@ -802,6 +805,33 @@
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
+    function isUserLoggedIn() {
+      return Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
+    }
+
+    function updateReviewFormState() {
+      const textareaEl = document.getElementById('comment-input-text');
+      const submitBtnEl = document.querySelector('.comment-form .btn-submit-comment');
+      const noticeEl = document.getElementById('comment-login-notice');
+      const canComment = isUserLoggedIn();
+
+      if (!textareaEl || !submitBtnEl) return;
+
+      textareaEl.disabled = !canComment;
+      textareaEl.placeholder = canComment
+        ? 'Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển...'
+        : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
+
+      submitBtnEl.textContent = canComment ? 'Gửi đánh giá' : 'Đăng nhập để đánh giá';
+      submitBtnEl.onclick = canComment
+        ? () => submitProductComment()
+        : () => requireLoginForReview();
+
+      if (noticeEl) {
+        noticeEl.style.display = canComment ? 'none' : 'block';
+      }
+    }
+
     async function initPage() {
       const savedCount = localStorage.getItem('vinh_cart_count');
       if (savedCount) {
@@ -812,6 +842,7 @@
       if (productId) {
         await loadProduct();
         await loadCommentsUI();
+        updateReviewFormState();
 
         // Tạo hiệu ứng loading cho sản phẩm liên quan ban đầu
         document.getElementById('related-list-target').innerHTML = `
@@ -1093,6 +1124,11 @@
 
       } catch (err) {
         console.error("Lỗi tải danh sách comment:", err);
+        listTarget.innerHTML = `
+        <div style="padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 14px;">
+          <i class="fa-regular fa-comment-dots" style="font-size: 24px; display:block; margin-bottom: 10px;"></i>
+          Danh sách đánh giá hiện đang không khả dụng lúc này.
+        </div>`;
       }
     }
 
