@@ -756,7 +756,7 @@
     </div>
   </section>
 
-  <section class="comment-section-container">
+  <section class="comment-section-container" id="comment-section">
     <div>
       <h3 class="comment-header-title"><i class="fa-regular fa-comments"></i> Đánh giá từ khách hàng</h3>
       <div class="comment-display-list" id="comment-list-target">
@@ -767,8 +767,12 @@
     <div>
       <h3 class="comment-header-title"><i class="fa-regular fa-pen-to-square"></i> Viết đánh giá của bạn</h3>
       <div class="comment-form">
-        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 8px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
-          <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i> Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.
+        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 8px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
+          <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
+          <span>Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.</span>
+          <div style="margin-top: 10px;">
+            <button type="button" class="btn-submit-comment" id="comment-login-button" style="padding: 8px 14px; font-size: 13px; width: auto;">Đăng nhập để bình luận</button>
+          </div>
         </div>
         <div class="variant-title">Xếp hạng của bạn</div>
         <div class="star-rating-picker" id="star-picker-container">
@@ -784,7 +788,7 @@
           <textarea id="comment-input-text"
             placeholder="Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển..."></textarea>
         </div>
-        <button class="btn-submit-comment" onclick="submitProductComment()">Gửi đánh giá</button>
+        <button class="btn-submit-comment" id="comment-submit-button" onclick="submitProductComment()">Gửi đánh giá</button>
       </div>
     </div>
   </section>
@@ -827,8 +831,9 @@
 
     function updateReviewFormState() {
       const textareaEl = document.getElementById('comment-input-text');
-      const submitBtnEl = document.querySelector('.comment-form .btn-submit-comment');
+      const submitBtnEl = document.getElementById('comment-submit-button');
       const noticeEl = document.getElementById('comment-login-notice');
+      const loginBtnEl = document.getElementById('comment-login-button');
       const starPickerEl = document.getElementById('star-picker-container');
       const canComment = isUserLoggedIn();
 
@@ -839,6 +844,7 @@
         ? 'Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển...'
         : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
 
+      submitBtnEl.style.display = canComment ? 'inline-flex' : 'none';
       submitBtnEl.disabled = !canComment;
       submitBtnEl.style.opacity = canComment ? '1' : '0.65';
       submitBtnEl.style.cursor = canComment ? 'pointer' : 'not-allowed';
@@ -856,6 +862,17 @@
       if (noticeEl) {
         noticeEl.style.display = canComment ? 'none' : 'block';
       }
+
+      if (loginBtnEl) {
+        loginBtnEl.style.display = canComment ? 'none' : 'inline-flex';
+        loginBtnEl.onclick = () => requireLoginForReview();
+      }
+    }
+
+    function buildCommentRedirectUrl() {
+      const url = new URL(window.location.href);
+      url.hash = 'comment-section';
+      return url.toString();
     }
 
     async function initPage() {
@@ -1188,18 +1205,8 @@
     function requireLoginForReview() {
       const loggedIn = Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
       if (!loggedIn) {
-        Swal.fire({
-          title: 'YÊU CẦU ĐĂNG NHẬP',
-          text: 'Vui lòng đăng nhập để gửi đánh giá cho sản phẩm.',
-          icon: 'warning',
-          confirmButtonText: 'Đăng nhập',
-          confirmButtonColor: '#111111'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            const redirectUrl = encodeURIComponent(window.location.href);
-            window.location.href = `login.html?redirect=${redirectUrl}`;
-          }
-        });
+        const redirectUrl = encodeURIComponent(buildCommentRedirectUrl());
+        window.location.href = `login.html?redirect=${redirectUrl}`;
         return false;
       }
       return true;
