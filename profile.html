@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sportify - Hồ sơ cá nhân</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    :root {
+      --black: #000;
+      --white: #fff;
+      --gray-light: #fafafa;
+      --border-color: #e5e5e5;
+      --text-muted: #666;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--gray-light);
+      color: #111;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--black);
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black);
+      color: var(--white);
+      font-size: 16px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .back-link {
+      color: var(--black);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f3f3f3;
+      border: 1px solid var(--border-color);
+    }
+
+    .back-link:hover {
+      background: #ececec;
+    }
+
+    .profile-container {
+      max-width: 720px;
+      margin: 24px auto 40px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .profile-tabs {
+      display: inline-flex;
+      gap: 8px;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 4px;
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .profile-card {
+      background: var(--white);
+      padding: 22px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .profile-card.hidden {
+      display: none;
+    }
+
+    .profile-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #efefef;
+      padding-bottom: 8px;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfcfcf;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #fcfcfc;
+    }
+
+    .form-control:focus {
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.07);
+    }
+
+    .form-control:disabled {
+      background: #f4f4f4;
+      cursor: not-allowed;
+      color: #888;
+    }
+
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+      display: none;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper .form-control {
+      padding-right: 42px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .password-wrapper:hover .password-toggle,
+    .password-wrapper:focus-within .password-toggle {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .btn-submit {
+      display: block;
+      margin: 0 auto;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: #333;
+    }
+
+    .btn-submit:disabled {
+      background: #888;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 576px) {
+      .header {
+        padding: 15px 20px;
+      }
+      .profile-card {
+        padding: 18px;
+      }
+      .profile-tabs {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header đồng bộ -->
+  <header class="header">
+    <a href="products.html" class="brand-wrapper">
+      <div class="brand-logo">
+        <i class="fa-solid fa-bolt-lightning"></i>
+      </div>
+      <div class="brand-title">SPORTIFY</div>
+    </a>
+    <div id="authZone">
+      <a href="products.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại cửa hàng
+      </a>
+    </div>
+  </header>
+
+  <!-- Khối nội dung chính -->
+  <main class="profile-container">
+    <div class="profile-tabs" role="tablist" aria-label="Profile sections">
+      <button type="button" class="tab-btn active" data-tab="profile">
+        <i class="fa-regular fa-user"></i> THÔNG TIN CÁ NHÂN
+      </button>
+      <button type="button" class="tab-btn" data-tab="password">
+        <i class="fa-solid fa-key"></i> ĐỔI MẬT KHẨU
+      </button>
+    </div>
+
+    <!-- PHÂN KHU 1: THÔNG TIN HỒ SƠ -->
+    <section class="profile-card" id="profilePanel">
+      <h3>Thông tin cá nhân</h3>
+      <form id="profileForm">
+        <div class="form-group">
+          <label>Họ và tên</label>
+          <input type="text" id="profFullName" class="form-control" required maxlength="100">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="profEmail" class="form-control" disabled>
+          <small style="display:block; margin-top:6px; color:#777;">Email dùng để đăng nhập, không thể chỉnh sửa.</small>
+        </div>
+        <button type="submit" class="btn-submit" id="btnUpdateProfile">CẬP NHẬT THÔNG TIN</button>
+      </form>
+    </section>
+
+    <!-- PHÂN KHU 2: ĐỔI MẬT KHẨU -->
+    <section class="profile-card hidden" id="passwordPanel">
+      <h3>Đổi mật khẩu</h3>
+      <form id="passwordForm">
+        <div class="form-group">
+          <label>Mật khẩu hiện tại</label>
+          <div class="password-wrapper">
+            <input type="password" id="oldPassword" class="form-control" required>
+            <button type="button" class="password-toggle" data-target="oldPassword" aria-label="Hiện mật khẩu"><i class="fa-regular fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu mới</label>
+          <div class="password-wrapper">
+            <input type="password" id="newPassword" class="form-control" required>
+            <button type="button" class="password-toggle" data-target="newPassword" aria-label="Hiện mật khẩu"><i class="fa-regular fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Xác nhận mật khẩu mới</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" class="form-control" required>
+            <button type="button" class="password-toggle" data-target="confirmPassword" aria-label="Hiện mật khẩu"><i class="fa-regular fa-eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="btnUpdatePassword">ĐỔI MẬT KHẨU</button>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Nạp file cấu hình kết nối API gốc -->
+  <script src="api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const panels = {
+        profile: document.getElementById('profilePanel'),
+        password: document.getElementById('passwordPanel')
+      };
+
+      function switchTab(tabName) {
+        tabs.forEach(btn => {
+          const isActive = btn.dataset.tab === tabName;
+          btn.classList.toggle('active', isActive);
+        });
+
+        panels.profile.classList.toggle('hidden', tabName !== 'profile');
+        panels.password.classList.toggle('hidden', tabName !== 'password');
+      }
+
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      switchTab('profile');
+
+      // 1. Kiểm tra trạng thái đăng nhập hệ thống thông qua LocalStorage
+      const storedName = localStorage.getItem('fullName') || '';
+      const storedEmail = localStorage.getItem('email') || '';
+      if (!storedName && !storedEmail) {
+        Swal.fire({ icon: 'warning', title: 'Chưa đăng nhập!', text: 'Vui lòng đăng nhập để cấu hình hồ sơ.' })
+          .then(() => window.location.href = 'login.html');
+        return;
+      }
+
+      // 2. Tự động đổ dữ liệu hiện có từ bộ nhớ trình duyệt vào Form
+      document.getElementById('profFullName').value = storedName;
+      document.getElementById('profEmail').value = storedEmail;
+
+      document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById(btn.dataset.target);
+          const icon = btn.querySelector('i');
+          if (!input) return;
+
+          const isPassword = input.type === 'password';
+          input.type = isPassword ? 'text' : 'password';
+          icon.classList.toggle('fa-eye', !isPassword);
+          icon.classList.toggle('fa-eye-slash', isPassword);
+        });
+      });
+
+      // 3. Xử lý gọi API cập nhật thông tin cá nhân
+      document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById('profFullName').value.trim();
+        if (!fullName) {
+          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập họ và tên.' });
+          return;
+        }
+
+        const btn = document.getElementById('btnUpdateProfile');
+        btn.disabled = true;
+        btn.innerText = "ĐANG XỬ LÝ...";
+
+        try {
+          // Backend chỉ nhận trường fullName trong DTO UpdateProfileRequest
+          await apiPost('/users/update-profile', { fullName });
+
+          // Cập nhật lại cache đồng bộ thông tin hiển thị của hệ thống
+          localStorage.setItem('fullName', fullName);
+
+          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Thông tin cá nhân đã được cập nhật!' });
+        } catch (err) {
+          const errorMessage = err?.message || 'Không thể cập nhật thông tin hồ sơ.';
+          Swal.fire({ icon: 'error', title: 'Lỗi hệ thống', text: errorMessage });
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "CẬP NHẬT THÔNG TIN";
+        }
+      });
+
+      // 4. Xử lý gọi API thay đổi mật khẩu tài khoản
+      document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const oldPassword = document.getElementById('oldPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!oldPassword || !newPassword || !confirmPassword) {
+          Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập đầy đủ các trường mật khẩu.' });
+          return;
+        }
+
+        const passwordPattern = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        if (!passwordPattern.test(newPassword)) {
+          Swal.fire({ icon: 'error', title: 'Mật khẩu không hợp lệ', text: 'Mật khẩu mới cần tối thiểu 8 ký tự, có chữ hoa, chữ thường và số.' });
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          Swal.fire({ icon: 'error', title: 'Lỗi xác nhận', text: 'Xác nhận mật khẩu mới không khớp với mật khẩu đã nhập!' });
+          return;
+        }
+
+        const btn = document.getElementById('btnUpdatePassword');
+        btn.disabled = true;
+        btn.innerText = "ĐANG XỬ LÝ...";
+
+        try {
+          // Backend DTO yêu cầu oldPassword, newPassword, newPasswordAgain
+          await apiPost('/users/change-password', { oldPassword, newPassword, newPasswordAgain: confirmPassword });
+
+          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Mật khẩu tài khoản đã thay đổi thành công!' });
+          document.getElementById('passwordForm').reset();
+        } catch (err) {
+          const errorMessage = err?.message || 'Mật khẩu hiện tại không chính xác.';
+          Swal.fire({ icon: 'error', title: 'Thất bại', text: errorMessage });
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "ĐỔI MẬT KHẨU";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

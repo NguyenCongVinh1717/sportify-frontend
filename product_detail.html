@@ -1096,12 +1096,36 @@
       }
     }
 
+    function requireLoginForReview() {
+      const loggedIn = Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
+      if (!loggedIn) {
+        Swal.fire({
+          title: 'YÊU CẦU ĐĂNG NHẬP',
+          text: 'Vui lòng đăng nhập để gửi đánh giá cho sản phẩm.',
+          icon: 'warning',
+          confirmButtonText: 'Đăng nhập',
+          confirmButtonColor: '#111111'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const redirectUrl = encodeURIComponent(window.location.href);
+            window.location.href = `login.html?redirect=${redirectUrl}`;
+          }
+        });
+        return false;
+      }
+      return true;
+    }
+
     async function submitProductComment() {
       const inputEl = document.getElementById('comment-input-text');
       const content = inputEl.value.trim();
 
       if (!content) {
         Swal.fire({ icon: 'warning', title: 'Nội dung trống', text: 'Vui lòng nhập nội dung cảm nghĩ trước khi gửi đánh giá!' });
+        return;
+      }
+
+      if (!requireLoginForReview()) {
         return;
       }
 
@@ -1157,6 +1181,10 @@
     }
 
     async function saveUpdatedComment(commentId) {
+      if (!requireLoginForReview()) {
+        return;
+      }
+
       const newContent = document.getElementById(`edit-input-${commentId}`).value.trim();
       const newRating = activeEditRatings[commentId] || 5;
 
@@ -1179,6 +1207,10 @@
     }
 
     async function removeComment(commentId) {
+      if (!requireLoginForReview()) {
+        return;
+      }
+
       const result = await Swal.fire({
         title: 'Xóa bình luận?',
         text: "Bạn có chắc chắn muốn gỡ bỏ đánh giá này không?",

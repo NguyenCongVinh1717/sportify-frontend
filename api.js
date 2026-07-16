@@ -1,6 +1,6 @@
-const API_BASE = "/api";
-//test thì đổi thành:
-// const API_BASE ="http://localhost:8081";
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:8081'
+    : '/api';
 let accessToken = null;
 
 // ✨ THÊM MỚI: giữ 1 Promise refresh đang chạy (nếu có), để mọi request 401 xảy ra

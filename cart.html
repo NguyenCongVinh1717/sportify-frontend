@@ -152,16 +152,12 @@
     }
 
     .product-img {
-      width: 80px; /* Chiều rộng cố định */
-      height: 106px; /* Chiều cao tự động tính chuẩn theo tỷ lệ dọc 3:4 (80 * 4 / 3 = 106.6px) */
+      width: 80px;
+      height: 106px;
       background: var(--gray-bg);
       border-radius: var(--radius);
-      
-      /* Cấu hình phủ kín toàn bộ khung giống như trang danh sách sản phẩm */
       object-fit: cover; 
       object-position: center;
-      
-      /* Bỏ padding để ảnh tràn viền bo góc cực kỳ đẹp mắt và đồng bộ */
       padding: 0; 
       border: 1px solid var(--gray-border);
     }
@@ -411,47 +407,6 @@
       box-shadow: none;
     }
 
-    /* ===== NÚT TIỆN ÍCH FLOATING ===== */
-    .floating-tools {
-      position: fixed;
-      right: 25px;
-      bottom: 35px;
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .tool-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-      transition: var(--transition);
-    }
-
-    .tool-icon:hover {
-      transform: translateY(-3px);
-    }
-
-    .zalo-btn {
-      background: #0068ff;
-    }
-
-    .phone-btn {
-      background: #10b981;
-    }
-
-    .fb-btn {
-      background: #1877f2;
-    }
-
     /* SweetAlert2 custom CSS override (Chỉnh màu chữ tiêu đề cho đẹp mắt) */
     .swal2-title {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -592,12 +547,6 @@
       <button class="checkout-btn" id="main-action-btn" onclick="processCheckout()">Xác nhận thông tin đặt hàng</button>
     </aside>
   </main>
-
-  <div class="floating-tools">
-    <a href="#" class="tool-icon fb-btn"><i class="fa-brands fa-facebook-f"></i></a>
-    <a href="#" class="tool-icon zalo-btn" style="font-weight: 800; font-size: 13px;">ZALO</a>
-    <a href="tel:0901234567" class="tool-icon phone-btn"><i class="fa-solid fa-phone"></i></a>
-  </div>
 
   <script src="api.js"></script>
   <script>
@@ -777,6 +726,26 @@
       const formattedTotal = total.toLocaleString('vi-VN') + 'đ';
       document.getElementById('subtotal-amount').innerText = formattedTotal;
       document.getElementById('total-amount').innerText = formattedTotal;
+    }
+
+    function requireLoginForCheckout() {
+      const loggedIn = Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
+      if (!loggedIn) {
+        Swal.fire({
+          title: 'YÊU CẦU ĐĂNG NHẬP',
+          text: 'Vui lòng đăng nhập để thực hiện đặt hàng.',
+          icon: 'warning',
+          confirmButtonText: 'Đăng nhập',
+          confirmButtonColor: '#111111'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const redirectUrl = encodeURIComponent(window.location.href);
+            window.location.href = `login.html?redirect=${redirectUrl}`;
+          }
+        });
+        return false;
+      }
+      return true;
     }
 
     async function processCheckout() {

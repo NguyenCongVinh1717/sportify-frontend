@@ -597,10 +597,13 @@
 
         function handleNavigation(role) {
             const userRole = role ? role.toUpperCase() : '';
+            const params = new URLSearchParams(window.location.search);
+            const redirectUrl = params.get('redirect');
+
             if (userRole.includes('ADMIN')) {
                 window.location.href = 'adminDashboard.html';
             } else if (userRole.includes('USER')) {
-                window.location.href = 'products.html';
+                window.location.href = redirectUrl || 'products.html';
             } else {
                 msg.textContent = 'Vai trò tài khoản không hợp lệ!';
                 msg.style.color = '#e11d48';
