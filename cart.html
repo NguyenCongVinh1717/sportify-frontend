@@ -551,6 +551,7 @@
   <script src="api.js"></script>
   <script>
     const IMAGE_BASE_URL = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
+    const IMAGE_BASE_URL_FALLBACK = "https://res.cloudinary.com/l3chl8tz/image/upload/";
     let hasItemsInCart = false;
     let isFormVisible = false;
 
@@ -606,11 +607,12 @@
         total += itemTotal;
 
         const imgUrl = item.image ? (item.image.startsWith('http') ? item.image : `${IMAGE_BASE_URL}${item.image}`) : 'https://via.placeholder.com/200';
+        const imgFallback = item.image && !item.image.startsWith('http') ? `${IMAGE_BASE_URL_FALLBACK}${item.image}` : '';
 
         return `
           <div class="cart-item" id="cart-item-${item.productColorSizeId}">
             <div class="product-info">
-              <img src="${imgUrl}" alt="${item.productName}" class="product-img">
+              <img src="${imgUrl}" alt="${item.productName}" class="product-img" ${imgFallback ? `onerror="this.onerror=null; this.src='${imgFallback}'"` : ''}>
               <div class="product-details">
                 <div class="name">${item.productName}</div>
                 <div class="variant-info">

@@ -796,6 +796,7 @@
   <script src="api.js"></script>
   <script>
     const IMG_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
+    const IMG_BASE_FALLBACK = "https://res.cloudinary.com/l3chl8tz/image/upload/";
     let productData = null;
     let selectedColorId = null;
     let selectedSizeId = null;
@@ -923,6 +924,7 @@
     function renderProduct(p) {
       const images = p.images && p.images.length > 0 ? p.images : [];
       const mainImgSrc = images.length > 0 ? (images[0].startsWith('http') ? images[0] : IMG_BASE + images[0]) : 'https://via.placeholder.com/600';
+      const mainImgFallback = images.length > 0 && !images[0].startsWith('http') ? IMG_BASE_FALLBACK + images[0] : '';
 
       const colors = [...new Map(p.variants.map(v => [v.colorId, { id: v.colorId, name: v.colorName }])).values()];
       const sizes = [...new Map(p.variants.map(v => [v.sizeId, { id: v.sizeId, name: v.sizeName }])).values()];
@@ -935,7 +937,7 @@
         <!-- NÚT CHUYỂN ẢNH TRÁI -->
         <button class="nav-btn prev-btn" onclick="navigateImg(-1)">&#10094;</button>
         
-        <img src="${mainImgSrc}" id="mainImg">
+        <img src="${mainImgSrc}" id="mainImg" ${mainImgFallback ? `onerror="this.onerror=null; this.src='${mainImgFallback}'"` : ''}>
         
         <!-- NÚT CHUYỂN ẢNH PHẢI -->
         <button class="nav-btn next-btn" onclick="navigateImg(1)">&#10095;</button>
@@ -944,9 +946,10 @@
       <div class="thumbnail-grid">
         ${images.map((img, idx) => {
         const src = img.startsWith('http') ? img : IMG_BASE + img;
+        const fallbackSrc = img.startsWith('http') ? '' : IMG_BASE_FALLBACK + img;
         return `
             <div class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="switchImg(this, '${src}')">
-              <img src="${src}">
+              <img src="${src}" ${fallbackSrc ? `onerror="this.onerror=null; this.src='${fallbackSrc}'"` : ''}>
             </div>`;
       }).join('')}
       </div>
@@ -1363,11 +1366,14 @@
           const imgSrc = images.length > 0
             ? (images[0].startsWith('http') ? images[0] : IMG_BASE + images[0])
             : 'https://via.placeholder.com/300';
+          const imgFallback = images.length > 0 && !images[0].startsWith('http')
+            ? IMG_BASE_FALLBACK + images[0]
+            : '';
 
           return `
             <a href="product_detail.html?id=${p.id}" class="related-card">
               <div class="related-img-wrapper">
-                <img src="${imgSrc}" alt="${p.productName}">
+                <img src="${imgSrc}" alt="${p.productName}" ${imgFallback ? `onerror="this.onerror=null; this.src='${imgFallback}'"` : ''}>
               </div>
               <div class="related-name">${p.productName}</div>
               <div class="related-price">${p.price.toLocaleString('vi-VN')}đ</div>

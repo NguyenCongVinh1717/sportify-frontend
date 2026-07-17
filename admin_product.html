@@ -663,6 +663,7 @@
     // const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     // const IMG_VIEW_BASE = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
     const IMG_VIEW_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
+    const IMG_VIEW_FALLBACK_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/";
     // const IMG_VIEW_BASE = "/images/";
     const PLACEHOLDER = "https://dummyimage.com/200x200/f8f9fa/666666.png&text=Sportify";
 
@@ -706,13 +707,14 @@
       const tbody = document.getElementById('product-list-body');
       tbody.innerHTML = data.map(p => {
         let imgUrl = p.images && p.images.length > 0 ? (p.images[0].startsWith('http') ? p.images[0] : `${IMG_VIEW_BASE}${p.images[0]}`) : PLACEHOLDER;
+        let imgFallback = p.images && p.images.length > 0 && !p.images[0].startsWith('http') ? `${IMG_VIEW_FALLBACK_BASE}${p.images[0]}` : '';
         const totalQty = p.variants ? p.variants.reduce((sum, v) => sum + v.stock, 0) : 0;
 
         return `
           <tr>
             <td>
               <div style="display:flex; align-items:center; gap:12px;">
-                <img src="${imgUrl}" class="product-img" onerror="this.src='${PLACEHOLDER}'">
+                <img src="${imgUrl}" class="product-img" ${imgFallback ? `onerror="this.onerror=null; this.src='${imgFallback}'"` : `onerror="this.src='${PLACEHOLDER}'"`}>
                 <div style="font-weight: 800; text-transform:uppercase; font-size:12px;">${p.productName}</div>
               </div>
             </td>
@@ -871,7 +873,8 @@
       const container = document.getElementById('preview-container');
       container.innerHTML = currentImages.map((imgUrl, index) => {
         const src = imgUrl.startsWith('http') ? imgUrl : `${IMG_VIEW_BASE}${imgUrl}`;
-        return `<div class="preview-card"><img src="${src}" onerror="this.src='${PLACEHOLDER}'"><button type="button" class="remove-img" onclick="removeImage(${index})">×</button></div>`;
+        const fallbackSrc = imgUrl.startsWith('http') ? '' : `${IMG_VIEW_FALLBACK_BASE}${imgUrl}`;
+        return `<div class="preview-card"><img src="${src}" ${fallbackSrc ? `onerror="this.onerror=null; this.src='${fallbackSrc}'"` : `onerror="this.src='${PLACEHOLDER}'"`}><button type="button" class="remove-img" onclick="removeImage(${index})">×</button></div>`;
       }).join('');
     }
 

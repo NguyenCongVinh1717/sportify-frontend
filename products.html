@@ -888,6 +888,10 @@
       max-height: 90vh;
     }
 
+    .swal2-container {
+      z-index: 9999 !important;
+    }
+
     .close-modal {
       position: absolute;
       top: 20px;
@@ -1640,9 +1644,13 @@
           <i class="fa-solid fa-bars"></i>
         </button>
 
-        <h3 id="collection-title"
-          style="font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.5px; text-transform: uppercase;">
-          SẢN PHẨM NỔI BẬT</h3>
+        <div>
+          <h3 id="collection-title"
+            style="font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.5px; text-transform: uppercase;">
+            SẢN PHẨM NỔI BẬT</h3>
+          <p id="result-count-text" style="margin-top: 4px; color: var(--text-muted); font-size: 13px; font-weight: 600;">
+            Đang tải sản phẩm...</p>
+        </div>
         <div class="sort-wrap">
           <label for="sortSelect">Sắp xếp</label>
           <select id="sortSelect" class="sort-select" onchange="applySort()">
@@ -1762,6 +1770,7 @@
   <script src="api.js"></script>
   <script>
     const IMG_VIEW_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
+    const IMG_VIEW_FALLBACK_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/";
     let globalCartCount = 0;
     let currentP = null;
     let selColor = null;
@@ -1881,10 +1890,11 @@
       container.innerHTML = products.map(p => {
         const img = Array.isArray(p.images) ? p.images[0] : p.images;
         const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
+        const fallbackImg = img?.startsWith('http') ? '' : `${IMG_VIEW_FALLBACK_BASE}${img}`;
         return `
           <article class="product-card">
             <div class="img-box" onclick="location.href='product_detail.html?id=${p.id}'" style="cursor:pointer">
-              <img src="${displayImg}">
+              <img src="${displayImg}" ${fallbackImg ? `onerror="this.onerror=null; this.src='${fallbackImg}'"` : ''}>
               <button class="quick-add-overlay" onclick="event.stopPropagation(); openModal(${p.id})"><i class="fa-solid fa-cart-plus" style="margin-right: 6px;"></i>Thêm vào giỏ</button>
             </div>
             <div class="p-info">
@@ -1899,6 +1909,19 @@
       }).join('');
     }
 
+    function updateResultCount(totalCount, labelText = '') {
+      const resultCountEl = document.getElementById('result-count-text');
+      if (!resultCountEl) return;
+
+      if (typeof totalCount !== 'number' || Number.isNaN(totalCount)) {
+        resultCountEl.textContent = labelText || 'Không có kết quả phù hợp';
+        return;
+      }
+
+      const safeLabel = labelText ? `${labelText} · ` : '';
+      resultCountEl.textContent = `${safeLabel}${totalCount.toLocaleString('vi-VN')} sản phẩm`;
+    }
+
     async function openModal(id) {
       currentP = await apiGet(`/products/${id}`);
       selColor = null; selSize = null;
@@ -1906,7 +1929,14 @@
       document.getElementById('m-name').innerText = currentP.productName;
       document.getElementById('m-price').innerText = currentP.price.toLocaleString('vi-VN') + 'đ';
       const img = currentP.images && currentP.images.length > 0 ? currentP.images[0] : '';
-      document.getElementById('m-img').src = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
+      const modalImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
+      const modalFallbackImg = img?.startsWith('http') ? '' : `${IMG_VIEW_FALLBACK_BASE}${img}`;
+      const modalImgEl = document.getElementById('m-img');
+      modalImgEl.src = modalImg;
+      modalImgEl.onerror = modalFallbackImg ? function () {
+        this.onerror = null;
+        this.src = modalFallbackImg;
+      } : null;
 
       document.getElementById('m-stock').innerHTML = '';
 
@@ -1972,9 +2002,10 @@
         await apiPost('/cart/add', { productColorSizeId: v.id, quantity: 1 });
         globalCartCount += 1;
         document.getElementById('cart-count').innerText = globalCartCount;
-        Swal.fire({ icon: 'success', title: 'Đã thêm vào giỏ!', timer: 1000, showConfirmButton: false });
         closeModal();
+        Swal.fire({ icon: 'success', title: 'Đã thêm vào giỏ!', timer: 1000, showConfirmButton: false });
       } catch (err) {
+        closeModal();
         Swal.fire({
           icon: 'warning',
           title: 'YÊU CẦU ĐĂNG NHẬP',
@@ -1999,8 +2030,10 @@
       const response = await apiGet(`/products/brandPaged/${id}?page=${pageIndex}&size=${defaultPageSize}`);
       const productsArray = response.content || [];
       const totalPages = response.totalPages || 1;
+      const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
       renderProducts(productsArray);
+      updateResultCount(totalCount, `Thương hiệu đang chọn`);
       renderPaginationControls(totalPages, currentPageIndex);
     }
 
@@ -2023,8 +2056,10 @@
       const response = await apiGet(url);
       const productsArray = response.content || [];
       const totalPages = response.totalPages || 1;
+      const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
       renderProducts(productsArray);
+      updateResultCount(totalCount, currentMaxPrice !== null ? `Tối đa ${currentMaxPrice.toLocaleString('vi-VN')}đ` : 'Tất cả sản phẩm');
       renderPaginationControls(totalPages, currentPageIndex);
     }
 
@@ -2041,9 +2076,11 @@
 
       const productsArray = response.content || [];
       const totalPages = response.totalPages || 1;
+      const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
 
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
       renderProducts(productsArray);
+      updateResultCount(totalCount, `Kết quả tìm kiếm: "${keyword}"`);
       renderPaginationControls(totalPages, currentPageIndex);
     }
 
@@ -2064,8 +2101,10 @@
       const response = await apiGet(url);
       const productsArray = response.content || [];
       const totalPages = response.totalPages || 1;
+      const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray;
       renderProducts(productsArray);
+      updateResultCount(totalCount, 'Kết quả bộ lọc');
       renderPaginationControls(totalPages, currentPageIndex);
     }
 
