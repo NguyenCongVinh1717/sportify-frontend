@@ -39,7 +39,8 @@ async function doRefresh() {
 }
 
 async function apiFetch(path, { method = 'GET', body = null, redirectOnAuthError = false } = {}) {
-    const headers = { 'Content-Type': 'application/json' };
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+    const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
 
     // Tự động gắn AccessToken từ bộ nhớ vào Header
     if (accessToken) {
@@ -48,7 +49,7 @@ async function apiFetch(path, { method = 'GET', body = null, redirectOnAuthError
 
     const url = path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
     const opts = { method, headers, credentials: 'include' };
-    if (body != null) opts.body = JSON.stringify(body);
+    if (body != null) opts.body = isFormData ? body : JSON.stringify(body);
 
     let res = await fetch(url, opts);
 

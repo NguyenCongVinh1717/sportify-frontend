@@ -5,22 +5,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giỏ hàng | Sportify Premium Store</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Tích hợp SweetAlert2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
       --white: #ffffff;
-      --gray-bg: #f8f9fa;
+      --gray-bg: #f9fafb;
       --gray-border: #e5e7eb;
-      --black: #111111;
+      --black: #000000;
       --text-muted: #6b7280;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.04);
-      --radius: 8px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --radius-sm: 2px; /* Bo góc cực nhẹ, sắc nét */
+      --radius-md: 4px;
+      --transition: all 0.2s ease;
     }
 
     * {
@@ -42,10 +41,9 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid var(--gray-border);
-      padding: 16px 0;
-      backdrop-filter: blur(8px);
+      background: var(--white);
+      border-bottom: 1px solid var(--black); /* Đường viền đen phẳng mảnh cực chất */
+      padding: 20px 0;
     }
 
     .topbar-inner {
@@ -63,26 +61,10 @@
       text-decoration: none;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      background: var(--black);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-logo i {
-      color: var(--white);
-      font-size: 18px;
-    }
-
     .brand-title {
       font-size: 24px;
       font-weight: 900;
-      font-style: italic;
-      letter-spacing: -1px;
+      letter-spacing: 0px;
       color: var(--black);
       margin-left: 12px;
       text-transform: uppercase;
@@ -92,23 +74,25 @@
       text-decoration: none;
       color: var(--black);
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: var(--transition);
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
     }
 
     .back-link:hover {
-      color: var(--text-muted);
+      border-color: var(--black);
     }
 
     /* ===== LAYOUT TRANG GIỎ HÀNG ===== */
     .cart-page {
       max-width: 1440px;
-      margin: 40px auto 80px;
+      margin: 60px auto 100px;
       padding: 0 40px;
       display: grid;
       grid-template-columns: 1fr 450px;
@@ -116,9 +100,9 @@
     }
 
     .cart-title {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
       text-transform: uppercase;
       letter-spacing: -0.5px;
     }
@@ -145,7 +129,7 @@
       transition: var(--transition);
     }
 
- .product-info {
+    .product-info {
       display: flex;
       align-items: center;
       gap: 20px;
@@ -155,10 +139,9 @@
       width: 80px;
       height: 106px;
       background: var(--gray-bg);
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       object-fit: cover; 
       object-position: center;
-      padding: 0; 
       border: 1px solid var(--gray-border);
     }
 
@@ -167,16 +150,18 @@
       font-size: 15px;
       color: var(--black);
       margin-bottom: 6px;
+      text-transform: uppercase; /* Đồng bộ thể thao mạnh mẽ */
+      letter-spacing: 0.3px;
     }
 
     .product-details .variant-info {
       font-size: 11px;
-      color: var(--black);
-      font-weight: 700;
+      color: var(--text-muted);
+      font-weight: 600;
       background: var(--gray-bg);
       display: inline-block;
-      padding: 4px 10px;
-      border-radius: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       border: 1px solid var(--gray-border);
@@ -192,31 +177,31 @@
       font-weight: 700;
     }
 
-    /* BỘ TĂNG GIẢM SỐ LƯỢNG tối giản */
+    /* BỘ TĂNG GIẢM SỐ LƯỢNG vuông vắn */
     .quantity-control {
       display: flex;
       align-items: center;
-      border: 1px solid var(--gray-border);
+      border: 1px solid var(--black); /* Đổi sang viền đen cứng cáp */
       width: fit-content;
-      border-radius: 6px;
-      background: var(--gray-bg);
+      border-radius: var(--radius-sm);
       overflow: hidden;
     }
 
     .qty-btn {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border: none;
-      background: none;
+      background: var(--white);
       cursor: pointer;
       font-weight: 600;
-      font-size: 16px;
+      font-size: 14px;
       color: var(--black);
       transition: var(--transition);
     }
 
     .qty-btn:hover {
-      background: var(--white);
+      background: var(--black);
+      color: var(--white);
     }
 
     .qty-input {
@@ -230,36 +215,38 @@
       color: var(--black);
     }
 
-    /* NÚT XÓA SẢN PHẨM */
+    /* NÚT XÓA SẢN PHẨM tối giản phẳng */
     .remove-btn {
       background: none;
       border: none;
       color: #9ca3af;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       transition: var(--transition);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
+      height: 36px;
+      width: 36px;
+      border-radius: var(--radius-sm);
     }
 
     .remove-btn:hover {
-      color: #ef4444;
-      background: #fef2f2;
+      color: var(--black);
+      background: var(--gray-bg);
     }
 
     /* ===== KHỐI TỔNG ĐƠN HÀNG & THÔNG TIN ĐẶT HÀNG ===== */
     .cart-summary {
-      background: var(--gray-bg);
-      padding: 40px;
-      border-radius: var(--radius);
+      background: var(--white); /* Chuyển nền trắng phẳng */
+      padding: 0 0 40px 0;
+      border-radius: 0;
       height: fit-content;
       position: sticky;
       top: 120px;
-      border: 1px solid var(--gray-border);
+      border: none;
+      border-left: 1px solid var(--gray-border); /* Sử dụng border cắt dọc tinh tế */
+      padding-left: 40px;
     }
 
     .summary-title {
@@ -268,43 +255,41 @@
       margin-bottom: 25px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 10px;
     }
 
     .summary-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 18px;
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: 600;
+      font-size: 13px;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .summary-row span:last-child {
       color: var(--black);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .summary-row.total {
       margin-top: 25px;
       padding-top: 20px;
-      border-top: 1px solid var(--gray-border);
-      font-size: 20px;
-      font-weight: 800;
+      border-top: 1px solid var(--black);
+      font-size: 22px;
+      font-weight: 900;
     }
 
-    .summary-row.total span {
-      color: var(--black) !important;
-    }
-
-    /* FORM NHẬP THÔNG TIN GIAO HÀNG (MỚI THÊM) */
+    /* FORM NHẬP THÔNG TIN GIAO HÀNG vuông vắn */
     .checkout-form-section {
-      margin-top: 30px;
-      padding-top: 25px;
-      border-top: 1px dashed var(--gray-border);
+      margin-top: 40px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .form-group label {
@@ -312,16 +297,16 @@
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       letter-spacing: 0.5px;
     }
 
     .form-control {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 16px;
       border: 1px solid var(--gray-border);
       background: var(--white);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 500;
       outline: none;
@@ -332,7 +317,7 @@
       border-color: var(--black);
     }
 
-    /* ĐỊNH DẠNG PHƯƠNG THỨC THANH TOÁN (MỚI THÊM) */
+    /* PHƯƠNG THỨC THANH TOÁN phẳng */
     .payment-methods {
       display: flex;
       flex-direction: column;
@@ -347,7 +332,7 @@
       padding: 14px;
       border: 1px solid var(--gray-border);
       background: var(--white);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       transition: var(--transition);
     }
@@ -358,8 +343,8 @@
 
     .payment-option input[type="radio"] {
       accent-color: var(--black);
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
 
     .payment-option label {
@@ -367,64 +352,90 @@
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .payment-option label i {
-      font-size: 16px;
-    }
-
-    /* Nút Thanh toán Đen nguyên khối */
+    /* Nút Thanh toán Đen nguyên khối vuông góc hoàn toàn */
     .checkout-btn {
       width: 100%;
-      padding: 16px;
+      padding: 18px;
       border: none;
       background: var(--black);
       color: var(--white);
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       margin-top: 25px;
-      border-radius: var(--radius);
+      border-radius: 0px; /* Vuông góc tuyệt đối khỏe khoắn */
       text-transform: uppercase;
       font-size: 13px;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       transition: var(--transition);
     }
 
     .checkout-btn:hover {
       background: #222222;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      opacity: 0.9;
     }
 
     .checkout-btn:disabled {
-      background: #9ca3af;
+      background: #e5e7eb;
+      color: #9ca3af;
       cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
     }
 
-    /* SweetAlert2 custom CSS override (Chỉnh màu chữ tiêu đề cho đẹp mắt) */
+    /* Tối ưu hóa SweetAlert2 sang Phong cách Modern Brutalism (Đen/Trắng) */
+    .swal2-popup {
+      border-radius: 0px !important; /* Không bo góc thông báo alert */
+      border: 2px solid var(--black) !important;
+    }
     .swal2-title {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 800 !important;
+      text-transform: uppercase !important;
+      font-size: 18px !important;
+      letter-spacing: 0.5px;
     }
-
     .swal2-html-container {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 500 !important;
+      font-size: 14px !important;
+    }
+    .swal2-confirm {
+      background-color: var(--black) !important;
+      border-radius: 0px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      font-size: 12px !important;
+      letter-spacing: 1px !important;
+    }
+    .swal2-cancel {
+      border-radius: 0px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      font-size: 12px !important;
+      letter-spacing: 1px !important;
+      background-color: #f3f4f6 !important;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
     }
 
-    /* ===== PHẢN HỒI DI ĐỘNG ===== */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 1024px) {
       .cart-page {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 50px;
         padding: 0 20px;
-        margin-top: 20px;
+        margin-top: 30px;
+      }
+
+      .cart-summary {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--gray-border);
+        padding-top: 40px;
       }
 
       .topbar-inner {
@@ -442,9 +453,10 @@
         justify-items: center;
         padding: 30px 15px;
         background: var(--gray-bg);
-        border-radius: var(--radius);
+        border-radius: var(--radius-sm);
         margin-bottom: 15px;
         border: 1px solid var(--gray-border);
+        position: relative;
       }
 
       .product-info {
@@ -454,8 +466,8 @@
 
       .remove-btn {
         position: absolute;
-        right: 25px;
-        margin-top: -10px;
+        top: 15px;
+        right: 15px;
       }
     }
   </style>
@@ -466,9 +478,6 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="products.html" class="brand-wrapper">
-        <div class="brand-logo">
-          <i class="fa-solid fa-bolt-lightning"></i>
-        </div>
         <div class="brand-title">SPORTIFY</div>
       </a>
       <a href="products.html" class="back-link">
@@ -512,7 +521,7 @@
       </div>
 
       <div class="checkout-form-section" id="checkout-form-container" style="display: none;">
-        <h4 class="summary-title" style="font-size: 14px; margin-bottom: 15px;">Thông tin nhận hàng</h4>
+        <h4 class="summary-title" style="font-size: 13px; margin-bottom: 20px; border-bottom: 1px solid var(--gray-border); padding-bottom: 6px;">Thông tin nhận hàng</h4>
 
         <div class="form-group">
           <label for="order-receiver">Họ tên người nhận</label>
@@ -571,8 +580,8 @@
           hasItemsInCart = false;
           container.innerHTML = `
             <div style="text-align: center; padding: 80px 0;">
-              <i class="fa-solid fa-bag-shopping" style="font-size: 48px; color: #d1d5db; margin-bottom: 20px;"></i>
-              <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 25px;">Túi đồ của bạn đang trống.</p>
+              <i class="fa-solid fa-bag-shopping" style="font-size: 40px; color: #000000; margin-bottom: 20px;"></i>
+              <p style="color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; margin-bottom: 25px;">Túi đồ của bạn đang trống.</p>
               <a href="products.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 14px 35px; text-decoration: none;">MUA SẮM NGAY</a>
             </div>`;
           updateSummary(0);
@@ -586,9 +595,9 @@
       } catch (err) {
         const isGuest = !isUserLoggedIn();
         container.innerHTML = `
-          <div style="text-align: center; padding: 50px 20px; color: var(--text-muted); font-weight: 600;">
-            <i class="fa-solid fa-right-to-bracket" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
-            <p style="margin: 0 0 12px; font-size: 15px;">${isGuest ? 'Vui lòng đăng nhập để xem và quản lý giỏ hàng.' : 'Không thể tải giỏ hàng lúc này.'}</p>
+          <div style="text-align: center; padding: 50px 20px; color: var(--black); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-right-to-bracket" style="font-size: 28px; margin-bottom: 16px; display: block;"></i>
+            <p style="margin: 0 0 16px; font-size: 13px;">${isGuest ? 'Vui lòng đăng nhập để xem và quản lý giỏ hàng.' : 'Không thể tải giỏ hàng lúc này.'}</p>
             ${isGuest ? `<a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="checkout-btn" style="display: inline-block; width: auto; padding: 12px 24px; text-decoration: none;">ĐĂNG NHẬP NGAY</a>` : ''}
           </div>`;
         document.getElementById('checkout-form-container').style.display = 'none';
@@ -644,7 +653,6 @@
         await apiPut('/cart/update', { productColorSizeId: vId, quantity: newQty });
         loadCart();
       } catch (err) {
-        // Thông báo lỗi tự biến mất khi cập nhật số lượng không thành công
         Swal.fire({
           title: 'CẬP NHẬT THẤT BẠI',
           text: 'Không thể cập nhật số lượng sản phẩm.',
@@ -657,14 +665,13 @@
     }
 
     async function deleteItem(vId) {
-      // 1. Dùng Swal thay confirm truyền thống (có nút Đồng ý và Hủy)
       const result = await Swal.fire({
         title: 'XÓA SẢN PHẨM?',
         text: "Bạn có chắc chắn muốn xóa sản phẩm này khỏi túi đồ không?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#111111', // Đen Sportify
-        cancelButtonColor: '#ef4444',  // Đỏ nguy hiểm
+        confirmButtonColor: '#000000',
+        cancelButtonColor: '#ffffff',
         confirmButtonText: 'ĐỒNG Ý XÓA',
         cancelButtonText: 'QUAY LẠI'
       });
@@ -686,8 +693,8 @@
           hasItemsInCart = false;
           container.innerHTML = `
             <div style="text-align: center; padding: 80px 0;">
-              <i class="fa-solid fa-bag-shopping" style="font-size: 48px; color: #d1d5db; margin-bottom: 20px;"></i>
-              <p style="color: var(--text-muted); font-weight: 500; margin-bottom: 25px;">Túi đồ của bạn đang trống.</p>
+              <i class="fa-solid fa-bag-shopping" style="font-size: 40px; color: #000000; margin-bottom: 20px;"></i>
+              <p style="color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; margin-bottom: 25px;">Túi đồ của bạn đang trống.</p>
               <a href="products.html" class="checkout-btn" style="display: inline-block; width: auto; padding: 14px 35px; text-decoration: none;">MUA SẮM NGAY</a>
             </div>`;
           updateSummary(0);
@@ -697,7 +704,6 @@
           recalculateTotal();
         }
 
-        // 2. Thông báo xóa thành công tự biến mất sau 1.5 giây
         Swal.fire({
           title: 'ĐÃ XÓA SẢN PHẨM',
           text: 'Sản phẩm đã được loại khỏi túi đồ của bạn.',
@@ -709,7 +715,6 @@
 
       } catch (err) {
         console.error(err);
-        // Thông báo lỗi tự biến mất sau 1.5 giây
         Swal.fire({
           title: 'LỖI HỆ THỐNG',
           text: 'Không thể xóa sản phẩm vào lúc này.',
@@ -747,7 +752,7 @@
           text: 'Vui lòng đăng nhập để thực hiện đặt hàng.',
           icon: 'warning',
           confirmButtonText: 'Đăng nhập',
-          confirmButtonColor: '#111111'
+          confirmButtonColor: '#000000'
         }).then((result) => {
           if (result.isConfirmed) {
             const redirectUrl = encodeURIComponent(window.location.href);
@@ -778,7 +783,6 @@
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
       if (!receiver || !phone || !address) {
-        // Báo lỗi điền thiếu thông tin (tự biến mất sau 2 giây)
         Swal.fire({
           title: 'THIẾU THÔNG TIN',
           text: 'Vui lòng điền đầy đủ thông tin giao hàng để tiến hành đặt hàng.',
@@ -804,7 +808,6 @@
         const response = await apiPost('/order/checkout', orderRequestData);
 
         if (paymentMethod === 'VNPAY' && response.paymentUrl) {
-          // Thông báo chuyển hướng tự biến mất
           Swal.fire({
             title: 'ĐANG CHUYỂN HƯỚNG',
             text: 'Hệ thống đang chuyển hướng bạn sang cổng thanh toán an toàn VNPAY...',
@@ -823,7 +826,6 @@
           }, 1500);
 
         } else {
-          // Đặt hàng COD thành công tự động biến mất và chuyển trang
           Swal.fire({
             title: 'ĐẶT HÀNG THÀNH CÔNG',
             text: 'Chúc mừng bạn đã đặt hàng thành công tại Sportify!',
@@ -838,7 +840,6 @@
           }, 2000);
         }
       } catch (err) {
-        // Thông báo lỗi thanh toán tự động biến mất
         Swal.fire({
           title: 'ĐẶT HÀNG THẤT BẠI',
           text: err.message || "Xảy ra lỗi trong quá trình đặt hàng. Vui lòng thử lại sau.",

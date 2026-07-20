@@ -219,6 +219,7 @@
       overflow-x: auto;
       /* Tự động cuộn ngang trên mobile */
       box-shadow: var(--shadow);
+      margin-bottom: 25px;
     }
 
     .table-responsive {
@@ -307,6 +308,49 @@
     .action-btns {
       display: flex;
       gap: 5px;
+    }
+
+    /* PAGINATION BOX TỐI GIẢN - KHÔNG BO GÓC QUÁ ĐÀ */
+    .pagination-container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .pagination-btn {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 12px;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      color: var(--black);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    .pagination-btn:hover {
+      background: #f1f1f1;
+    }
+
+    .pagination-btn.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .pagination-btn:disabled {
+      background: #f8f9fa;
+      color: #999999;
+      cursor: not-allowed;
+      border-color: var(--gray-border);
     }
 
     /* MODAL RESPONSIVE */
@@ -529,9 +573,10 @@
     <div class="filter-toolbar">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="search-input" placeholder="Tìm tên, mã sản phẩm..." oninput="filterProducts()">
+        <!-- Thay đổi sự kiện oninput bằng trigger tìm kiếm phân trang có debounce để tăng hiệu năng -->
+        <input type="text" id="search-input" placeholder="Tìm tên, mã sản phẩm..." oninput="handleSearchInput()">
       </div>
-      <select id="filter-brand" class="filter-control" onchange="filterProducts()">
+      <select id="filter-brand" class="filter-control" onchange="handleBrandChange()">
         <option value="">TẤT CẢ THƯƠNG HIỆU</option>
       </select>
     </div>
@@ -553,6 +598,9 @@
         </table>
       </div>
     </div>
+
+    <!-- KHU VỰC CHỨA CÁC NÚT ĐIỀU HƯỚNG PHÂN TRANG -->
+    <div class="pagination-container" id="pagination-box"></div>
   </main>
 
   <div id="productModal" class="modal">
@@ -660,14 +708,17 @@
       overlay.classList.toggle('open');
     }
 
-    // const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    // const IMG_VIEW_BASE = IS_LOCAL ? "http://localhost:8081/images/" : "/images/";
     const IMG_VIEW_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
     const IMG_VIEW_FALLBACK_BASE = "https://res.cloudinary.com/l3chl8tz/image/upload/";
-    // const IMG_VIEW_BASE = "/images/";
     const PLACEHOLDER = "https://dummyimage.com/200x200/f8f9fa/666666.png&text=Sportify";
 
-    let allProducts = [], allBrands = [], allColors = [], allSizes = [];
+    // CÁC BIẾN QUẢN LÝ PHÂN TRANG VÀ TRẠNG THÁI BỘ LỌC CHUẨN BACKEND
+    let allBrands = [], allColors = [], allSizes = [];
+    let currentPage = 0;
+    let pageSize = 12; // Khớp với kích thước mặc định của Controller
+    let totalPages = 0;
+    let searchTimeout = null;
+
     let currentImages = [];
     let uploadedImagesThisSession = [];
     let imagesToDelete = [];
@@ -675,7 +726,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       await loadMetadata();
-      loadProducts();
+      loadProducts(0); // Luôn load trang đầu tiên khi mở ứng dụng
     });
 
     async function loadMetadata() {
@@ -696,15 +747,46 @@
       } catch (err) { console.error("Lỗi metadata:", err); }
     }
 
-    async function loadProducts() {
+    // THAY ĐỔI: Gọi API phân trang thay vì lấy tất cả cục bộ
+    async function loadProducts(page) {
+      currentPage = page;
+      const keyword = document.getElementById('search-input').value.trim();
+      const brandId = document.getElementById('filter-brand').value;
+
       try {
-        allProducts = await apiGet('/products/all');
-        renderTable(allProducts);
-      } catch (err) { Swal.fire('Lỗi', 'Không thể tải sản phẩm', 'error'); }
+        let responseData;
+
+        // Kịch bản 1: Có từ khóa tìm kiếm -> Gọi endpoint /search hỗ trợ phân trang
+        if (keyword !== "") {
+          responseData = await apiGet(`/products/search?keywords=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`);
+        } 
+        // Kịch bản 2: Chọn bộ lọc thương hiệu cụ thể -> Gọi endpoint lọc /brandPaged
+        else if (brandId !== "") {
+          responseData = await apiGet(`/products/brandPaged/${brandId}?page=${page}&size=${pageSize}`);
+        } 
+        // Kịch bản 3: Không lọc gì -> Gọi danh sách sản phẩm phân trang mặc định
+        else {
+          responseData = await apiGet(`/products?page=${page}&size=${pageSize}`);
+        }
+
+        // Render dữ liệu vào bảng và xây dựng các nút phân trang
+        renderTable(responseData.content || []);
+        totalPages = responseData.totalPages || 0;
+        renderPagination();
+
+      } catch (err) { 
+        console.error(err);
+        Swal.fire('Lỗi', 'Không thể tải danh sách sản phẩm', 'error'); 
+      }
     }
 
     function renderTable(data) {
       const tbody = document.getElementById('product-list-body');
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color:#999;">Không tìm thấy sản phẩm nào phù hợp</td></tr>`;
+        return;
+      }
+
       tbody.innerHTML = data.map(p => {
         let imgUrl = p.images && p.images.length > 0 ? (p.images[0].startsWith('http') ? p.images[0] : `${IMG_VIEW_BASE}${p.images[0]}`) : PLACEHOLDER;
         let imgFallback = p.images && p.images.length > 0 && !p.images[0].startsWith('http') ? `${IMG_VIEW_FALLBACK_BASE}${p.images[0]}` : '';
@@ -733,6 +815,58 @@
             </td>
           </tr>`;
       }).join('');
+    }
+
+    // THÊM MỚI: Hàm hiển thị các nút chọn trang vuông vắn đồng bộ giao diện
+    function renderPagination() {
+      const box = document.getElementById('pagination-box');
+      box.innerHTML = '';
+
+      if (totalPages <= 1) return; // Nếu chỉ có 1 trang thì ẩn hẳn thanh phân trang đi
+
+      // Nút Về trang trước (Previous)
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'pagination-btn';
+      prevBtn.innerHTML = '<i class="fa-solid fa-angle-left"></i>';
+      prevBtn.disabled = (currentPage === 0);
+      prevBtn.onclick = () => loadProducts(currentPage - 1);
+      box.appendChild(prevBtn);
+
+      // Hiển thị các ô số trang cụ thể
+      for (let i = 0; i < totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+        pageBtn.innerText = i + 1;
+        pageBtn.onclick = () => loadProducts(i);
+        box.appendChild(pageBtn);
+      }
+
+      // Nút Sang trang sau (Next)
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'pagination-btn';
+      nextBtn.innerHTML = '<i class="fa-solid fa-angle-right"></i>';
+      nextBtn.disabled = (currentPage === totalPages - 1);
+      nextBtn.onclick = () => loadProducts(currentPage + 1);
+      box.appendChild(nextBtn);
+    }
+
+    // THÊM MỚI: Sử dụng cơ chế Debounce để tránh spam gọi API liên tục khi gõ ký tự tìm kiếm
+    function handleSearchInput() {
+      clearTimeout(searchTimeout);
+      // Nếu có nhập từ khóa tìm kiếm thì xóa lựa chọn thương hiệu đi để tránh xung đột logic API
+      if (document.getElementById('search-input').value.trim() !== "") {
+        document.getElementById('filter-brand').value = "";
+      }
+      searchTimeout = setTimeout(() => {
+        loadProducts(0); // Trở về trang đầu tiên khi thực hiện tìm kiếm mới
+      }, 400); 
+    }
+
+    // THÊM MỚI: Xử lý thay đổi bộ lọc thương hiệu theo phân trang
+    function handleBrandChange() {
+      // Nếu lọc thương hiệu thì xóa sạch từ khóa tìm kiếm trước đó
+      document.getElementById('search-input').value = "";
+      loadProducts(0);
     }
 
     async function showDetail(id) {
@@ -824,12 +958,11 @@
         if (id) await apiPut(`/products/${id}`, productRequest);
         else await apiPost('/products', productRequest);
 
-        // Gọi DELETE file vật lý đồng bộ bảo mật Cookie
         for (const fileName of imagesToDelete) {
           try {
             await fetch(`${API_BASE}/upload/${encodeURIComponent(fileName)}`, {
               method: 'DELETE',
-              credentials: 'include' // Dùng cơ chế bảo mật HttpOnly Cookie
+              credentials: 'include'
             });
           } catch (e) { console.warn("Lỗi xóa file vật lý:", fileName); }
         }
@@ -840,7 +973,7 @@
 
         Swal.fire('Thành công', 'Dữ liệu đã được lưu', 'success');
         closeModal();
-        loadProducts();
+        loadProducts(currentPage); // Giữ nguyên trang đang đứng sau khi thêm/sửa thành công
       } catch (err) {
         errorDiv.style.display = 'block';
         document.getElementById('error-text').innerText = "Lỗi: " + err.message;
@@ -857,7 +990,7 @@
       try {
         const response = await fetch(`${API_BASE}/upload/multiple`, {
           method: 'POST',
-          credentials: 'include', // Cho phép truyền nhận HttpOnly Cookie tự động qua HTTPS
+          credentials: 'include',
           body: formData
         });
         const data = await response.json();
@@ -880,23 +1013,17 @@
 
     async function removeImage(index) {
       const fileName = currentImages[index];
-
-      // delete right away if new images
       if (uploadedImagesThisSession.includes(fileName)) {
         try {
           await fetch(`${API_BASE}/products/upload/${encodeURIComponent(fileName)}`, {
             method: 'DELETE',
             credentials: 'include'
           });
-          // Xóa luôn khỏi mảng tạm của session
           uploadedImagesThisSession = uploadedImagesThisSession.filter(name => name !== fileName);
         } catch (e) { console.error(e); }
       } else {
-        // if old image => put into delete uploadedImagesThisSession
         imagesToDelete.push(fileName);
       }
-
-      // delete from giao diện
       currentImages.splice(index, 1);
       renderPreviews();
     }
@@ -912,7 +1039,6 @@
           } catch (e) { }
         }
       }
-
       document.getElementById('productModal').style.display = 'none';
       uploadedImagesThisSession = [];
       imagesToDelete = [];
@@ -958,18 +1084,12 @@
     async function deleteProduct(id) {
       const res = await Swal.fire({ title: 'Xóa?', text: "Không thể hoàn tác!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#000', confirmButtonText: 'Xóa ngay' });
       if (res.isConfirmed) {
-        try { await apiDelete(`/products/${id}`); loadProducts(); Swal.fire('Đã xóa!', '', 'success'); } catch (err) { Swal.fire('Lỗi', err.message, 'error'); }
+        try { 
+          await apiDelete(`/products/${id}`); 
+          loadProducts(currentPage); // Tải lại trang hiện tại sau khi xóa sản phẩm thành công
+          Swal.fire('Đã xóa!', '', 'success'); 
+        } catch (err) { Swal.fire('Lỗi', err.message, 'error'); }
       }
-    }
-
-    function filterProducts() {
-      const keyword = document.getElementById('search-input').value.toLowerCase();
-      const brandId = document.getElementById('filter-brand').value;
-      const filtered = allProducts.filter(p =>
-        (p.productName.toLowerCase().includes(keyword) || p.productCode.toLowerCase().includes(keyword)) &&
-        (brandId === "" || p.brandId == brandId)
-      );
-      renderTable(filtered);
     }
   </script>
 </body>

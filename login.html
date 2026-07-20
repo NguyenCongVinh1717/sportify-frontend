@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sportify Admin | Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -14,11 +13,12 @@
     <style>
         :root {
             --white: #ffffff;
-            --bg-right: #f8f9fa;
+            --bg-right: #fafafa;
             --text-main: #111111;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --success: #10b981;
+            --text-muted: #666666;
+            --border: #dddddd;
+            --success: #0f9d58;
+            --error: #d93025;
         }
 
         * {
@@ -37,14 +37,16 @@
 
         .left-panel {
             flex: 1;
-            background-image: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
+            background-image: url('https://res.cloudinary.com/l3chl8tz/image/upload/v1784478394/banner3_hsuom9.png');
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
-            padding: 80px 100px;
+            padding: 40px 80px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             position: relative;
+            background-color: #000000;
         }
 
         .left-panel::before {
@@ -54,48 +56,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            background: transparent;
             z-index: 1;
         }
 
         .logo-brand {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             font-style: italic;
             text-transform: uppercase;
-            letter-spacing: -1px;
-            color: var(--text-main);
-            margin-bottom: 50px;
+            letter-spacing: 0px;
+            color: #ffffff;
+            margin-bottom: 0;
             position: relative;
             z-index: 2;
-        }
-
-        .left-content {
-            max-width: 480px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .line-top {
-            width: 40px;
-            height: 3px;
-            background: var(--text-main);
-            margin-bottom: 30px;
-        }
-
-        .left-content h1 {
-            font-size: 42px;
-            font-weight: 800;
-            line-height: 1.2;
-            color: var(--text-main);
-            margin-bottom: 25px;
-        }
-
-        .left-content p {
-            font-size: 15px;
-            color: #2d3748;
-            line-height: 1.6;
-            font-weight: 600;
         }
 
         .right-panel {
@@ -104,37 +78,40 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px;
+            padding: 60px;
             position: relative;
         }
 
         .login-card {
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
             background: var(--white);
-            border-radius: 16px;
-            padding: 50px 55px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 45px 45px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
         .login-header h2 {
-            font-size: 30px;
+            font-size: 26px;
             font-weight: 800;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             text-align: center;
             color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #374151;
+            color: var(--text-main);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -148,7 +125,7 @@
         .input-group i {
             position: absolute;
             left: 15px;
-            color: #9ca3af;
+            color: #888888;
             font-size: 14px;
         }
 
@@ -160,12 +137,13 @@
 
         .form-control {
             width: 100%;
-            padding: 13px 15px 13px 45px;
+            padding: 12px 15px 12px 42px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 14px;
             outline: none;
-            transition: 0.2s;
+            color: var(--text-main);
+            transition: border-color 0.15s ease;
         }
 
         .form-control:focus {
@@ -175,10 +153,10 @@
         .forgot-pass {
             display: block;
             text-align: right;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
             text-decoration: none;
-            margin-top: 12px;
+            margin-top: 10px;
             font-weight: 600;
         }
 
@@ -191,59 +169,64 @@
             width: 100%;
             background: var(--text-main);
             color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid var(--text-main);
+            padding: 14px;
+            border-radius: 4px;
+            font-size: 13px;
             font-weight: 700;
-            margin-top: 30px;
+            margin-top: 25px;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: background 0.2s;
+            letter-spacing: 1px;
+            transition: all 0.15s ease;
         }
 
         .btn-login:hover {
             background: #222222;
+            border-color: #222222;
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 30px 0 20px 0;
-            color: #cbd5e1;
-            font-size: 12px;
+            margin: 25px 0 20px 0;
+            color: #e0e0e0;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .divider::before,
         .divider::after {
             content: "";
             flex: 1;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #eeeeee;
         }
 
         .divider span {
             padding: 0 15px;
-            color: #94a3b8;
+            color: #999999;
+            font-weight: 500;
         }
 
         .google-btn-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .signup-link {
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
-            margin-top: 20px;
+            margin-top: 15px;
+            font-weight: 500;
         }
 
         .signup-link a {
             color: var(--text-main);
             text-decoration: none;
-            font-weight: 800;
+            font-weight: 700;
         }
 
         .signup-link a:hover {
@@ -251,11 +234,12 @@
         }
 
         .msg {
-            color: #e11d48;
+            color: var(--error);
             font-size: 13px;
             font-weight: 600;
             margin-bottom: 15px;
             text-align: center;
+            line-height: 1.4;
         }
 
         .pwd-hint {
@@ -265,19 +249,36 @@
             line-height: 1.4;
         }
 
-        /* ----- PHẦN BỔ SUNG RESPONSIVE MÀN HÌNH ----- */
+        /* Responsive Breakpoints */
         @media (max-width: 1024px) {
-            .left-panel { padding: 60px 40px; }
-            .left-content h1 { font-size: 34px; }
-            .right-panel { padding: 40px; }
+            .left-panel {
+                padding: 40px;
+            }
+            .right-panel {
+                padding: 40px;
+            }
         }
 
         @media (max-width: 850px) {
-            body { overflow: auto; } /* Cho phép cuộn dọc nếu màn hình quá thấp */
-            .left-panel { display: none; } /* Ẩn ảnh bên trái khi vào màn hình mobile */
-            .right-panel { padding: 20px 16px; min-height: 100vh; }
-            .login-card { padding: 40px 24px; } /* Thu nhỏ padding card cho vừa màn hình điện thoại */
-            .google-btn-container div { max-width: 100% !important; } /* Ép nút google ko tràn viền */
+            body {
+                overflow: auto;
+            }
+            .left-panel {
+                display: none;
+            }
+            .right-panel {
+                padding: 20px 16px;
+                min-height: 100vh;
+            }
+            .login-card {
+                padding: 35px 25px;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+            }
+            .google-btn-container div {
+                max-width: 100% !important;
+            }
         }
     </style>
 </head>
@@ -289,18 +290,13 @@
 
     <div class="left-panel">
         <div class="logo-brand">SPORTIFY</div>
-        <div class="left-content">
-            <div class="line-top"></div>
-            <h1>Quản lý cửa hàng<br>thể thao chuyên nghiệp</h1>
-            <p>Đăng nhập để truy cập và quản lý toàn bộ hoạt động của cửa hàng một cách hiệu quả.</p>
-        </div>
     </div>
 
     <div class="right-panel">
+        <!-- Section: Đăng nhập chính -->
         <div class="login-card" id="mainLoginSection">
             <div class="login-header">
                 <h2>Đăng nhập</h2>
-                <!-- <p>Chào mừng bạn quay trở lại với Sportify Admin</p> -->
             </div>
 
             <div id="msg" class="msg"></div>
@@ -309,7 +305,7 @@
                 <div class="form-group">
                     <label>Địa chỉ Email</label>
                     <div class="input-group">
-                        <i class="fa-regular fa-envelope"></i> 
+                        <i class="fa-regular fa-envelope"></i>
                         <input type="email" id="email" class="form-control" placeholder="nguyenvana@gmail.com" required>
                     </div>
                 </div>
@@ -343,7 +339,7 @@
             </div>
         </div>
 
-
+        <!-- Section: Quên mật khẩu -->
         <div class="login-card" id="forgotPasswordSection" style="display: none;">
             <div class="login-header">
                 <h2>Quên mật khẩu</h2>
@@ -365,11 +361,11 @@
             </form>
         </div>
 
-
+        <!-- Section: Đặt lại mật khẩu -->
         <div class="login-card" id="resetPasswordSection" style="display: none;">
             <div class="login-header">
                 <h2>Đặt lại mật khẩu</h2>
-                <p>Nhập mã OTP vừa được gửi về Email và mật khẩu mới của bạn</p>
+                <p>Nhập mã OTP và mật khẩu mới của bạn</p>
             </div>
             <div id="resetMsg" class="msg"></div>
             <form id="resetForm">
@@ -397,6 +393,7 @@
         </div>
     </div>
 
+    <!-- Giữ nguyên toàn bộ logic Script hoạt động chính xác -->
     <script src="api.js"></script>
     <script>
         const passwordInput = document.getElementById('password');
@@ -407,13 +404,13 @@
         const mainLoginSection = document.getElementById('mainLoginSection');
         const forgotPasswordSection = document.getElementById('forgotPasswordSection');
         const resetPasswordSection = document.getElementById('resetPasswordSection');
-        
+
         const forgotForm = document.getElementById('forgotForm');
         const resetForm = document.getElementById('resetForm');
         const forgotMsg = document.getElementById('forgotMsg');
         const resetMsg = document.getElementById('resetMsg');
-        
-        let savedEmailForReset = ""; 
+
+        let savedEmailForReset = "";
 
         window.onload = () => {
             localStorage.clear();
@@ -469,22 +466,19 @@
 
             if (!email) {
                 msg.textContent = 'Vui lòng nhập địa chỉ Email!';
-                msg.style.color = '#e11d48';
                 return;
             }
             if (!validateEmail(email)) {
                 msg.textContent = 'Định dạng Email không hợp lệ!';
-                msg.style.color = '#e11d48';
                 return;
             }
             if (!password || password.length < 8) {
                 msg.textContent = 'Mật khẩu bảo mật phải chứa từ 8 ký tự trở lên!';
-                msg.style.color = '#e11d48';
                 return;
             }
 
             msg.textContent = 'Đang đăng nhập...';
-            msg.style.color = '#111111';
+            msg.style.color = 'var(--text-main)';
 
             try {
                 const data = await apiPost('/auth/login', { email, password });
@@ -498,7 +492,7 @@
                 }
             } catch (err) {
                 msg.textContent = err.message || 'Đăng nhập thất bại!';
-                msg.style.color = '#e11d48';
+                msg.style.color = 'var(--error)';
             }
         });
 
@@ -508,23 +502,23 @@
 
             if (!emailInput || !validateEmail(emailInput)) {
                 forgotMsg.textContent = 'Vui lòng nhập định dạng Email hợp lệ!';
-                forgotMsg.style.color = '#e11d48';
+                forgotMsg.style.color = 'var(--error)';
                 return;
             }
 
             forgotMsg.textContent = 'Đang gửi mã OTP khôi phục...';
-            forgotMsg.style.color = '#111111';
+            forgotMsg.style.color = 'var(--text-main)';
 
             try {
                 const response = await apiPost('/users/forgot-password', { email: emailInput });
-                savedEmailForReset = emailInput; 
+                savedEmailForReset = emailInput;
                 forgotPasswordSection.style.display = 'none';
                 resetPasswordSection.style.display = 'block';
                 resetMsg.textContent = response.message || 'Mã OTP đã được gửi thành công!';
                 resetMsg.style.color = 'var(--success)';
             } catch (err) {
                 forgotMsg.textContent = err.message || 'Email không tồn tại hoặc hệ thống gặp sự cố!';
-                forgotMsg.style.color = '#e11d48';
+                forgotMsg.style.color = 'var(--error)';
             }
         });
 
@@ -535,19 +529,19 @@
 
             if (otp.length !== 6 || isNaN(otp)) {
                 resetMsg.textContent = 'Mã số OTP phải có độ dài chính xác là 6 số!';
-                resetMsg.style.color = '#e11d48';
+                resetMsg.style.color = 'var(--error)';
                 return;
             }
 
             const pwdRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
             if (!pwdRegex.test(newPassword)) {
                 resetMsg.textContent = 'Mật khẩu yếu! Cần ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số.';
-                resetMsg.style.color = '#e11d48';
+                resetMsg.style.color = 'var(--error)';
                 return;
             }
 
             resetMsg.textContent = 'Đang tiến hành đặt lại mật khẩu...';
-            resetMsg.style.color = '#111111';
+            resetMsg.style.color = 'var(--text-main)';
 
             try {
                 const response = await apiPost('/users/reset-password', {
@@ -569,13 +563,13 @@
 
             } catch (err) {
                 resetMsg.textContent = err.message || 'Mã OTP không chính xác hoặc đã hết hiệu lực!';
-                resetMsg.style.color = '#e11d48';
+                resetMsg.style.color = 'var(--error)';
             }
         });
 
         async function handleCredentialResponse(response) {
             msg.textContent = 'Đang xác thực Google...';
-            msg.style.color = '#111111';
+            msg.style.color = 'var(--text-main)';
 
             try {
                 const data = await apiPost('/auth/google', { token: response.credential });
@@ -591,7 +585,7 @@
                 }
             } catch (err) {
                 msg.textContent = 'Đăng nhập Google thất bại! Vui lòng thử lại.';
-                msg.style.color = '#e11d48';
+                msg.style.color = 'var(--error)';
             }
         }
 
@@ -606,7 +600,7 @@
                 window.location.href = redirectUrl || 'products.html';
             } else {
                 msg.textContent = 'Vai trò tài khoản không hợp lệ!';
-                msg.style.color = '#e11d48';
+                msg.style.color = 'var(--error)';
             }
         }
     </script>

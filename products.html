@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sportify Style | Premium Store</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -15,7 +15,7 @@
       --white: #ffffff;
       --gray-bg: #f8f9fa;
       --gray-border: #e5e7eb;
-      --black: #111111;
+      --black: #000;
       --text-muted: #6b7280;
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.06);
@@ -51,7 +51,7 @@
     .header-inner {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 0 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -59,10 +59,9 @@
     }
 
     .logo {
-      font-size: 26px;
+      font-size: 25px;
       font-weight: 900;
-      font-style: italic;
-      letter-spacing: -1px;
+      letter-spacing: 0px;
       text-decoration: none;
       color: var(--black);
       text-transform: uppercase;
@@ -70,15 +69,25 @@
     }
 
     .search-bar-top {
-      flex: 0 1 500px;
-      position: relative;
-      margin: 0 20px;
+      flex: 1 1 560px;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0 16px;
     }
 
-    .search-bar-top input {
+    .search-bar-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-bar-row input {
       width: 100%;
-      padding: 12px 60px 12px 20px;
-      border-radius: 8px;
+      min-width: 220px;
+      padding: 13px 88px 13px 18px;
+      border-radius: 2px;
       border: 1px solid var(--gray-border);
       background: var(--gray-bg);
       outline: none;
@@ -86,24 +95,62 @@
       transition: var(--transition);
     }
 
-    .search-bar-top input:focus {
+    .search-bar-row input:focus {
       border-color: var(--black);
       background: var(--white);
       box-shadow: var(--shadow-sm);
     }
 
-    .search-bar-top button {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
+    .search-icon-btn {
+      width: 34px;
+      height: 34px;
       border: none;
       cursor: pointer;
-      font-weight: 700;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 13px;
-      letter-spacing: 0.5px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .search-text-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      color: #9ca3af;
+      z-index: 2;
+    }
+
+    .search-text-btn:hover {
       color: var(--black);
+    }
+
+    .search-image-btn {
+      position: absolute;
+      right: 46px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      color: #8f96a3;
+      border: 1px solid transparent;
+      z-index: 2;
+    }
+
+    .search-image-btn:hover {
+      color: var(--black);
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .search-image-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      min-height: 16px;
     }
 
     .user-actions {
@@ -116,6 +163,30 @@
     #authZone {
       display: flex;
       align-items: center;
+    }
+
+    #authZone .auth-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--black);
+      border: none;
+      background: transparent;
+      transition: var(--transition);
+      box-shadow: none;
+    }
+
+    #authZone .auth-icon-btn i {
+      font-size: 19px;
+    }
+
+    #authZone .auth-icon-btn:hover {
+      opacity: 0.7;
+      box-shadow: none;
     }
 
     #authZone a {
@@ -145,45 +216,59 @@
     .cart-btn-wrapper {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
       text-decoration: none;
-      color: var(--white) !important;
+      color: var(--black) !important;
       font-weight: 700;
       font-size: 13px;
-      background: var(--black);
-      padding: 10px 22px;
-      border-radius: 8px;
+      background: transparent;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 0;
       transition: var(--transition);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      position: relative;
     }
 
     .cart-btn-wrapper:hover {
-      background: #222222;
-      transform: translateY(-1px);
+      background: transparent;
+      opacity: 0.7;
     }
 
     .cart-icon-container {
       position: relative;
       display: flex;
       align-items: center;
+      justify-content: center;
+    }
+
+    .cart-icon-container i {
+      color: var(--black);
+      font-size: 19px !important;
+    }
+
+    .cart-icon-svg {
+      width: 28px;
+      height: 28px;
+      display: block;
+      color: var(--black);
     }
 
     .cart-badge {
       position: absolute;
-      top: -14px;
-      right: -14px;
+      top: -3px;
+      right: -3px;
       background: #ff4757;
       color: var(--white);
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
-      width: 18px;
-      height: 18px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--black);
+      border: 1.5px solid var(--white);
     }
 
     /* ===== DROPDOWN PROFILE ===== */
@@ -195,19 +280,19 @@
     .dropdown-trigger {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0;
       font-size: 14px;
       font-weight: 600;
       color: var(--black);
       cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 20px;
+      padding: 0;
+      border-radius: 0;
       transition: var(--transition);
       user-select: none;
     }
 
     .dropdown-trigger:hover {
-      background-color: var(--gray-bg);
+      background-color: transparent;
     }
 
     .dropdown-trigger .arrow-icon {
@@ -226,7 +311,7 @@
       right: 0;
       background: var(--white);
       min-width: 240px;
-      border-radius: 12px;
+      border-radius: 2px;
       border: 1px solid var(--gray-border);
       box-shadow: var(--shadow-md);
       padding: 12px 0;
@@ -321,6 +406,7 @@
       display: flex;
       align-items: center;
       background: var(--gray-bg);
+      /* background: #000000; */
     }
 
     .hero-container::before {
@@ -428,7 +514,7 @@
       font-weight: 700;
       font-size: 14px;
       display: inline-block;
-      border-radius: 8px;
+      border-radius: 2px;
       text-transform: uppercase;
       letter-spacing: 1px;
       transition: var(--transition);
@@ -492,26 +578,25 @@
       margin: 40px auto;
       padding: 0 40px;
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 260px minmax(0, 1fr);
       /* 2 cột trên máy tính */
-      gap: 40px;
+      gap: 32px;
     }
 
     /* ===== BỘ LỌC (SIDEBAR - THIẾT KẾ CÓ ĐIỂM NHẤN TRÊN PC) ===== */
     .sidebar {
-      position: static;
+      position: sticky;
+      top: 92px;
       width: 100%;
       height: auto;
-      background: #fdfdfd;
-      /* Màu nền trắng sáng nhẹ */
-      padding: 24px;
-      border-radius: 12px;
+      max-height: calc(100vh - 120px);
+      background: var(--white);
+      padding: 22px;
+      border-radius: 2px;
       border: 1px solid #eaeaea;
-      /* Viền mỏng nhạt màu tinh tế */
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-      /* Đổ bóng nhẹ tạo chiều sâu */
       z-index: 1;
-      overflow-y: visible;
+      overflow-y: auto;
     }
 
     .sidebar-header {
@@ -524,7 +609,7 @@
     }
 
     .sidebar-header h3 {
-      font-size: 21px;
+      font-size: 18px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: -0.5px;
@@ -558,7 +643,7 @@
     /* ===== ACCORDION BỘ LỌC ===== */
     .filter-accordion {
       border-top: 1px solid var(--gray-border);
-      padding: 18px 0;
+      padding: 14px 0;
     }
 
     .filter-accordion summary {
@@ -589,7 +674,7 @@
     }
 
     .filter-accordion .filter-body {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .price-display-wrapper {
@@ -623,7 +708,7 @@
       background: var(--black);
       color: var(--white);
       border: none;
-      border-radius: 8px;
+      border-radius: 2px;
       cursor: pointer;
       font-weight: 700;
       font-size: 13px;
@@ -670,7 +755,7 @@
       border: 1.5px solid var(--gray-border);
       background: var(--white);
       padding: 7px 14px;
-      border-radius: 6px;
+      border-radius: 2px;
       font-size: 12.5px;
       font-weight: 700;
       color: var(--black);
@@ -716,7 +801,7 @@
       border: 1px solid var(--gray-border);
       background: var(--white);
       padding: 10px 36px 10px 14px;
-      border-radius: 8px;
+      border-radius: 2px;
       font-size: 13px;
       font-weight: 600;
       color: var(--black);
@@ -737,7 +822,7 @@
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 40px 30px;
+      gap: 32px 24px;
     }
 
     .product-card {
@@ -755,7 +840,7 @@
     .img-box {
       position: relative;
       background: var(--gray-bg);
-      border-radius: 12px;
+      border-radius: 2px;
       aspect-ratio: 3 / 4;
       /* Chuyển từ 1:1 sang tỉ lệ vàng dọc 3:4 giúp ôm dáng giày dép, quần áo cực đẹp */
       display: flex;
@@ -838,7 +923,7 @@
       color: var(--white);
       border: none;
       text-align: center;
-      padding: 12px;
+      padding: 11px;
       font-size: 12.5px;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -877,7 +962,7 @@
       background: var(--white);
       width: 100%;
       max-width: 760px;
-      border-radius: 16px;
+      border-radius: 2px;
       padding: 40px;
       display: grid;
       grid-template-columns: 1fr 1.1fr;
@@ -911,7 +996,7 @@
 
     .modal-img-container {
       background: var(--gray-bg);
-      border-radius: 12px;
+      border-radius: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -959,7 +1044,7 @@
       padding: 8px 16px;
       border: 1px solid var(--gray-border);
       margin: 0 8px 8px 0;
-      border-radius: 6px;
+      border-radius: 2px;
       cursor: pointer;
       font-size: 13px;
       font-weight: 600;
@@ -992,7 +1077,7 @@
       color: var(--white);
       border: none;
       padding: 16px;
-      border-radius: 8px;
+      border-radius: 2px;
       font-weight: 700;
       font-size: 13px;
       margin-top: 20px;
@@ -1044,7 +1129,7 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 2px;
       transition: var(--transition);
     }
 
@@ -1100,7 +1185,7 @@
       max-height: calc(100vh - 140px);
       background: var(--white);
       border: 1px solid var(--gray-border);
-      border-radius: 16px;
+      border-radius: 2px;
       box-shadow: var(--shadow-md);
       z-index: 1000;
       display: none;
@@ -1160,7 +1245,7 @@
     .ai-msg {
       max-width: 85%;
       padding: 10px 14px;
-      border-radius: 12px;
+      border-radius: 2px;
       font-size: 13.5px;
       line-height: 1.5;
       white-space: pre-wrap;
@@ -1256,7 +1341,7 @@
     .footer-social a {
       width: 36px;
       height: 36px;
-      border-radius: 50%;
+      border-radius: 2px;
       border: 1px solid var(--gray-border);
       display: flex;
       align-items: center;
@@ -1319,7 +1404,7 @@
     .footer-pay span {
       border: 1px solid var(--gray-border);
       padding: 4px 10px;
-      border-radius: 4px;
+      border-radius: 2px;
       font-size: 10.5px;
       font-weight: 700;
       margin-left: 6px;
@@ -1356,7 +1441,7 @@
         border: 1px solid var(--gray-border);
         width: 42px;
         height: 42px;
-        border-radius: 8px;
+        border-radius: 2px;
         font-size: 18px;
         cursor: pointer;
         transition: var(--transition);
@@ -1387,6 +1472,7 @@
         border-radius: 0;
         /* Bỏ border-radius và shadow nhẹ của bản PC */
         box-shadow: var(--shadow-md);
+        max-height: none;
       }
 
       .sidebar.active {
@@ -1445,7 +1531,12 @@
       }
 
       .hero-container {
-        min-height: 450px;
+        min-height: 380px;
+      }
+
+      .hero-bg-slide img {
+        object-fit: cover;
+        object-position: right center;
       }
 
       .hero-text h1 {
@@ -1461,8 +1552,6 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 20px 15px;
       }
-
-      /* Modal Xem nhanh chuyển thành dạng 1 cột dọc */
       .modal-content {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1480,6 +1569,10 @@
       .footer-top {
         grid-template-columns: 1fr;
         padding: 40px 24px;
+      }
+
+      .hero-container {
+        min-height: 320px;
       }
 
       .pagination-container {
@@ -1505,16 +1598,18 @@
       }
 
       .cart-btn-wrapper {
-        padding: 8px 14px;
-        font-size: 11px;
+        width: 42px;
+        height: 42px;
+        border-radius: 2px;
       }
 
       .cart-badge {
         width: 16px;
         height: 16px;
         font-size: 9px;
-        top: -10px;
-        right: -10px;
+        top: -3px;
+        right: -3px;
+        border-radius: 10px;
       }
 
       .product-grid {
@@ -1550,19 +1645,36 @@
     <div class="header-inner">
       <a href="#" class="logo">SPORTIFY</a>
       <div class="search-bar-top">
-        <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm, thương hiệu...">
-        <button onclick="handleSearch()">TÌM KIẾM</button>
+        <div class="search-bar-row">
+          <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm, thương hiệu...">
+          <button type="button" class="search-image-btn" onclick="triggerImageSearch()" aria-label="Tìm bằng ảnh">
+            <i class="fa-solid fa-camera"></i>
+          </button>
+          <button type="button" class="search-icon-btn search-text-btn" onclick="handleSearch()" aria-label="Tìm kiếm">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <input type="file" id="imageSearchInput" accept="image/*" hidden onchange="handleImageSearchFile(event)">
+        <div class="search-image-note" id="imageSearchNote">Chọn ảnh sản phẩm để tìm mẫu tương tự.</div>
       </div>
       <div class="user-actions">
         <div id="authZone">
-          <a href="login.html">Đăng nhập</a>
+          <a href="login.html" class="auth-icon-btn" aria-label="Đăng nhập">
+            <i class="fa-regular fa-user"></i>
+          </a>
         </div>
         <a href="cart.html" class="cart-btn-wrapper">
           <div class="cart-icon-container">
-            <i class="fa-solid fa-bag-shopping" style="font-size: 15px;"></i>
+            <svg class="cart-icon-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <!-- Đã sửa stroke-width của 2 đường line chính từ 1.7 xuống 1.2 -->
+              <path d="M5 7h14l-1.2 9.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 7Z" stroke="currentColor" stroke-width="1.5"
+                stroke-linejoin="round" />
+              <path d="M9 7V5.8A2.8 2.8 0 0 1 11.8 3h.4A2.8 2.8 0 0 1 15 5.8V7" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" />
+              <path d="M9 11.2h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
             <span class="cart-badge" id="cart-count">0</span>
           </div>
-          <span style="margin-left: 4px;">Giỏ hàng</span>
         </a>
       </div>
     </div>
@@ -1648,7 +1760,8 @@
           <h3 id="collection-title"
             style="font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.5px; text-transform: uppercase;">
             SẢN PHẨM NỔI BẬT</h3>
-          <p id="result-count-text" style="margin-top: 4px; color: var(--text-muted); font-size: 13px; font-weight: 600;">
+          <p id="result-count-text"
+            style="margin-top: 4px; color: var(--text-muted); font-size: 13px; font-weight: 600;">
             Đang tải sản phẩm...</p>
         </div>
         <div class="sort-wrap">
@@ -1779,6 +1892,8 @@
     const defaultPageSize = 12;
     let currentSelectedBrandId = null;
     let currentSearchKeyword = null; // ✨ THÊM MỚI: Biến lưu từ khóa tìm kiếm toàn cục
+    let currentImageSearchActive = false;
+    let currentImageSearchLabel = '';
     let currentMaxPrice = null; // ✨ THÊM MỚI: Biến lưu giá trị lọc giá toàn cục
     let lastRenderedProducts = []; // ✨ THÊM MỚI: Cache danh sách sản phẩm đang hiển thị để sắp xếp client-side
 
@@ -1796,6 +1911,248 @@
         selectSearch(keyword, 0);
       } else {
         selectAll(null, 0); // Nếu để trống ô tìm kiếm thì quay lại hiện tất cả
+      }
+    }
+
+    function triggerImageSearch() {
+      const input = document.getElementById('imageSearchInput');
+      if (input) input.click();
+    }
+
+    function setImageSearchNote(message) {
+      const note = document.getElementById('imageSearchNote');
+      if (note) note.textContent = message;
+    }
+
+    function deactivateImageSearch() {
+      currentImageSearchActive = false;
+      currentImageSearchLabel = '';
+      setImageSearchNote('Chọn ảnh sản phẩm để tìm mẫu tương tự.');
+    }
+
+    function resetBrowsingStateForImageSearch() {
+      currentSearchKeyword = null;
+      currentSelectedBrandId = null;
+      advancedFilterActive = false;
+      currentMaxPrice = null;
+      selectedBrandIdFilter = null;
+      selectedSizeIds = new Set();
+      selectedColorIds = new Set();
+
+      const priceRangeInput = document.getElementById('priceRange');
+      if (priceRangeInput) {
+        priceRangeInput.value = priceRangeInput.max;
+        updatePriceDisplay(priceRangeInput.value);
+      }
+
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.value = '';
+
+      document.querySelectorAll('.brand-item').forEach(i => i.classList.remove('active'));
+      const firstBrandItem = document.querySelector('#brand-list .brand-item');
+      if (firstBrandItem) firstBrandItem.classList.add('active');
+
+      document.querySelectorAll('#sidebarBrandList input[type="checkbox"]').forEach(cb => cb.checked = false);
+      document.querySelectorAll('#sidebarSizeList .filter-chip, #sidebarColorList .filter-chip').forEach(chip => chip.classList.remove('selected'));
+      document.querySelectorAll('.filter-accordion').forEach(acc => acc.removeAttribute('open'));
+    }
+
+    function clearPaginationControls() {
+      const controlsContainer = document.getElementById('pagination-controls');
+      if (controlsContainer) controlsContainer.innerHTML = '';
+      const currentPageText = document.getElementById('current-page-text');
+      const totalPagesText = document.getElementById('total-pages-text');
+      if (currentPageText) currentPageText.innerText = '1';
+      if (totalPagesText) totalPagesText.innerText = '1';
+    }
+
+    function normalizeImageSearchProduct(item) {
+      const rawImages = item.images ?? item.imageUrls ?? item.imageUrl ?? item.thumbnail ?? item.image ?? item.productImages;
+      let images = [];
+      if (Array.isArray(rawImages)) {
+        images = rawImages.filter(Boolean);
+      } else if (typeof rawImages === 'string' && rawImages.trim() !== '') {
+        images = [rawImages.trim()];
+      } else if (rawImages && typeof rawImages === 'object' && rawImages.url) {
+        images = [rawImages.url];
+      }
+
+      const priceValue = Number(item.price ?? item.productPrice ?? item.salePrice ?? item.currentPrice ?? item.detailPrice ?? 0);
+      return {
+        ...item,
+        id: item.id ?? item.productId ?? item.productID ?? item.product?.id,
+        productName: item.productName ?? item.name ?? item.title ?? item.product?.productName ?? '',
+        brandName: item.brandName ?? item.brand?.brandName ?? item.product?.brandName ?? 'SPORTIFY',
+        price: Number.isFinite(priceValue) ? priceValue : 0,
+        images,
+        searchSource: 'image'
+      };
+    }
+
+    function extractProductArray(response) {
+      if (Array.isArray(response)) return response;
+
+      const candidates = [
+        response?.content,
+        response?.items,
+        response?.data,
+        response?.result,
+        response?.products,
+        response?.payload,
+        response?.data?.content,
+        response?.data?.items,
+        response?.data?.products
+      ];
+
+      for (const candidate of candidates) {
+        if (Array.isArray(candidate)) return candidate;
+      }
+
+      return [];
+    }
+
+    function extractLooseImageSearchProducts(rawText) {
+      if (typeof rawText !== 'string') return [];
+
+      const text = rawText.trim();
+      if (!text.startsWith('[')) return [];
+
+      const products = [];
+      let depth = 0;
+      let inString = false;
+      let escaped = false;
+      let objectStart = -1;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+
+        if (inString) {
+          if (escaped) {
+            escaped = false;
+          } else if (char === '\\') {
+            escaped = true;
+          } else if (char === '"') {
+            inString = false;
+          }
+          continue;
+        }
+
+        if (char === '"') {
+          inString = true;
+          continue;
+        }
+
+        if (char === '{') {
+          depth += 1;
+          if (depth === 1 && objectStart === -1) {
+            objectStart = index;
+          }
+          continue;
+        }
+
+        if (char === '}') {
+          if (depth === 1 && objectStart !== -1) {
+            const objectText = text.slice(objectStart, index + 1);
+            const idMatch = objectText.match(/"id"\s*:\s*(\d+)/);
+            if (idMatch) {
+              const productNameMatch = objectText.match(/"productName"\s*:\s*"([^"]*)"/);
+              const priceMatch = objectText.match(/"price"\s*:\s*([0-9.]+)/);
+              const brandNameMatch = objectText.match(/"brandName"\s*:\s*"([^"]*)"/);
+
+              products.push({
+                id: Number(idMatch[1]),
+                productName: productNameMatch ? productNameMatch[1] : '',
+                price: priceMatch ? Number(priceMatch[1]) : 0,
+                brandName: brandNameMatch ? brandNameMatch[1] : 'SPORTIFY',
+                images: [],
+                searchSource: 'image'
+              });
+            }
+
+            objectStart = -1;
+          }
+
+          depth = Math.max(depth - 1, 0);
+        }
+      }
+
+      return products;
+    }
+
+    async function enrichImageSearchResults(results) {
+      const normalized = results.map(normalizeImageSearchProduct);
+      const needsDetail = normalized.some(item => !item.productName || !item.images.length || !item.price);
+
+      if (!needsDetail) return normalized;
+
+      return Promise.all(normalized.map(async item => {
+        if (item.id == null || (!item.productName && !item.images.length && !item.price)) {
+          return item;
+        }
+
+        try {
+          const detail = await apiGet(`/products/${item.id}`);
+          const detailImages = Array.isArray(detail.images) ? detail.images : (detail.images ? [detail.images] : []);
+          return {
+            ...item,
+            ...detail,
+            id: detail.id ?? item.id,
+            productName: detail.productName ?? item.productName,
+            brandName: detail.brandName ?? item.brandName,
+            price: Number(detail.price ?? item.price ?? 0),
+            images: detailImages.length ? detailImages : item.images,
+            searchSource: 'image'
+          };
+        } catch (error) {
+          return item;
+        }
+      }));
+    }
+
+    async function handleImageSearchFile(event) {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+
+      resetBrowsingStateForImageSearch();
+      currentImageSearchActive = true;
+      currentImageSearchLabel = file.name;
+      setImageSearchNote(`Đang tìm với ảnh: ${file.name}`);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        Swal.fire({
+          title: 'Đang tìm kiếm bằng hình ảnh',
+          text: 'Hệ thống đang đối chiếu ảnh với danh mục sản phẩm.',
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => Swal.showLoading()
+        });
+
+        const rawResults = await apiPost(`/ai/image/search?limit=${defaultPageSize}`, formData);
+        const safeResults = extractProductArray(rawResults).length > 0
+          ? extractProductArray(rawResults)
+          : extractLooseImageSearchProducts(rawResults);
+        const products = await enrichImageSearchResults(safeResults);
+
+        lastRenderedProducts = products;
+        renderProducts(products);
+        updateResultCount(products.length, `Kết quả từ ảnh: ${currentImageSearchLabel}`);
+        clearPaginationControls();
+        setImageSearchNote(products.length > 0 ? `Đã tìm thấy ${products.length} sản phẩm phù hợp từ ảnh đã chọn.` : 'Không tìm thấy sản phẩm nào phù hợp từ ảnh đã chọn.');
+        Swal.close();
+      } catch (error) {
+        currentImageSearchActive = false;
+        currentImageSearchLabel = '';
+        setImageSearchNote('Không thể tìm kiếm bằng ảnh vào lúc này.');
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Không thể tìm kiếm bằng ảnh',
+          text: error?.message || 'Vui lòng thử lại sau.'
+        });
       }
     }
 
@@ -1879,10 +2236,13 @@
 
       // ✨ THÊM MỚI: Hiển thị thông báo nếu không tìm thấy kết quả phù hợp
       if (!products || products.length === 0) {
+        const emptyMessage = currentImageSearchActive
+          ? 'Không tìm thấy sản phẩm nào phù hợp với ảnh bạn đã chọn.'
+          : 'Không tìm thấy sản phẩm nào phù hợp yêu cầu.';
         container.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #6b7280;">
             <i class="fa-solid fa-magnifying-glass" style="font-size: 40px; margin-bottom: 15px; display:block; color: #ccc;"></i>
-            <span style="font-size: 15px; font-weight: 500;">Không tìm thấy sản phẩm nào phù hợp yêu cầu.</span>
+            <span style="font-size: 15px; font-weight: 500;">${emptyMessage}</span>
           </div>`;
         return;
       }
@@ -1974,7 +2334,7 @@
         if (v) {
           const isOutOfStock = v.stock <= 0;
           stockInfo.innerHTML = `
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${isOutOfStock ? '#ff4757' : '#27ae60'}"></div>
+            <div style="width: 8px; height: 8px; border-radius: 2px; background: ${isOutOfStock ? '#ff4757' : '#27ae60'}"></div>
             <span>${isOutOfStock ? 'Hết hàng trong kho' : `Còn lại: <b>${v.stock}</b> sản phẩm`}</span>
           `;
 
@@ -1982,7 +2342,7 @@
           addBtn.innerText = isOutOfStock ? "HẾT HÀNG" : "XÁC NHẬN THÊM";
         } else {
           stockInfo.innerHTML = `
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: #ff4757"></div>
+            <div style="width: 8px; height: 8px; border-radius: 2px; background: #ff4757"></div>
             <span>Mẫu này không có sẵn</span>
           `;
           addBtn.disabled = true;
@@ -1990,7 +2350,7 @@
         }
       } else {
         stockInfo.innerHTML = `
-          <div style="width: 8px; height: 8px; border-radius: 50%; background: #ccc"></div>
+          <div style="width: 8px; height: 8px; border-radius: 2px; background: #ccc"></div>
           <span style="color: #666;">Vui lòng chọn Màu và Size để xem số lượng</span>
         `;
       }
@@ -2019,6 +2379,7 @@
     function updatePriceDisplay(val) { document.getElementById('priceValue').innerText = parseInt(val).toLocaleString('vi-VN') + 'đ'; }
 
     async function selectBrand(el, id, pageIndex = 0) {
+      deactivateImageSearch();
       currentSearchKeyword = null; // ✨ THÊM MỚI: Reset từ khóa tìm kiếm khi xem theo hãng
       advancedFilterActive = false; // ✨ THÊM MỚI: Thoát chế độ lọc nâng cao khi chọn brand trên thanh ngang
       if (el) {
@@ -2028,7 +2389,7 @@
       currentSelectedBrandId = id;
       currentPageIndex = pageIndex;
       const response = await apiGet(`/products/brandPaged/${id}?page=${pageIndex}&size=${defaultPageSize}`);
-      const productsArray = response.content || [];
+      const productsArray = extractProductArray(response);
       const totalPages = response.totalPages || 1;
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
@@ -2038,6 +2399,7 @@
     }
 
     async function selectAll(el, pageIndex = 0) {
+      deactivateImageSearch();
       currentSearchKeyword = null; // Reset từ khóa tìm kiếm khi dùng bộ lọc mặc định/giá
       advancedFilterActive = false; // ✨ THÊM MỚI: Thoát chế độ lọc nâng cao khi xem "TẤT CẢ"
       if (el) {
@@ -2054,7 +2416,7 @@
       }
 
       const response = await apiGet(url);
-      const productsArray = response.content || [];
+      const productsArray = extractProductArray(response);
       const totalPages = response.totalPages || 1;
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
@@ -2065,6 +2427,7 @@
 
     // ✨ THÊM MỚI: Hàm xử lý gọi API Tìm kiếm đồng bộ cấu trúc phân trang Page<ProductResponse> từ Backend
     async function selectSearch(keyword, pageIndex = 0) {
+      deactivateImageSearch();
       advancedFilterActive = false; // ✨ THÊM MỚI: Thoát chế độ lọc nâng cao khi tìm kiếm
       document.querySelectorAll('.brand-item').forEach(i => i.classList.remove('active'));
       currentSelectedBrandId = null;
@@ -2074,7 +2437,7 @@
       // Gọi API gửi lên đúng cấu trúc parameter: keywords, page, size
       const response = await apiGet(`/products/search?keywords=${encodeURIComponent(keyword)}&page=${pageIndex}&size=${defaultPageSize}`);
 
-      const productsArray = response.content || [];
+      const productsArray = extractProductArray(response);
       const totalPages = response.totalPages || 1;
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
 
@@ -2086,6 +2449,7 @@
 
     // ✨ THÊM MỚI: Gọi API /products kèm đầy đủ bộ lọc nâng cao (giá, thương hiệu, kích cỡ, màu sắc) cùng lúc
     async function fetchFilteredProducts(pageIndex = 0) {
+      deactivateImageSearch();
       advancedFilterActive = true;
       currentSearchKeyword = null;
       currentSelectedBrandId = null;
@@ -2099,7 +2463,7 @@
       if (selectedSizeIds.size > 0) url += `&sizeIds=${[...selectedSizeIds].join(',')}`;
 
       const response = await apiGet(url);
-      const productsArray = response.content || [];
+      const productsArray = extractProductArray(response);
       const totalPages = response.totalPages || 1;
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray;
@@ -2164,9 +2528,9 @@
         authZone.innerHTML = `
     <div class="profile-dropdown">
       <div class="dropdown-trigger" id="dropdownTrigger">
-        <i class="fa-solid fa-circle-user"></i>
-        <span>Hi, ${storedName}</span>
-        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+        <a href="#" class="auth-icon-btn" aria-label="Tài khoản">
+          <i class="fa-regular fa-user"></i>
+        </a>
       </div>
       <div class="dropdown-menu" id="dropdownMenu">
         <div class="user-info-header">
@@ -2215,8 +2579,8 @@
       } else {
         // Giữ nguyên phần render Đăng nhập mặc định của bạn
         authZone.innerHTML = `
-    <a href="login.html" style="color: var(--black); font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-      <i class="fa-solid fa-user"></i> Đăng nhập
+    <a href="login.html" class="auth-icon-btn" aria-label="Đăng nhập">
+      <i class="fa-regular fa-user"></i>
     </a>
   `;
       }
@@ -2258,10 +2622,10 @@
     // ✨ THÊM MỚI: Hero banner tự động trượt ảnh sang trái để đổi ảnh mới
     function initHeroSlider() {
       const heroImages = [
-        'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=2069&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=2070&auto=format&fit=crop'
+        'https://res.cloudinary.com/l3chl8tz/image/upload/v1784479368/b2_gmktqm.png',
+        'https://res.cloudinary.com/l3chl8tz/image/upload/v1784479811/b3_jnykdl.png',
+        'https://res.cloudinary.com/l3chl8tz/image/upload/v1784480275/b4_ave6se.png',
+        'https://res.cloudinary.com/l3chl8tz/image/upload/v1784480702/b5_sfbyuf.png'
       ];
 
       const track = document.getElementById('heroBgTrack');

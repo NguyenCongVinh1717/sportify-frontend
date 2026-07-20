@@ -12,16 +12,13 @@
   <style>
     :root {
       --white: #ffffff;
-      --gray-bg: #f8f9fa;
-      --gray-border: #e5e7eb;
+      --gray-bg: #fafafa;
+      --gray-border: #dddddd;
       --black: #111111;
-      --text-muted: #6b7280;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.04);
-      --radius: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --error: #e11d48;
-      --success: #16a34a;
+      --text-muted: #666666;
+      --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.02);
+      --error: #d93025;
+      --success: #0f9d58;
     }
 
     * {
@@ -66,26 +63,10 @@
       text-decoration: none;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      background: var(--black);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-logo i {
-      color: var(--white);
-      font-size: 18px;
-    }
-
     .brand-title {
       font-size: 24px;
       font-weight: 900;
-      font-style: italic;
-      letter-spacing: -1px;
+      letter-spacing: 0px;
       color: var(--black);
       margin-left: 12px;
       text-transform: uppercase;
@@ -96,7 +77,7 @@
       font-size: 14px;
       font-weight: 600;
       text-decoration: none;
-      transition: var(--transition);
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -120,26 +101,28 @@
       background: var(--white);
       width: 100%;
       max-width: 460px;
-      padding: 50px 40px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-premium);
+      padding: 45px 45px;
+      border-radius: 4px;
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--gray-border);
     }
 
     .auth-header h2 {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
+      color: var(--black);
+      margin-bottom: 25px;
+      letter-spacing: 0.5px;
       text-align: center;
       text-transform: uppercase;
     }
+
     .msg {
       font-size: 13px;
       font-weight: 600;
       margin-bottom: 20px;
       text-align: center;
+      line-height: 1.4;
     }
 
     .msg.error-msg {
@@ -152,7 +135,7 @@
 
     .form-group {
       text-align: left;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
 
     .form-group label {
@@ -160,50 +143,47 @@
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       margin-bottom: 8px;
       color: var(--black);
     }
 
     .form-group input {
       width: 100%;
-      padding: 13px 18px;
-      border-radius: 8px;
+      padding: 12px 15px;
+      border-radius: 4px;
       border: 1px solid var(--gray-border);
-      background: var(--gray-bg);
+      background: var(--white);
       font-size: 14px;
       font-weight: 500;
-      transition: var(--transition);
+      transition: border-color 0.15s ease;
       outline: none;
       color: var(--black);
     }
 
     .form-group input:focus {
       border-color: var(--black);
-      background: var(--white);
-      box-shadow: var(--shadow-sm);
     }
 
     .btn-submit {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       margin-top: 10px;
-      border: none;
-      border-radius: 8px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
       background: var(--black);
       color: var(--white);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: var(--transition);
+      letter-spacing: 1px;
+      transition: all 0.15s ease;
     }
 
     .btn-submit:hover {
       background: #222222;
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border-color: #222222;
     }
 
     /* Container căn giữa nút Google tự động chuẩn */
@@ -215,7 +195,7 @@
 
     .auth-footer {
       margin-top: 25px;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-muted);
       font-weight: 500;
       text-align: center;
@@ -225,14 +205,11 @@
       color: var(--black);
       font-weight: 700;
       text-decoration: none;
-      border-bottom: 1px solid var(--black);
-      padding-bottom: 1px;
-      transition: var(--transition);
+      transition: all 0.15s ease;
     }
 
     .auth-footer a:hover {
-      color: var(--text-muted);
-      border-color: var(--text-muted);
+      text-decoration: underline;
     }
 
     .footer {
@@ -250,6 +227,15 @@
       letter-spacing: 0.5px;
     }
 
+    @media (max-width: 768px) {
+      .topbar-inner {
+        padding: 0 24px;
+      }
+      .auth-container {
+        padding: 40px 16px;
+      }
+    }
+
     @media (max-width: 480px) {
       .topbar-inner {
         padding: 0 20px;
@@ -260,21 +246,14 @@
       }
 
       .auth-card {
-        padding: 40px 24px;
+        padding: 35px 25px;
+        border: none;
+        box-shadow: none;
+        background: transparent;
       }
 
       .auth-header h2 {
         font-size: 24px;
-      }
-    }
-
-    /* ----- THÊM BỔ SUNG RESPONSIVE MÀN HÌNH MÁY TÍNH BẢNG & DI ĐỘNG ----- */
-    @media (max-width: 768px) {
-      .topbar-inner {
-        padding: 0 24px;
-      }
-      .auth-container {
-        padding: 40px 16px;
       }
     }
 
@@ -298,9 +277,6 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="products.html" class="brand-wrapper">
-        <div class="brand-logo">
-          <i class="fa-solid fa-bolt-lightning"></i>
-        </div>
         <div class="brand-title">SPORTIFY</div>
       </a>
       <div class="auth-links">
@@ -313,7 +289,6 @@
     <div class="auth-card">
       <div class="auth-header">
         <h2>Tạo tài khoản</h2>
-        <!-- <p>Tham gia cộng đồng Sportify để nhận những đặc quyền và bộ sưu tập thể thao mới nhất.</p> -->
       </div>
 
       <div id="msg" class="msg"></div>
@@ -343,15 +318,15 @@
           <button type="submit" class="btn-submit">Đăng ký ngay</button>
 
           <div
-            style="display: flex; align-items: center; margin: 20px 0; color: var(--text-muted); font-size: 13px; font-weight: 600;">
-            <div style="flex: 1; height: 1px; background: var(--gray-border);"></div>
-            <span style="padding: 0 10px; text-transform: uppercase;">Hoặc</span>
-            <div style="flex: 1; height: 1px; background: var(--gray-border);"></div>
+            style="display: flex; align-items: center; margin: 25px 0 20px 0; color: #eeeeee; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+            <div style="flex: 1; height: 1px; background: #eeeeee;"></div>
+            <span style="padding: 0 15px; color: #999999;">Hoặc</span>
+            <div style="flex: 1; height: 1px; background: #eeeeee;"></div>
           </div>
 
           <div class="google-btn-container">
             <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-              data-text="signup_with" data-size="large" data-logo_alignment="left" data-width="380">
+              data-text="signup_with" data-size="large" data-logo_alignment="left" data-width="370">
             </div>
           </div>
         </form>
@@ -426,7 +401,7 @@
       } catch (err) {
         msg.textContent = err.message || 'Không thể gửi lại mã!';
         msg.className = 'msg error-msg';
-        msg.style.color = '#e11d48';
+        msg.style.color = 'var(--error)';
       }
     }
 
@@ -539,27 +514,24 @@
             } catch (err) {
               msg.textContent = err.message || 'Mã OTP không chính xác!';
               msg.className = 'msg error-msg';
-              msg.style.color = '#e11d48';
+              msg.style.color = 'var(--error)';
             }
           });
         } catch (err) {
           console.error("Lỗi chi tiết từ Backend gửi về:", err);
           msg.className = 'msg error-msg';
-          msg.style.color = '#e11d48';
+          msg.style.color = 'var(--error)';
 
           if (err && typeof err === 'object' && !err.message) {
             const firstErrorKey = Object.keys(err)[0];
             if (firstErrorKey) {
               msg.textContent = err[firstErrorKey];
-              msg.style.color = '#e11d48';
             } else {
               msg.textContent = 'Dữ liệu nhập vào không hợp lệ!';
-              msg.style.color = '#e11d48';
             }
           }
           else {
             msg.textContent = err.message || 'Đăng ký thất bại! Vui lòng kiểm tra lại.';
-            msg.style.color = '#e11d48';
           }
         }
       });
@@ -577,7 +549,7 @@
       } catch (err) {
         msg.textContent = 'Đăng nhập thông qua Google thất bại!';
         msg.className = 'msg error-msg';
-        msg.style.color = '#e11d48';
+        msg.style.color = 'var(--error)';
       }
     }
   </script>

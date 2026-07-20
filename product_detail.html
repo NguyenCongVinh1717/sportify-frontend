@@ -12,17 +12,17 @@
   <style>
     :root {
       --white: #ffffff;
-      --gray-bg: #f8f9fa;
-      --gray-border: #e5e7eb;
-      --black: #111111;
-      --text-muted: #6b7280;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.04);
-      --radius: 8px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --success: #10b981;
-      --danger: #ef4444;
-      --star-color: #ffbe0b;
+      --gray-bg: #fcfcfc;
+      --gray-border: #e0e0e0;
+      --black: #000000;
+      --text-muted: #707070;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.02);
+      --shadow-premium: none;
+      --radius: 4px;
+      --transition: all 0.2s ease-in-out;
+      --success: #2ecc71; /* Chấm xanh lá khi còn hàng */
+      --danger: #e74c3c;  /* Màu đỏ tươi hơn cho nút xóa, hủy, hết hàng */
+      --star-color: #f1c40f; /* Ngôi sao chuyển sang màu vàng tươi */
     }
 
     * {
@@ -44,16 +44,15 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid var(--gray-border);
-      padding: 16px 0;
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid var(--black);
+      padding: 14px 0;
     }
 
     .topbar-inner {
-      max-width: 1440px;
+      max-width: 1300px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -65,43 +64,28 @@
       text-decoration: none;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      background: var(--black);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-logo i {
-      color: var(--white);
-      font-size: 18px;
-    }
-
     .brand-title {
       font-size: 24px;
       font-weight: 900;
-      font-style: italic;
-      letter-spacing: -1px;
+      font-style: normal; /* Bỏ in nghiêng chữ SPORTIFY */
+      letter-spacing: 0px;
       color: var(--black);
-      margin-left: 12px;
       text-transform: uppercase;
     }
 
     .cart-btn-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       text-decoration: none;
       color: var(--black);
       font-weight: 700;
-      font-size: 13px;
-      background: var(--gray-bg);
-      padding: 10px 20px;
-      border-radius: 50px;
-      border: 1px solid var(--gray-border);
+      font-size: 12px;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--black);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       transition: var(--transition);
@@ -110,24 +94,22 @@
     .cart-btn-wrapper:hover {
       background: var(--black);
       color: var(--white);
-      border-color: var(--black);
     }
 
     .cart-icon-container {
-      position: relative;
       display: flex;
       align-items: center;
     }
 
     .cart-icon-container i {
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .cart-badge {
       position: absolute;
-      top: -12px;
-      right: -12px;
-      background: var(--black);
+      top: -6px;
+      right: -8px;
+      background: var(--danger); /* Số lượng giỏ hàng đổi sang màu đỏ */
       color: var(--white);
       font-size: 10px;
       font-weight: 800;
@@ -137,27 +119,32 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--white);
     }
 
     .cart-btn-wrapper:hover .cart-badge {
-      background: var(--white);
-      color: var(--black);
+      background: var(--danger);
+      color: var(--white);
     }
 
     /* ===== LAYOUT CHI TIẾT SẢN PHẨM ===== */
+    .product-box-wrapper {
+      max-width: 1300px;
+      margin: 40px auto 30px;
+      padding: 0 24px;
+    }
+
     .main-detail {
-      max-width: 1440px;
-      margin: 50px auto 30px;
-      padding: 0 40px;
+      border: 1px solid var(--gray-border);
+      padding: 30px;
+      background: var(--white);
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 80px;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 50px;
+      border-radius: var(--radius);
     }
 
     .gallery-container {
-      position: sticky;
-      top: 120px;
+      position: relative; /* Bỏ tính chất sticky để ảnh cuộn theo văn bản khi kéo trang */
       height: fit-content;
     }
 
@@ -165,36 +152,32 @@
       background: var(--gray-bg);
       border-radius: var(--radius);
       overflow: hidden;
-      /* Bỏ aspect-ratio: 3/4 hoặc 1/1 cố định */
       width: 100%;
       height: auto;
-      /* Để chiều cao tự động co giãn theo ảnh */
-      min-height: 300px;
-      /* Giới hạn chiều cao tối thiểu để khung không bị sụp khi chưa có ảnh */
+      min-height: 260px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
       border: 1px solid var(--gray-border);
     }
 
     .main-img-view img {
       width: 100%;
       height: 100%;
+      max-height: 450px;
       object-fit: contain;
-      /* Giúp ảnh hiển thị trọn vẹn */
       display: block;
     }
 
     .thumbnail-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+      gap: 10px;
     }
 
     .thumb-item {
-      /* Bỏ aspect-ratio cố định */
-      border-radius: 6px;
+      border-radius: var(--radius);
       background: var(--gray-bg);
       cursor: pointer;
       border: 1px solid var(--gray-border);
@@ -209,7 +192,6 @@
     .thumb-item img {
       width: 100%;
       height: auto;
-      /* Để ảnh nhỏ tự co giãn theo tỉ lệ thực tế */
       object-fit: contain;
       display: block;
     }
@@ -219,99 +201,87 @@
       border-color: var(--black);
     }
 
-    .thumb-item.active {
-      box-shadow: var(--shadow-sm);
-    }
-
-    /* Mặc định trên Điện thoại/Tablet (thiết bị cảm ứng): Nút luôn hiện để chạm */
     .nav-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.85);
-      /* Tăng độ đậm nền một chút trên điện thoại cho dễ nhìn */
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--black);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 10;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-      /* Mặc định luôn hiện */
       opacity: 1;
       visibility: visible;
       transition: all 0.2s ease;
     }
 
-    .prev-btn {
-      left: 15px;
-    }
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
 
-    .next-btn {
-      right: 15px;
-    }
-
-    /* CHỈ ÁP DỤNG ẨN/HOVER TRÊN MÁY TÍNH (thiết bị dùng chuột) */
     @media (hover: hover) {
       .nav-btn {
         opacity: 0;
         visibility: hidden;
       }
-
       .main-img-view:hover .nav-btn {
         opacity: 1;
         visibility: visible;
       }
-
       .nav-btn:hover {
-        background: var(--black, #000);
-        color: #fff;
+        background: var(--black);
+        color: var(--white);
       }
     }
 
+    .info-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
     .brand-label {
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
       color: var(--text-muted);
-      font-size: 12px;
-      letter-spacing: 2px;
+      font-size: 11px;
+      letter-spacing: 1.5px;
       display: inline-block;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .p-name {
-      font-size: 36px;
+      font-size: 26px;
       font-weight: 800;
-      line-height: 1.2;
-      margin: 5px 0 15px;
+      line-height: 1.3;
+      margin: 4px 0 10px;
       color: var(--black);
       letter-spacing: -0.5px;
     }
 
     .p-price {
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 35px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 24px;
       color: var(--black);
       border-bottom: 1px solid var(--gray-border);
-      padding-bottom: 20px;
+      padding-bottom: 14px;
     }
 
     .variant-selector {
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
 
     .variant-title {
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: block;
       color: var(--black);
       letter-spacing: 0.5px;
@@ -320,20 +290,20 @@
     .options-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .option-btn {
-      padding: 12px 22px;
+      padding: 10px 18px;
       border: 1px solid var(--gray-border);
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       background: var(--white);
       color: var(--black);
-      min-width: 65px;
+      min-width: 55px;
       text-transform: uppercase;
     }
 
@@ -349,12 +319,12 @@
     }
 
     .stock-status {
-      font-size: 13px;
-      margin: 25px 0;
-      font-weight: 700;
+      font-size: 12px;
+      margin: 20px 0;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -363,7 +333,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #d1d5db;
+      background: #aaa;
     }
 
     .btn-add-cart {
@@ -371,9 +341,9 @@
       background: var(--black);
       color: var(--white);
       border: none;
-      padding: 18px;
+      padding: 14px;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       border-radius: var(--radius);
       cursor: pointer;
       text-transform: uppercase;
@@ -383,8 +353,6 @@
 
     .btn-add-cart:hover:not(:disabled) {
       background: #222222;
-      transform: translateY(-1px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     }
 
     .btn-add-cart:disabled {
@@ -395,9 +363,9 @@
 
     .error-msg {
       color: var(--danger);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       display: none;
       align-items: center;
       gap: 6px;
@@ -405,9 +373,9 @@
 
     /* ===== KHU VỰC SẢN PHẨM LIÊN QUAN ===== */
     .related-section {
-      max-width: 1440px;
-      margin: 40px auto 10px;
-      padding: 40px 40px 0;
+      max-width: 1300px;
+      margin: 30px auto 10px;
+      padding: 30px 24px 0;
       border-top: 1px solid var(--gray-border);
     }
 
@@ -415,19 +383,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     .related-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: 20px;
     }
 
     .related-card {
       border: 1px solid var(--gray-border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 14px;
       background: var(--white);
       text-decoration: none;
       color: var(--black);
@@ -437,74 +405,67 @@
     }
 
     .related-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
       border-color: var(--black);
     }
 
     .related-img-wrapper {
       background: var(--gray-bg);
-      border-radius: 6px;
+      border-radius: var(--radius);
       aspect-ratio: 3 / 4;
-      /* Đổi từ 1/1 sang tỉ lệ dọc 3:4 */
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .related-img-wrapper img {
       width: 100%;
-      /* Đổi từ 85% lên 100% */
       height: 100%;
-      /* Đổi từ 85% lên 100% */
       object-fit: cover;
-      /* Đổi từ contain sang cover để tràn viền hoàn toàn */
       object-position: center;
       transition: var(--transition);
     }
 
     .related-card:hover .related-img-wrapper img {
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
 
     .related-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      height: 44px;
-      line-height: 1.5;
+      height: 38px;
+      line-height: 1.4;
     }
 
     .related-price {
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--black);
       margin-top: auto;
     }
 
-    /* ĐỊNH DẠNG HÀNG NÚT ĐIỀU KHIỂN PHÂN TRANG */
     .view-more-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 15px;
-      margin-top: 35px;
+      gap: 12px;
+      margin-top: 30px;
     }
 
     .btn-view-more-related {
       background: transparent;
       color: var(--black);
       border: 1px solid var(--black);
-      padding: 12px 30px;
-      font-size: 13px;
+      padding: 10px 24px;
+      font-size: 12px;
       font-weight: 700;
-      border-radius: 50px;
+      border-radius: var(--radius);
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -518,12 +479,12 @@
 
     .btn-collapse-related {
       background: transparent;
-      color: var(--danger);
+      color: var(--danger); /* Đổi nút thu gọn sang màu đỏ tươi */
       border: 1px solid var(--danger);
-      padding: 12px 30px;
-      font-size: 13px;
+      padding: 10px 24px;
+      font-size: 12px;
       font-weight: 700;
-      border-radius: 50px;
+      border-radius: var(--radius);
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -537,29 +498,29 @@
 
     /* ===== KHU VỰC BÌNH LUẬN (COMMENT SECTION) ===== */
     .comment-section-container {
-      max-width: 1440px;
-      margin: 0 auto 100px;
-      padding: 40px 40px 0;
+      max-width: 1300px;
+      margin: 0 auto 80px;
+      padding: 30px 24px 0;
       border-top: 1px solid var(--gray-border);
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 80px;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 50px;
     }
 
     .comment-header-title {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: -0.5px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .comment-form {
       background: var(--gray-bg);
-      padding: 30px;
+      padding: 24px;
       border-radius: var(--radius);
       border: 1px solid var(--gray-border);
       height: fit-content;
@@ -567,12 +528,12 @@
 
     .star-rating-picker {
       display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
+      gap: 6px;
+      margin-bottom: 12px;
     }
 
     .star-rating-picker i {
-      font-size: 20px;
+      font-size: 18px;
       color: #ddd;
       cursor: pointer;
       transition: var(--transition);
@@ -584,16 +545,16 @@
     }
 
     .comment-textarea-wrapper {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .comment-textarea-wrapper textarea {
       width: 100%;
-      height: 120px;
-      padding: 15px;
+      height: 100px;
+      padding: 12px;
       border: 1px solid var(--gray-border);
-      border-radius: 6px;
-      font-size: 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
       font-weight: 500;
       resize: none;
       outline: none;
@@ -608,9 +569,9 @@
       background: var(--black);
       color: var(--white);
       border: none;
-      padding: 12px 28px;
+      padding: 10px 24px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       border-radius: var(--radius);
       cursor: pointer;
       text-transform: uppercase;
@@ -625,11 +586,11 @@
     .comment-display-list {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     .comment-card-item {
-      padding-bottom: 20px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--gray-border);
     }
 
@@ -641,21 +602,21 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .comment-user-name {
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .comment-stars-view i {
-      font-size: 12px;
+      font-size: 11px;
       margin-left: 1px;
     }
 
     .comment-stars-view i.fa-solid {
-      color: var(--star-color);
+      color: var(--star-color); /* Ngôi sao vàng hiển thị bình luận cũ */
     }
 
     .comment-stars-view i.fa-regular {
@@ -663,8 +624,8 @@
     }
 
     .comment-text-content {
-      color: #333333;
-      font-size: 14px;
+      color: #222222;
+      font-size: 13px;
       font-weight: 500;
       word-wrap: break-word;
     }
@@ -672,38 +633,23 @@
     @media (max-width: 1024px) {
       .main-detail {
         grid-template-columns: 1fr;
-        gap: 40px;
-        padding: 0 20px;
-        margin-bottom: 20px;
-      }
-
-      .related-section {
-        padding: 20px 20px 0;
+        gap: 30px;
+        padding: 20px;
       }
 
       .related-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        gap: 14px;
       }
 
       .comment-section-container {
         grid-template-columns: 1fr;
-        gap: 40px;
-        padding: 20px 20px 0;
-        margin-bottom: 60px;
-      }
-
-      .topbar-inner {
-        padding: 0 20px;
-      }
-
-      .gallery-container {
-        position: relative;
-        top: 0;
+        gap: 30px;
+        padding: 20px 24px 0;
       }
 
       .p-name {
-        font-size: 30px;
+        font-size: 24px;
       }
     }
   </style>
@@ -714,10 +660,8 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="products.html" class="brand-wrapper">
-        <div class="brand-logo">
-          <i class="fa-solid fa-bolt-lightning"></i>
-        </div>
-        <div class="brand-title">SPORTIFY</div>
+        <!-- Bỏ logo sấm sét hoàn toàn -->
+        <div class="brand-title">SPORTIFY</div> 
       </a>
       <a href="cart.html" class="cart-btn-wrapper">
         <div class="cart-icon-container">
@@ -729,28 +673,26 @@
     </div>
   </header>
 
-  <main class="main-detail" id="product-content">
-    <div style="padding: 100px 0; text-align: center; grid-column: 1/-1; color: var(--text-muted); font-weight: 500;">
-      <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản
-      phẩm...
-    </div>
-  </main>
+  <div class="product-box-wrapper">
+    <main class="main-detail" id="product-content">
+      <div style="padding: 100px 0; text-align: center; grid-column: 1/-1; color: var(--text-muted); font-weight: 500;">
+        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản phẩm...
+      </div>
+    </main>
+  </div>
 
   <section class="related-section">
     <div class="related-header-wrapper">
-      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên
-        quan</h3>
+      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên quan</h3>
     </div>
 
     <div class="related-grid" id="related-list-target"></div>
 
     <div class="view-more-container">
-      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()"
-        style="display: none;">
+      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()" style="display: none;">
         Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
-      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()"
-        style="display: none;">
+      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()" style="display: none;">
         Thu gọn <i class="fa-solid fa-chevron-up" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
     </div>
@@ -767,7 +709,7 @@
     <div>
       <h3 class="comment-header-title"><i class="fa-regular fa-pen-to-square"></i> Viết đánh giá của bạn</h3>
       <div class="comment-form">
-        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 8px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
+        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 4px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
           <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
           <span>Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.</span>
           <div style="margin-top: 10px;">
@@ -803,7 +745,6 @@
     let globalCartCount = 0;
     let currentSelectedRating = 5;
 
-    // Biến quản lý phân trang sản phẩm liên quan
     let currentRelatedPage = 0;
     const RELATED_PAGE_SIZE = 4;
 
@@ -888,7 +829,6 @@
         await loadCommentsUI();
         updateReviewFormState();
 
-        // Tạo hiệu ứng loading cho sản phẩm liên quan ban đầu
         document.getElementById('related-list-target').innerHTML = `
           <div id="related-loading-spinner" style="padding: 30px 0; text-align: center; color: var(--text-muted); grid-column: 1/-1;">
             <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Đang tải sản phẩm liên quan...
@@ -932,14 +872,9 @@
       const container = document.getElementById('product-content');
       container.innerHTML = `
     <div class="gallery-container">
-      <!-- Thêm style position: relative trực tiếp vào đây hoặc viết trong CSS -->
       <div class="main-img-view" style="position: relative;">
-        <!-- NÚT CHUYỂN ẢNH TRÁI -->
         <button class="nav-btn prev-btn" onclick="navigateImg(-1)">&#10094;</button>
-        
         <img src="${mainImgSrc}" id="mainImg" ${mainImgFallback ? `onerror="this.onerror=null; this.src='${mainImgFallback}'"` : ''}>
-        
-        <!-- NÚT CHUYỂN ẢNH PHẢI -->
         <button class="nav-btn next-btn" onclick="navigateImg(1)">&#10095;</button>
       </div>
       
@@ -1012,8 +947,6 @@
 
       const nextThumb = thumbs[nextIndex];
       const nextImgSrc = nextThumb.querySelector('img').src;
-
-      // Gọi trực tiếp hàm switchImg gọn của bạn bằng cách truyền phần tử DOM (nextThumb) và link ảnh
       switchImg(nextThumb, nextImgSrc);
     }
 
@@ -1042,6 +975,7 @@
 
         if (v) {
           const isOutOfStock = v.stock <= 0;
+          /* Sửa đổi màu sắc chấm tình trạng: Xanh lá khi còn hàng, đỏ tươi khi hết hàng */
           stockInfo.innerHTML = `
             <div class="dot" style="background: ${isOutOfStock ? 'var(--danger)' : 'var(--success)'}"></div> 
             ${isOutOfStock ? 'Hết hàng' : `Tình trạng: Còn lại ${v.stock} sản phẩm`}`;
@@ -1083,10 +1017,6 @@
       localStorage.setItem('vinh_cart_count', count);
     }
 
-    /* =========================================================
-       ✨ LOGIC XỬ LÝ BÌNH LUẬN VÀ ĐÁNH GIÁ (COMMENTS JAVASCRIPT)
-       ========================================================= */
-
     function handleStarSelect(score) {
       if (!isUserLoggedIn()) {
         requireLoginForReview();
@@ -1117,7 +1047,6 @@
         });
 
         let response = await fetchComments(true);
-
         let comments = [];
         if (response.ok) {
           const data = await response.json();
@@ -1152,9 +1081,9 @@
           }
 
           const isOwner = isOwnComment(c);
-
           let actionButtonsHtml = '';
           if (isOwner) {
+            /* Sửa icon thùng rác thành màu đỏ tươi var(--danger) */
             actionButtonsHtml = `
           <i class="fa-solid fa-pen-to-square" onclick="toggleEditRow(${c.id})" style="color: var(--text-muted); cursor: pointer; font-size: 13px; margin-left: 15px;" title="Sửa bình luận"></i>
           <i class="fa-solid fa-trash-can" onclick="removeComment(${c.id})" style="color: var(--danger); cursor: pointer; font-size: 13px; margin-left: 10px;" title="Xóa bình luận"></i>
@@ -1185,7 +1114,7 @@
                    style="font-size: 16px; color: ${star <= Number(c.rating || 0) ? 'var(--star-color)' : '#ddd'}"></i>
               `).join('')}
             </div>
-            <textarea id="edit-input-${c.id}" style="width:100%; height:70px; padding:10px; border:1px solid var(--gray-border); border-radius:6px; font-size:14px; resize:none; outline:none; font-weight:500; margin-bottom:8px;">${safeContent}</textarea>
+            <textarea id="edit-input-${c.id}" style="width:100%; height:70px; padding:10px; border:1px solid var(--gray-border); border-radius:4px; font-size:14px; resize:none; outline:none; font-weight:500; margin-bottom:8px;">${safeContent}</textarea>
             <div style="display: flex; gap: 8px;">
               <button class="btn-submit-comment" onclick="saveUpdatedComment(${c.id})" style="padding: 6px 15px; font-size: 12px;">Lưu</button>
               <button class="btn-submit-comment" onclick="toggleEditRow(${c.id})" style="padding: 6px 15px; font-size: 12px; background: #6b7280;">Hủy</button>
@@ -1315,8 +1244,8 @@
         text: "Bạn có chắc chắn muốn gỡ bỏ đánh giá này không?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#111111',
-        cancelButtonColor: '#ef4444',
+        confirmButtonColor: '#000000',
+        cancelButtonColor: '#e74c3c',
         confirmButtonText: 'ĐỒNG Ý',
         cancelButtonText: 'HỦY'
       });
@@ -1333,9 +1262,6 @@
       }
     }
 
-    /* =======================================================================
-       📦 CORE LOGIC: TẢI, NỐI TIẾP VÀ THU GỌN SẢN PHẨM LIÊN QUAN
-       ======================================================================= */
     async function fetchRelatedProducts() {
       const target = document.getElementById('related-list-target');
       const viewMoreBtn = document.getElementById('btn-load-more-related');
@@ -1349,7 +1275,6 @@
 
         if (spinner) spinner.remove();
 
-        // 1. Trường hợp trang đầu tiên rỗng
         if (currentRelatedPage === 0 && relatedProducts.length === 0) {
           target.innerHTML = `
             <div style="padding: 20px 0; color: var(--text-muted); font-size: 14px; font-weight: 500; grid-column: 1/-1;">
@@ -1360,7 +1285,6 @@
           return;
         }
 
-        // Tạo HTML chuỗi sản phẩm
         const itemsHtml = relatedProducts.map(p => {
           const images = p.images && p.images.length > 0 ? p.images : [];
           const imgSrc = images.length > 0
@@ -1381,22 +1305,18 @@
           `;
         }).join('');
 
-        // 2. Chèn dữ liệu (Trang 0 thì ghi đè, Trang > 0 thì cộng dồn nối đuôi)
         if (currentRelatedPage === 0) {
           target.innerHTML = itemsHtml;
         } else {
           target.insertAdjacentHTML('beforeend', itemsHtml);
         }
 
-        // 3. ĐIỀU KIỆN HIỂN THỊ NÚT XEM THÊM
         if (isLastPage || relatedProducts.length < RELATED_PAGE_SIZE) {
           viewMoreBtn.style.display = 'none';
         } else {
           viewMoreBtn.style.display = 'inline-block';
         }
 
-        // 4. ĐIỀU KIỆN HIỂN THỊ NÚT THU GỌN
-        // Xuất hiện nút Thu gọn từ trang thứ 2 trở đi (tức là khi currentRelatedPage >= 1)
         if (currentRelatedPage >= 1) {
           collapseBtn.style.display = 'inline-block';
         } else {
@@ -1415,31 +1335,25 @@
       }
     }
 
-    // Sự kiện khi bấm "Xem thêm"
     async function loadNextRelatedPage() {
       currentRelatedPage += 1;
-
       const viewMoreBtn = document.getElementById('btn-load-more-related');
       const originalText = viewMoreBtn.innerHTML;
 
       viewMoreBtn.disabled = true;
       viewMoreBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...`;
-
       await fetchRelatedProducts();
 
       viewMoreBtn.disabled = false;
       viewMoreBtn.innerHTML = originalText;
     }
 
-    // ✨ Sự kiện khi bấm "Thu gọn" quay về trạng thái 4 sản phẩm ban đầu
     async function collapseRelatedToDefault() {
-      currentRelatedPage = 0; // Đưa số trang quản lý về lại 0
-
+      currentRelatedPage = 0;
       const target = document.getElementById('related-list-target');
       const collapseBtn = document.getElementById('btn-collapse-related');
       const viewMoreBtn = document.getElementById('btn-load-more-related');
 
-      // Tạm ẩn các nút đi và xóa sạch lưới sản phẩm cũ để tải lại trang đầu
       collapseBtn.style.display = 'none';
       viewMoreBtn.style.display = 'none';
       target.innerHTML = `
@@ -1448,8 +1362,6 @@
         </div>`;
 
       await fetchRelatedProducts();
-
-      // Cuộn màn hình mượt mà về lại đầu khu vực sản phẩm liên quan để người dùng dễ theo dõi
       document.querySelector('.related-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
