@@ -270,9 +270,7 @@
       font-weight: 800;
       text-transform: uppercase;
       white-space: nowrap;
-      /* Thêm dòng này để chữ không bị xuống hàng */
       display: inline-block;
-      /* Thêm dòng này để giữ padding ổn định */
     }
 
     .badge-success {
@@ -310,13 +308,27 @@
       gap: 5px;
     }
 
-    /* PAGINATION BOX TỐI GIẢN - KHÔNG BO GÓC QUÁ ĐÀ */
+    /* KHU VỰC PHÂN TRANG ĐỒNG BỘ VỚI ADMIN ORDERS */
+    .pagination-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .pagination-info {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
     .pagination-container {
       display: flex;
       justify-content: flex-end;
       align-items: center;
       gap: 8px;
-      margin-top: 15px;
     }
 
     .pagination-btn {
@@ -364,7 +376,6 @@
       align-items: center;
       justify-content: center;
       padding: 15px;
-      /* Tránh đè sát mép màn hình mobile */
     }
 
     .modal-content {
@@ -423,7 +434,6 @@
       border-radius: 4px;
       background: #fafafa;
       overflow-x: auto;
-      /* Cuộn bảng chọn thuộc tính nếu bị tràn trên màn nhỏ */
     }
 
     .variant-table-container table {
@@ -488,7 +498,6 @@
       .main-content {
         margin-left: 0;
         padding: 85px 20px 40px 20px;
-        /* Bù khoảng cách top bằng chiều cao mobile header */
       }
     }
 
@@ -504,8 +513,18 @@
 
       .form-grid {
         grid-template-columns: 1fr;
-        /* Chuyển form thành 1 cột dọc */
         gap: 0;
+      }
+
+      .pagination-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .pagination-container {
+        justify-content: center;
+        width: 100%;
       }
     }
 
@@ -573,7 +592,6 @@
     <div class="filter-toolbar">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <!-- Thay đổi sự kiện oninput bằng trigger tìm kiếm phân trang có debounce để tăng hiệu năng -->
         <input type="text" id="search-input" placeholder="Tìm tên, mã sản phẩm..." oninput="handleSearchInput()">
       </div>
       <select id="filter-brand" class="filter-control" onchange="handleBrandChange()">
@@ -599,8 +617,11 @@
       </div>
     </div>
 
-    <!-- KHU VỰC CHỨA CÁC NÚT ĐIỀU HƯỚNG PHÂN TRANG -->
-    <div class="pagination-container" id="pagination-box"></div>
+    <!-- KHU VỰC CHỨA CÁC NÚT ĐIỀU HƯỚNG PHÂN TRANG ĐỒNG BỘ -->
+    <div class="pagination-wrapper">
+      <div class="pagination-info" id="pagination-info">Hiển thị 0-0 trong tổng số 0 sản phẩm</div>
+      <div class="pagination-container" id="pagination-box"></div>
+    </div>
   </main>
 
   <div id="productModal" class="modal">
@@ -700,7 +721,7 @@
 
   <script src="api.js"></script>
   <script>
-    // Hàm kích hoạt mở/đóng Sidebar trên Mobile (Đồng bộ từ admin_size)
+    // Hàm kích hoạt mở/đóng Sidebar trên Mobile
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebarMenu');
       const overlay = document.getElementById('sidebarOverlay');
@@ -717,6 +738,7 @@
     let currentPage = 0;
     let pageSize = 12; // Khớp với kích thước mặc định của Controller
     let totalPages = 0;
+    let totalElements = 0;
     let searchTimeout = null;
 
     let currentImages = [];
@@ -747,7 +769,6 @@
       } catch (err) { console.error("Lỗi metadata:", err); }
     }
 
-    // THAY ĐỔI: Gọi API phân trang thay vì lấy tất cả cục bộ
     async function loadProducts(page) {
       currentPage = page;
       const keyword = document.getElementById('search-input').value.trim();
@@ -756,22 +777,25 @@
       try {
         let responseData;
 
-        // Kịch bản 1: Có từ khóa tìm kiếm -> Gọi endpoint /search hỗ trợ phân trang
+        // Kịch bản 1: Có từ khóa tìm kiếm
         if (keyword !== "") {
           responseData = await apiGet(`/products/search?keywords=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`);
         } 
-        // Kịch bản 2: Chọn bộ lọc thương hiệu cụ thể -> Gọi endpoint lọc /brandPaged
+        // Kịch bản 2: Chọn bộ lọc thương hiệu cụ thể
         else if (brandId !== "") {
           responseData = await apiGet(`/products/brandPaged/${brandId}?page=${page}&size=${pageSize}`);
         } 
-        // Kịch bản 3: Không lọc gì -> Gọi danh sách sản phẩm phân trang mặc định
+        // Kịch bản 3: Không lọc gì -> Danh sách mặc định
         else {
           responseData = await apiGet(`/products?page=${page}&size=${pageSize}`);
         }
 
-        // Render dữ liệu vào bảng và xây dựng các nút phân trang
-        renderTable(responseData.content || []);
+        const items = responseData.content || [];
         totalPages = responseData.totalPages || 0;
+        totalElements = responseData.totalElements !== undefined ? responseData.totalElements : items.length;
+
+        // Render dữ liệu vào bảng và xây dựng các nút phân trang
+        renderTable(items);
         renderPagination();
 
       } catch (err) { 
@@ -817,12 +841,22 @@
       }).join('');
     }
 
-    // THÊM MỚI: Hàm hiển thị các nút chọn trang vuông vắn đồng bộ giao diện
+    // Hiển thị thanh thông tin và các nút phân trang
     function renderPagination() {
       const box = document.getElementById('pagination-box');
+      const info = document.getElementById('pagination-info');
       box.innerHTML = '';
 
-      if (totalPages <= 1) return; // Nếu chỉ có 1 trang thì ẩn hẳn thanh phân trang đi
+      if (totalElements === 0) {
+        info.innerText = 'Hiển thị 0-0 trong tổng số 0 sản phẩm';
+        return;
+      }
+
+      const start = currentPage * pageSize + 1;
+      const end = Math.min((currentPage + 1) * pageSize, totalElements);
+      info.innerText = `Hiển thị ${start}-${end} trong tổng số ${totalElements} sản phẩm`;
+
+      if (totalPages <= 1) return;
 
       // Nút Về trang trước (Previous)
       const prevBtn = document.createElement('button');

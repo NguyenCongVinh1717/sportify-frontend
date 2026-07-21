@@ -245,6 +245,63 @@
       z-index: 1450;
     }
 
+    /* PAGINATION STYLES */
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: white;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .pagination-info {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid #ddd;
+      background: white;
+      color: black;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .page-btn:hover {
+      background: #f1f1f1;
+    }
+
+    .page-btn.active {
+      background: black;
+      color: white;
+      border-color: black;
+    }
+
+    .page-btn:disabled {
+      color: #ccc;
+      border-color: #eee;
+      cursor: not-allowed;
+    }
+
     /* ================= RESPONSIVE MEDIA QUERIES ================= */
     @media (max-width: 992px) {
       .sidebar {
@@ -273,6 +330,16 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+      }
+
+      /* Responsive đưa các phần tử phân trang vào giữa */
+      .pagination-container {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+      .pagination-buttons {
+        justify-content: center;
       }
     }
   </style>
@@ -348,6 +415,14 @@
         </thead>
         <tbody id="user-body"></tbody>
       </table>
+
+      <!-- Thanh điều hướng Phân trang (Pagination) -->
+      <div class="pagination-container">
+        <div class="pagination-info" id="pagination-info">
+          Hiển thị 0 - 0 trên tổng số 0 người dùng
+        </div>
+        <div class="pagination-buttons" id="pagination-buttons"></div>
+      </div>
     </div>
   </main>
 
@@ -361,18 +436,37 @@
       overlay.classList.toggle('open');
     }
 
-    let allUsers = [];
+    let allUsers = []; 
+    let currentPage = 0;
+    let totalPages = 0;
+    let totalElements = 0;
+    const pageSize = 12; // Kích thước trang mặc định
 
     document.addEventListener('DOMContentLoaded', () => {
-      loadUsers();
+      loadUsers(currentPage);
     });
 
-    // 1. Gọi API lấy thẳng danh sách người dùng thô từ endpoint: /users
-    async function loadUsers() {
+    // 1. Gọi API lấy danh sách phân trang từ Backend: /users?page=...&size=12
+    async function loadUsers(page = 0) {
       try {
-        allUsers = await apiGet('/users');
+        const response = await apiGet(`/users?page=${page}&size=${pageSize}`);
+        
+        if (response && response.content) {
+          allUsers = response.content;
+          currentPage = response.number;
+          totalPages = response.totalPages;
+          totalElements = response.totalElements;
+        } else if (Array.isArray(response)) {
+          allUsers = response;
+          currentPage = 0;
+          totalPages = 1;
+          totalElements = response.length;
+        }
+
         renderUsers(allUsers);
-        document.getElementById('user-count-text').innerText = `Hiện có ${allUsers.length} tài khoản thành viên hệ thống`;
+        renderPagination();
+        
+        document.getElementById('user-count-text').innerText = `Hiện có ${totalElements} tài khoản thành viên hệ thống`;
       } catch (err) {
         Swal.fire('Lỗi', err.message, 'error');
       }
@@ -381,12 +475,12 @@
     // 2. Render dữ liệu
     function renderUsers(usersList) {
       const tbody = document.getElementById('user-body');
-      if (usersList.length === 0) {
+      if (!usersList || usersList.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">Không tìm thấy người dùng nào.</td></tr>`;
         return;
       }
 
-      // 🌟 Lấy email của Admin đang đăng nhập từ Local Storage
+      // Lấy email của Admin đang đăng nhập từ Local Storage
       const currentAdminEmail = localStorage.getItem("email");
 
       tbody.innerHTML = usersList.map(u => {
@@ -396,11 +490,9 @@
 
         let actionButton = "";
 
-        // 🌟 Kiểm tra nếu trùng email với Admin hiện tại thì ẩn nút Khóa
         if (u.email === currentAdminEmail) {
           actionButton = `<span style="color: #999; font-size: 12px; font-style: italic; font-weight: 700; padding-right: 15px;">Bạn</span>`;
         } else {
-          // Tài khoản khác thì hiển thị nút bình thường
           actionButton = u.enabled
             ? `<button class="btn-action lock" onclick="toggleUserStatus(${u.id}, false)"><i class="fa-solid fa-user-slash"></i> Khóa</button>`
             : `<button class="btn-action unlock" onclick="toggleUserStatus(${u.id}, true)"><i class="fa-solid fa-user-check"></i> Mở khóa</button>`;
@@ -423,7 +515,55 @@
       }).join('');
     }
 
-    // 3. Bộ lọc tìm kiếm giống bên brand
+    // Render các nút Phân trang (Pagination)
+    function renderPagination() {
+      const infoContainer = document.getElementById('pagination-info');
+      const buttonsContainer = document.getElementById('pagination-buttons');
+
+      // 1. Tính toán vị trí hiển thị bắt đầu (startItem) và kết thúc (endItem)
+      const startItem = totalElements === 0 ? 0 : currentPage * pageSize + 1;
+      const endItem = Math.min((currentPage + 1) * pageSize, totalElements);
+
+      // Hiển thị dạng: Hiển thị 1 - 12 trên tổng số 24 người dùng
+      infoContainer.innerText = `Hiển thị ${startItem} - ${endItem} trên tổng số ${totalElements} người dùng`;
+
+      // 2. Cập nhật dãy nút chuyển trang bên phải
+      let buttonsHtml = '';
+
+      // Nút Previous
+      buttonsHtml += `
+        <button class="page-btn" ${currentPage === 0 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      `;
+
+      // Tạo nút danh sách các trang
+      for (let i = 0; i < totalPages; i++) {
+        buttonsHtml += `
+          <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+            ${i + 1}
+          </button>
+        `;
+      }
+
+      // Nút Next
+      buttonsHtml += `
+        <button class="page-btn" ${currentPage >= totalPages - 1 ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      `;
+
+      buttonsContainer.innerHTML = buttonsHtml;
+    }
+
+    // Hàm chuyển trang
+    function changePage(pageIndex) {
+      if (pageIndex < 0 || pageIndex >= totalPages) return;
+      currentPage = pageIndex;
+      loadUsers(currentPage);
+    }
+
+    // 3. Bộ lọc tìm kiếm theo từ khóa ở trang hiện tại
     function filterUsers() {
       const keyword = document.getElementById('search-user').value.toLowerCase();
       const filtered = allUsers.filter(u =>
@@ -433,7 +573,7 @@
       renderUsers(filtered);
     }
 
-    // 4. Gọi API PUT thay đổi trạng thái theo cấu trúc mới: /users/{id}/status?enabled=...
+    // 4. Gọi API PUT thay đổi trạng thái người dùng
     async function toggleUserStatus(id, targetStatus) {
       const actionText = targetStatus ? "Mở khóa" : "Khóa";
       const confirmResult = await Swal.fire({
@@ -449,11 +589,10 @@
       if (!confirmResult.isConfirmed) return;
 
       try {
-        // Đã cập nhật url gọi sang: /users/${id}/status
         const responseMessage = await apiPut(`/users/${id}/status?enabled=${targetStatus}`);
 
         Swal.fire('Thành công', responseMessage, 'success');
-        loadUsers();
+        loadUsers(currentPage); // Tải lại dữ liệu đúng ở trang hiện tại
       } catch (err) {
         Swal.fire('Lỗi', err.message, 'error');
       }

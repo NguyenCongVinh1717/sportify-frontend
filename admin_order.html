@@ -39,7 +39,7 @@
       min-height: 100vh;
     }
 
-    /* SIDEBAR RESPONSIVE ĐỒNG BỘ */
+    /* SIDEBAR RESPONSIVE */
     .sidebar {
       width: 260px;
       background: var(--white);
@@ -59,7 +59,6 @@
       align-items: center;
     }
 
-    /* Nút đóng menu khi ở trên điện thoại */
     .close-sidebar-btn {
       display: none;
       background: none;
@@ -90,7 +89,7 @@
       color: white;
     }
 
-    /* MOBILE HEADER BAR ĐỒNG BỘ */
+    /* MOBILE HEADER */
     .mobile-header {
       display: none;
       position: fixed;
@@ -118,12 +117,12 @@
       cursor: pointer;
     }
 
-    /* MAIN CONTENT RESPONSIVE */
+    /* MAIN CONTENT */
     .main-content {
       flex: 1;
       margin-left: 260px;
       padding: 40px;
-      min-width: 0; /* Chống tràn layout */
+      min-width: 0;
     }
 
     .page-header {
@@ -138,7 +137,7 @@
       font-weight: 800;
     }
 
-    /* FILTER TOOLBAR RESPONSIVE */
+    /* FILTER TOOLBAR */
     .filter-toolbar {
       display: flex;
       gap: 20px;
@@ -175,7 +174,7 @@
     .filter-tabs-container {
       display: flex;
       gap: 8px;
-      overflow-x: auto; /* Cho phép vuốt ngang các tabs lọc trên màn hình nhỏ */
+      overflow-x: auto;
       padding-bottom: 5px;
     }
 
@@ -190,7 +189,7 @@
       border: 1px solid var(--gray-border);
       background: var(--gray-bg);
       text-transform: uppercase;
-      white-space: nowrap; /* Tránh gãy chữ khi cuộn ngang */
+      white-space: nowrap;
     }
 
     .filter-tab.active {
@@ -204,7 +203,6 @@
       background: var(--white);
       border-radius: var(--radius);
       border: 1px solid var(--gray-border);
-      overflow-x: auto; /* Tự động cuộn bảng khi bị màn hình hẹp */
       box-shadow: var(--shadow);
     }
 
@@ -216,7 +214,7 @@
     .admin-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 850px; /* Đảm bảo cấu trúc cột thông tin không bị co bóp méo mó */
+      min-width: 850px;
     }
 
     .admin-table th {
@@ -276,7 +274,63 @@
       color: var(--black);
     }
 
-    /* LỚP PHỦ NỀN SIDEBAR OVERLAY */
+    /* PAGINATION STYLES */
+    .pagination-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 25px;
+      border-top: 1px solid var(--gray-border);
+      background: var(--white);
+    }
+
+    .pagination-info {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--gray-border);
+      background: var(--white);
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn:hover {
+      background: #f1f1f1;
+    }
+
+    .page-btn.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .page-btn:disabled {
+      background: #f8f9fa;
+      color: #999999;
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--gray-border);
+    }
+
+    /* OVERLAY & MODAL */
     .sidebar-overlay {
       display: none;
       position: fixed;
@@ -285,7 +339,6 @@
       z-index: 1450;
     }
 
-    /* ===== CSS MODAL CHI TIẾT ĐƠN HÀNG RESPONSIVE ===== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -297,7 +350,7 @@
       z-index: 2000;
       align-items: center;
       justify-content: center;
-      padding: 15px; /* Giữ khoảng cách an toàn viền màn hình nhỏ */
+      padding: 15px;
     }
 
     .modal-container {
@@ -350,7 +403,6 @@
       gap: 25px;
     }
 
-    /* Khối thông tin khách hàng grid chuyển layout tự động */
     .modal-info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -384,9 +436,8 @@
       width: 16px;
     }
 
-    /* Bảng sản phẩm trong Modal */
     .modal-table-wrapper {
-      overflow-x: auto; /* Cuộn bảng chi tiết sản phẩm nếu dài */
+      overflow-x: auto;
     }
 
     .modal-table {
@@ -483,38 +534,45 @@
         opacity: 0;
         transform: translateY(-15px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
 
-    /* ================= RESPONSIVE QUERIES ĐỒNG BỘ MÀU SẮC ================= */
     @media (max-width: 992px) {
       .sidebar {
         transform: translateX(-100%);
       }
+
       .sidebar.open {
         transform: translateX(0);
       }
+
       .close-sidebar-btn {
         display: block;
       }
+
       .mobile-header {
         display: flex;
       }
+
       .sidebar-overlay.open {
         display: block;
       }
+
       .main-content {
         margin-left: 0;
-        padding: 85px 20px 40px 20px; /* Bù khoảng cách top bằng chiều cao header di động */
+        padding: 85px 20px 40px 20px;
       }
+
       .filter-toolbar {
         flex-direction: column;
         align-items: stretch;
         gap: 15px;
       }
+
       .filter-tabs-container {
         width: 100%;
       }
@@ -526,26 +584,38 @@
         align-items: flex-start;
         margin-bottom: 25px;
       }
+
       .header-title h2 {
         font-size: 24px;
       }
+
       .modal-info-grid {
-        grid-template-columns: 1fr; /* Chuyển thành 1 cột đứng trên mobile */
+        grid-template-columns: 1fr;
         gap: 15px;
         padding: 15px;
       }
+
       .modal-container {
         max-height: 90vh;
       }
+
       .modal-body {
         padding: 15px;
         gap: 15px;
       }
+
       .modal-footer {
         padding: 15px;
       }
+
       .total-price-value {
         font-size: 18px;
+      }
+
+      .pagination-wrapper {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
       }
     }
   </style>
@@ -553,10 +623,8 @@
 
 <body>
 
-  <!-- Lớp phủ màn hình khi bật Menu ở Mobile -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-  <!-- Thanh công cụ đầu trang trên điện thoại -->
   <div class="mobile-header">
     <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
       <i class="fa-solid fa-bars"></i>
@@ -577,9 +645,7 @@
       <a href="admin_color.html" class="menu-item"><i class="fa-solid fa-palette"></i> MÀU SẮC</a>
       <a href="admin_size.html" class="menu-item"><i class="fa-solid fa-ruler"></i> KÍCH THƯỚC</a>
       <a href="admin_order.html" class="menu-item active"><i class="fa-solid fa-cart-shopping"></i> ĐƠN HÀNG</a>
-      <a href="admin_customer.html" class="menu-item">
-        <i class="fa-solid fa-user"></i> NGƯỜI DÙNG
-      </a>
+      <a href="admin_customer.html" class="menu-item"><i class="fa-solid fa-user"></i> NGƯỜI DÙNG</a>
     </nav>
   </aside>
 
@@ -598,11 +664,15 @@
       </div>
       <div class="filter-tabs-container">
         <div class="filter-tab active" onclick="switchTab(this, 'ALL')">TẤT CẢ (<span id="count-all">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'UNPAID')">CHƯA THANH TOÁN (<span id="count-unpaid">0</span>)</div>
+        <div class="filter-tab" onclick="switchTab(this, 'UNPAID')">CHƯA THANH TOÁN (<span id="count-unpaid">0</span>)
+        </div>
         <div class="filter-tab" onclick="switchTab(this, 'PENDING')">CHỜ XỬ LÝ (<span id="count-pending">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'SHIPPING')">ĐANG GIAO (<span id="count-shipping">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'DELIVERED')">ĐÃ GIAO ĐẾN (<span id="count-delivered">0</span>)</div>
-        <div class="filter-tab" onclick="switchTab(this, 'CANCELLED')">ĐÃ HỦY (<span id="count-cancelled">0</span>)</div>
+        <div class="filter-tab" onclick="switchTab(this, 'SHIPPING')">ĐANG GIAO (<span id="count-shipping">0</span>)
+        </div>
+        <div class="filter-tab" onclick="switchTab(this, 'DELIVERED')">ĐÃ GIAO ĐẾN (<span id="count-delivered">0</span>)
+        </div>
+        <div class="filter-tab" onclick="switchTab(this, 'CANCELLED')">ĐÃ HỦY (<span id="count-cancelled">0</span>)
+        </div>
       </div>
     </div>
 
@@ -626,32 +696,39 @@
           </tbody>
         </table>
       </div>
+
+      <!-- BỘ ĐIỀU HƯỚNG PHÂN TRANG -->
+      <div class="pagination-wrapper">
+        <div class="pagination-info" id="pagination-info">Hiển thị 0 - 0 trên tổng số 0 đơn hàng</div>
+        <div class="pagination-controls" id="pagination-controls">
+          <!-- Các nút phân trang sẽ render động tại đây -->
+        </div>
+      </div>
     </div>
   </main>
 
   <div id="order-detail-modal" class="modal-overlay">
     <div class="modal-container">
-
       <div class="modal-header">
         <h3 id="modal-order-title">CHI TIẾT ĐƠN HÀNG</h3>
         <button onclick="closeModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
       <div class="modal-body">
-
         <div class="modal-info-grid">
           <div>
             <p class="info-section-title">Thông tin nhận hàng</p>
-            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver" style="font-weight: 800;"></span></p>
+            <p class="info-text"><i class="fa-solid fa-user"></i> Người nhận: <span id="modal-receiver"
+                style="font-weight: 800;"></span></p>
             <p class="info-text"><i class="fa-solid fa-phone"></i> SĐT: <span id="modal-phone"></span></p>
           </div>
           <div>
             <p class="info-section-title">Thanh toán & Địa chỉ</p>
-            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment" style="font-weight: 800;"></span></p>
-            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot" style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
+            <p class="info-text"><i class="fa-solid fa-credit-card"></i> Hình thức: <span id="modal-payment"
+                style="font-weight: 800;"></span></p>
+            <p class="info-text" style="align-items: flex-start;"><i class="fa-solid fa-location-dot"
+                style="margin-top: 4px;"></i> <span>ĐC: <span id="modal-address"></span></span></p>
           </div>
         </div>
-
         <div>
           <p class="info-section-title" style="margin-bottom: 12px;">Danh sách sản phẩm</p>
           <div class="modal-table-wrapper">
@@ -664,98 +741,94 @@
                   <th style="width: 20%; text-align: right;">ĐƠN GIÁ</th>
                 </tr>
               </thead>
-              <tbody id="modal-products-body">
-              </tbody>
+              <tbody id="modal-products-body"></tbody>
             </table>
           </div>
         </div>
-
       </div>
-
       <div class="modal-footer">
         <span class="total-label">TỔNG GIÁ TRỊ ĐƠN HÀNG</span>
         <span id="modal-total-price" class="total-price-value">0đ</span>
       </div>
-
     </div>
   </div>
 
   <script src="api.js"></script>
   <script>
-    // Hàm kích hoạt mở/đóng Sidebar trên Mobile (Đồng bộ với quản lý màu sắc)
     function toggleSidebar() {
-        const sidebar = document.getElementById('sidebarMenu');
-        const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('open');
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
     }
 
     const API_ADMIN_ORDERS = "/admin/orders";
-    let allOrders = []; // Lưu trữ danh sách TẤT CẢ đơn hàng để phục vụ đếm counters toàn cục
     let currentStatusFilter = "ALL";
+    let currentPage = 0;      // Trang hiện tại (Spring Boot bắt đầu từ 0)
+    let pageSize = 12;         // Khớp với @PageableDefault(size = 12) ở Controller
+    let currentOrdersPage = null; // Lưu đối tượng Page<OrderResponse> nhận từ API
+    let searchDebounceTimer = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       initPage();
     });
 
-    // Hàm khởi tạo trang: Luôn lấy tất cả đơn hàng về trước để tính Badge counters
     async function initPage() {
+      await fetchTabCounters();
+      await loadOrders(currentStatusFilter, 0);
+    }
+
+    // 1. Hàm lấy tổng số lượng cho từng Tab Badge bằng cách gọi song song request size=1
+    async function fetchTabCounters() {
       try {
-        // 1. Gọi API lấy tất cả đơn hàng
-        allOrders = await apiGet(API_ADMIN_ORDERS);
+        const statuses = ['UNPAID', 'PENDING', 'SHIPPING', 'DELIVERED', 'CANCELLED'];
 
-        // 2. Cập nhật các số liệu đếm ở các Tab
-        updateTabCounters();
+        // Request tổng cho tab ALL
+        const promiseAll = apiGet(`${API_ADMIN_ORDERS}?page=0&size=1`);
 
-        // 3. Render danh sách ra bảng (mặc định ban đầu là hiển thị toàn bộ)
-        renderOrderTable(allOrders);
+        // Request đếm cho từng trạng thái
+        const promisesStatus = statuses.map(s =>
+          apiGet(`${API_ADMIN_ORDERS}/status/${s}?page=0&size=1`)
+        );
+
+        const [resAll, ...resStatuses] = await Promise.all([promiseAll, ...promisesStatus]);
+
+        document.getElementById("count-all").innerText = resAll.totalElements || 0;
+        statuses.forEach((s, idx) => {
+          document.getElementById(`count-${s.toLowerCase()}`).innerText = resStatuses[idx].totalElements || 0;
+        });
       } catch (err) {
-        console.error(err);
-        document.getElementById('order-list-body').innerHTML = `
-          <tr><td colspan="6" class="loading-row" style="color:var(--danger)">⚠️ Lỗi: Không thể đồng bộ dữ liệu với máy chủ Backend!</td></tr>
-        `;
+        console.error("Lỗi khi tải counters:", err);
       }
     }
 
-    // 1. Hàm gọi danh sách từ DB theo cấu trúc Path Variable mới của bạn (/status/{status})
-    async function loadOrders(statusParam = "ALL") {
+    // 2. Load danh sách đơn hàng hỗ trợ phân trang
+    async function loadOrders(statusParam = "ALL", page = 0) {
       try {
+        currentPage = page;
         let url = API_ADMIN_ORDERS;
 
-        // NẾU KHÁC ALL: Đổi đường dẫn thành /admin/orders/status/PENDING giống hệt như @GetMapping("/status/{status}") ở Backend
         if (statusParam !== "ALL") {
           url += `/status/${statusParam}`;
         }
 
-        // Gọi API nạp dữ liệu từ máy chủ
-        const dataFetched = await apiGet(url);
+        // Truyền query parameters dạng ?page=0&size=12 cho Spring Data Pageable
+        url += `?page=${page}&size=${pageSize}`;
 
-        // Nếu vừa chuyển trạng thái hoặc ở tab ALL thì đồng bộ nhẹ mảng tổng để cập nhật counters
-        if (statusParam === "ALL") {
-          allOrders = dataFetched;
-        }
+        const pageData = await apiGet(url);
+        currentOrdersPage = pageData;
 
-        updateTabCounters();
-        renderOrderTable(dataFetched);
+        renderOrderTable(pageData.content || []);
+        renderPagination(pageData);
       } catch (err) {
         console.error(err);
         document.getElementById('order-list-body').innerHTML = `
-          <tr><td colspan="6" class="loading-row" style="color:var(--danger)">⚠️ Lỗi: Không tìm thấy bản ghi hoặc lỗi kết nối máy chủ!</td></tr>
+          <tr><td colspan="6" class="loading-row" style="color:var(--danger)">⚠️ Lỗi: Không thể kết nối với máy chủ Backend!</td></tr>
         `;
       }
     }
 
-    // Cập nhật số lượng của Badge dựa trên mảng tổng thể allOrders
-    function updateTabCounters() {
-      document.getElementById("count-all").innerText = allOrders.length;
-      document.getElementById("count-unpaid").innerText = allOrders.filter(o => o.status === "UNPAID").length;
-      document.getElementById("count-pending").innerText = allOrders.filter(o => o.status === "PENDING").length;
-      document.getElementById("count-shipping").innerText = allOrders.filter(o => o.status === "SHIPPING").length;
-      document.getElementById("count-delivered").innerText = allOrders.filter(o => o.status === "DELIVERED").length;
-      document.getElementById("count-cancelled").innerText = allOrders.filter(o => o.status === "CANCELLED").length;
-    }
-
-    // 2. Render dữ liệu
+    // 3. Render bảng danh sách đơn hàng
     function renderOrderTable(data) {
       const tbody = document.getElementById('order-list-body');
       if (!data || data.length === 0) {
@@ -766,7 +839,6 @@
       tbody.innerHTML = data.map(order => {
         const formattedPrice = Number(order.totalPrice).toLocaleString() + "đ";
 
-        // Tạo biến định dạng màu viền trái tương ứng với từng trạng thái
         let borderColor = "#f97316";
         if (order.status === 'UNPAID') borderColor = "#7f8c8d";
         if (order.status === 'SHIPPING') borderColor = "#3b82f6";
@@ -782,7 +854,7 @@
             <td>
               <div class="customer-info">
                 <span class="customer-contact"><i class="fa-solid fa-phone" style="font-size:11px; color:#666;"></i> ${order.phone || 'Không có SĐT'}</span>
-                <span class="customer-address" title="${order.address}"><i class="fa-solid fa-location-dot" style="font-size:11px;"></i> ĐC: ${order.address}</span>
+                <span class="customer-address" title="${order.address || ''}"><i class="fa-solid fa-location-dot" style="font-size:11px;"></i> ĐC: ${order.address || 'N/A'}</span>
               </div>
             </td>
             <td>
@@ -809,7 +881,59 @@
       }).join('');
     }
 
-    // 3. Xử lý đổi trạng thái
+    // 4. Render thanh chuyển trang (Pagination Controls)
+    function renderPagination(pageData) {
+      const infoEl = document.getElementById('pagination-info');
+      const controlsEl = document.getElementById('pagination-controls');
+
+      if (!pageData || pageData.totalElements === 0) {
+        infoEl.innerText = 'Hiển thị 0 đơn hàng';
+        controlsEl.innerHTML = '';
+        return;
+      }
+
+      const totalElements = pageData.totalElements;
+      const totalPages = pageData.totalPages;
+      const number = pageData.number; // Trang hiện tại (0-indexed)
+      const size = pageData.size;
+
+      const start = number * size + 1;
+      const end = Math.min((number + 1) * size, totalElements);
+
+      infoEl.innerText = `Hiển thị ${start} - ${end} trên tổng số ${totalElements} đơn hàng`;
+
+      let html = '';
+
+      // Nút Nút Trước (Previous)
+      html += `<button class="page-btn" ${pageData.first ? 'disabled' : ''} onclick="goToPage(${number - 1})">
+                <i class="fa-solid fa-chevron-left"></i>
+               </button>`;
+
+      // Render danh sách số trang
+      for (let i = 0; i < totalPages; i++) {
+        // Chỉ hiển thị giới hạn xung quanh trang hiện tại để giao diện gọn gàng nếu số trang lớn
+        if (i === 0 || i === totalPages - 1 || (i >= number - 2 && i <= number + 2)) {
+          html += `<button class="page-btn ${i === number ? 'active' : ''}" onclick="goToPage(${i})">${i + 1}</button>`;
+        } else if (i === number - 3 || i === number + 3) {
+          html += `<span style="padding:0 4px; color:var(--text-muted)">...</span>`;
+        }
+      }
+
+      // Nút Sau (Next)
+      html += `<button class="page-btn" ${pageData.last ? 'disabled' : ''} onclick="goToPage(${number + 1})">
+                <i class="fa-solid fa-chevron-right"></i>
+               </button>`;
+
+      controlsEl.innerHTML = html;
+    }
+
+    // Hàm chuyển trang
+    function goToPage(pageIndex) {
+      if (pageIndex < 0) return;
+      loadOrders(currentStatusFilter, pageIndex);
+    }
+
+    // 5. Cập nhật trạng thái đơn
     async function changeOrderStatus(orderId, newStatus) {
       const confirmation = await Swal.fire({
         title: 'Cập nhật đơn hàng?',
@@ -822,71 +946,67 @@
       });
 
       if (!confirmation.isConfirmed) {
-        loadOrders(currentStatusFilter);
+        loadOrders(currentStatusFilter, currentPage);
         return;
       }
 
       try {
         await apiPut(`/admin/orders/${orderId}/status?status=${newStatus}`);
-
-        // Cập nhật lại mảng tổng cục bộ ngay lập tức để đồng bộ Badge số lượng
-        const targetOrder = allOrders.find(o => o.id === orderId);
-        if (targetOrder) targetOrder.status = newStatus;
-
         Swal.fire('Thành công', 'Trạng thái đơn hàng đã được cập nhật!', 'success');
 
-        // Tải lại dữ liệu theo tab hiện tại sau khi cập nhật thành công
-        loadOrders(currentStatusFilter);
+        // Làm mới bộ đếm badge và load lại trang hiện tại
+        await fetchTabCounters();
+        loadOrders(currentStatusFilter, currentPage);
       } catch (err) {
         Swal.fire('Lỗi hệ thống', err.message || 'Cập nhật trạng thái thất bại', 'error');
-        loadOrders(currentStatusFilter);
+        loadOrders(currentStatusFilter, currentPage);
       }
     }
 
-    // 4. BẤM TAB: Gọi trực tiếp API Path Variable mới từ DB xuống
+    // 6. Chuyển Tab lọc trạng thái
     function switchTab(element, status) {
       document.querySelectorAll(".filter-tab").forEach(tab => tab.classList.remove("active"));
       element.classList.add("active");
       currentStatusFilter = status;
+      document.getElementById('search-input').value = '';
 
-      // Gọi hàm load dữ liệu truyền trạng thái mới theo cấu trúc URL /status/{status}
-      loadOrders(status);
+      // Khi chuyển tab thì quay lại trang đầu tiên (page = 0)
+      loadOrders(status, 0);
     }
 
-    // 5. Tính toán Realtime Search trên dữ liệu hiện tại của bảng
+    // 7. Lọc theo từ khóa tìm kiếm trên dữ liệu của trang hiện tại
     function filterOrders() {
-      const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        const keyword = document.getElementById('search-input').value.trim().toLowerCase();
 
-      if (keyword === "") {
-        loadOrders(currentStatusFilter);
-        return;
-      }
+        if (!currentOrdersPage || !currentOrdersPage.content) return;
 
-      // Tìm kiếm thời gian thực trên client dựa trên mảng tổng toàn cục để tăng tốc độ phản hồi
-      let filtered = allOrders.filter(o =>
-        o.id.toString().includes(keyword) ||
-        (o.phone && o.phone.toLowerCase().includes(keyword)) ||
-        (o.address && o.address.toLowerCase().includes(keyword))
-      );
+        if (keyword === "") {
+          renderOrderTable(currentOrdersPage.content);
+          renderPagination(currentOrdersPage);
+          return;
+        }
 
-      if (currentStatusFilter !== "ALL") {
-        filtered = filtered.filter(o => o.status === currentStatusFilter);
-      }
+        const filtered = currentOrdersPage.content.filter(o =>
+          o.id.toString().includes(keyword) ||
+          (o.phone && o.phone.toLowerCase().includes(keyword)) ||
+          (o.address && o.address.toLowerCase().includes(keyword))
+        );
 
-      renderOrderTable(filtered);
+        renderOrderTable(filtered);
+      }, 250);
     }
 
-    // 6. Xem chi tiết đơn
+    // 8. Xem chi tiết đơn hàng
     async function viewOrderDetail(orderId) {
       try {
-        // Hiển thị loading mượt mà từ SweetAlert2
         Swal.fire({
           title: 'Đang tải thông tin...',
           allowOutsideClick: false,
           didOpen: () => { Swal.showLoading(); }
         });
 
-        // Gọi API Backend: /orderById?id={id}
         const order = await apiGet(`/admin/orders/orderById?id=${orderId}`);
         Swal.close();
 
@@ -895,7 +1015,6 @@
           return;
         }
 
-        // Gắn dữ liệu văn bản vào Modal thông qua ID
         document.getElementById('modal-order-title').innerText = `CHI TIẾT ĐƠN HÀNG #ORD-${order.id}`;
         document.getElementById('modal-receiver').innerText = order.receiver || 'Không có tên';
         document.getElementById('modal-phone').innerText = order.phone || 'N/A';
@@ -903,16 +1022,13 @@
         document.getElementById('modal-address').innerText = order.address || 'N/A';
         document.getElementById('modal-total-price').innerText = Number(order.totalPrice).toLocaleString() + "đ";
 
-        // Phối màu phương thức thanh toán linh động
         document.getElementById('modal-payment').style.color = order.paymentMethod === 'VNPAY' ? '#3b82f6' : '#000000';
 
-        // Đổ danh sách sản phẩm
         const productsBody = document.getElementById('modal-products-body');
         if (!order.items || order.items.length === 0) {
           productsBody.innerHTML = `<tr><td colspan="4" style="padding: 20px 0; text-align: center; color: var(--text-muted);">Không tìm thấy sản phẩm trong đơn này.</td></tr>`;
         } else {
           productsBody.innerHTML = order.items.map(item => {
-            // Lấy dữ liệu phẳng trực tiếp từ OrderItemResponse
             const productName = item.productName || 'Sản phẩm không tồn tại';
             const color = item.colorName || 'N/A';
             const size = item.sizeName || 'N/A';
@@ -920,19 +1036,18 @@
             const price = item.price || 0;
 
             return `
-      <tr>
-        <td style="font-weight: 700; color: var(--black);">${productName}</td>
-        <td style="text-align: center;">
-          <span class="variant-badge">${color} - ${size}</span>
-        </td>
-        <td style="text-align: center; font-weight: 700;">${quantity}</td>
-        <td style="text-align: right; font-weight: 800; color: var(--black);">${Number(price).toLocaleString()}đ</td>
-      </tr>
-    `;
+              <tr>
+                <td style="font-weight: 700; color: var(--black);">${productName}</td>
+                <td style="text-align: center;">
+                  <span class="variant-badge">${color} - ${size}</span>
+                </td>
+                <td style="text-align: center; font-weight: 700;">${quantity}</td>
+                <td style="text-align: right; font-weight: 800; color: var(--black);">${Number(price).toLocaleString()}đ</td>
+              </tr>
+            `;
           }).join('');
         }
 
-        // Hiển thị Modal theo cấu trúc flex (đã khai báo trong CSS)
         document.getElementById('order-detail-modal').style.display = 'flex';
 
       } catch (err) {
@@ -941,12 +1056,10 @@
       }
     }
 
-    // Hàm đóng Modal
     function closeModal() {
       document.getElementById('order-detail-modal').style.display = 'none';
     }
 
-    // Click ra ngoài viền nền xám (modal-overlay) để đóng Modal nhanh
     window.onclick = function (event) {
       const modal = document.getElementById('order-detail-modal');
       if (event.target === modal) {
