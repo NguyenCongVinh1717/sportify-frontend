@@ -15,7 +15,7 @@
       --white: #ffffff;
       --gray-bg: #f8f9fa;
       --gray-border: #e5e7eb;
-      --black: #000;
+      --black: #111111;
       --text-muted: #6b7280;
       --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.06);
@@ -75,6 +75,7 @@
       flex-direction: column;
       gap: 6px;
       margin: 0 16px;
+      position: relative;
     }
 
     .search-bar-row {
@@ -86,7 +87,7 @@
     .search-bar-row input {
       width: 100%;
       min-width: 220px;
-      padding: 13px 88px 13px 18px;
+      padding: 13px 118px 13px 18px;
       border-radius: 2px;
       border: 1px solid var(--gray-border);
       background: var(--gray-bg);
@@ -131,7 +132,7 @@
 
     .search-image-btn {
       position: absolute;
-      right: 46px;
+      right: 42px;
       top: 50%;
       transform: translateY(-50%);
       background: transparent;
@@ -151,6 +152,70 @@
       color: var(--text-muted);
       font-weight: 600;
       min-height: 16px;
+    }
+
+    .search-suggestions-box {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      background-color: var(--white, #ffffff);
+      border: 1px solid var(--gray-border, #e5e7eb);
+      border-radius: 2px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      display: none;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .suggestion-item {
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--black, #111827);
+      cursor: pointer;
+      transition: var(--transition, all 0.2s);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .suggestion-item:hover {
+      background-color: var(--gray-bg, #f3f4f6);
+      font-weight: 600;
+    }
+
+    .suggestion-item i {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .suggestion-item.active {
+      background-color: var(--gray-bg, #f3f4f6);
+      font-weight: 600;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 76px;
+      /* Nằm ngay bên trái nút Camera */
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: color 0.2s;
+    }
+
+    .clear-btn:hover {
+      color: var(--black, #000000);
     }
 
     .user-actions {
@@ -1552,6 +1617,7 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 20px 15px;
       }
+
       .modal-content {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1646,7 +1712,12 @@
       <a href="#" class="logo">SPORTIFY</a>
       <div class="search-bar-top">
         <div class="search-bar-row">
-          <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm, thương hiệu...">
+          <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm, thương hiệu..." autocomplete="off"
+            oninput="handleSearchSuggestions(this.value)" onkeydown="handleSearchKeyDown(event)">
+          <button type="button" id="clearSearchBtn" class="clear-btn" onclick="clearSearchInput()"
+            aria-label="Xóa từ khóa" style="display: none;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
           <button type="button" class="search-image-btn" onclick="triggerImageSearch()" aria-label="Tìm bằng ảnh">
             <i class="fa-solid fa-camera"></i>
           </button>
@@ -1654,6 +1725,7 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
+        <div id="searchSuggestions" class="search-suggestions-box"></div>
         <input type="file" id="imageSearchInput" accept="image/*" hidden onchange="handleImageSearchFile(event)">
         <div class="search-image-note" id="imageSearchNote">Chọn ảnh sản phẩm để tìm mẫu tương tự.</div>
       </div>
@@ -1724,7 +1796,6 @@
         <summary>Kích cỡ</summary>
         <div class="filter-body">
           <div class="filter-chip-list" id="sidebarSizeList">
-            <!-- ✨ THÊM MỚI: được render bởi loadSizes() qua API /sizes -->
           </div>
         </div>
       </details>
@@ -1733,7 +1804,6 @@
         <summary>Màu sắc</summary>
         <div class="filter-body">
           <div class="filter-chip-list" id="sidebarColorList">
-            <!-- ✨ THÊM MỚI: được render bởi loadColors() qua API /colors -->
           </div>
         </div>
       </details>
@@ -1742,7 +1812,6 @@
         <summary>Thương hiệu</summary>
         <div class="filter-body">
           <div class="sidebar-checkbox-list" id="sidebarBrandList">
-            <!-- ✨ THÊM MỚI: được render bởi loadBrands() -->
           </div>
         </div>
       </details>
@@ -2778,7 +2847,165 @@
           }
         });
       }
+      let suggestionDebounce;
+      let currentFocus = -1;
 
+      // 1. Lắng nghe gõ từ khóa
+      window.handleSearchSuggestions = function (keyword) {
+        const suggestionsBox = document.getElementById('searchSuggestions');
+        const clearBtn = document.getElementById('clearSearchBtn');
+
+        // ✨ SỬA: Kiểm tra nếu ô input có chữ thì hiện nút X, không thì ẩn
+        if (clearBtn) {
+          clearBtn.style.display = keyword.length > 0 ? 'flex' : 'none';
+        }
+
+        if (!suggestionsBox) return;
+
+        keyword = keyword.trim();
+        clearTimeout(suggestionDebounce);
+        currentFocus = -1; // Reset vị trí con trỏ bàn phím khi gõ từ khóa mới
+
+        if (!keyword) {
+          suggestionsBox.style.display = 'none';
+          suggestionsBox.innerHTML = '';
+          return;
+        }
+
+        suggestionDebounce = setTimeout(() => {
+          apiGet(`/products/suggestions?keyword=${encodeURIComponent(keyword)}`)
+            .then(data => {
+              renderSuggestions(data);
+            })
+            .catch(err => {
+              console.error("Lỗi lấy gợi ý:", err);
+              suggestionsBox.style.display = 'none';
+            });
+        }, 300);
+      };
+
+      // ✨ THÊM MỚI: Hàm thực thi việc xóa từ khóa khi bấm nút X
+      window.clearSearchInput = function () {
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('searchSuggestions');
+        const clearBtn = document.getElementById('clearSearchBtn');
+
+        if (searchInput) {
+          searchInput.value = '';
+          searchInput.focus(); // Đưa con trỏ quay lại ô gõ
+        }
+
+        if (clearBtn) {
+          clearBtn.style.display = 'none';
+        }
+
+        if (suggestionsBox) {
+          suggestionsBox.style.display = 'none';
+          suggestionsBox.innerHTML = '';
+        }
+
+        currentFocus = -1;
+      };
+
+      // --- CÁC HÀM DƯỚI ĐÂY GIỮ NGUYÊN Y NHƯ CODE CỦA BẠN ---
+
+      function renderSuggestions(list) {
+        const suggestionsBox = document.getElementById('searchSuggestions');
+        if (!suggestionsBox) return;
+
+        if (!list || list.length === 0) {
+          suggestionsBox.style.display = 'none';
+          suggestionsBox.innerHTML = '';
+          return;
+        }
+
+        const html = list.map((item, index) => `
+    <div class="suggestion-item" data-index="${index}" onclick="selectSuggestion('${item.replace(/'/g, "\\'")}')">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>${item}</span>
+    </div>
+  `).join('');
+
+        suggestionsBox.innerHTML = html;
+        suggestionsBox.style.display = 'block';
+      }
+
+      window.handleSearchKeyDown = function (e) {
+        const suggestionsBox = document.getElementById('searchSuggestions');
+        const searchInput = document.getElementById('searchInput');
+
+        if (!suggestionsBox) return;
+
+        if (suggestionsBox.style.display === 'none' || !suggestionsBox.innerHTML) {
+          if (e.key === 'Enter') {
+            if (typeof handleSearch === 'function') handleSearch();
+          }
+          return;
+        }
+
+        const items = suggestionsBox.querySelectorAll('.suggestion-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          currentFocus++;
+          if (currentFocus >= items.length) currentFocus = 0;
+          setActiveSuggestion(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          currentFocus--;
+          if (currentFocus < 0) currentFocus = items.length - 1;
+          setActiveSuggestion(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (currentFocus > -1 && items[currentFocus]) {
+            items[currentFocus].click();
+          } else {
+            suggestionsBox.style.display = 'none';
+            if (typeof handleSearch === 'function') handleSearch();
+          }
+        } else if (e.key === 'Escape') {
+          suggestionsBox.style.display = 'none';
+          currentFocus = -1;
+        }
+      };
+
+      function setActiveSuggestion(items) {
+        const searchInput = document.getElementById('searchInput');
+
+        items.forEach(item => item.classList.remove('active'));
+
+        if (currentFocus >= 0 && items[currentFocus]) {
+          const activeItem = items[currentFocus];
+          activeItem.classList.add('active');
+
+          activeItem.scrollIntoView({ block: 'nearest' });
+
+          const selectedText = activeItem.querySelector('span').innerText;
+          if (searchInput) searchInput.value = selectedText;
+        }
+      }
+
+      window.selectSuggestion = function (value) {
+        const searchInput = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('searchSuggestions');
+
+        if (searchInput) searchInput.value = value;
+        if (suggestionsBox) suggestionsBox.style.display = 'none';
+        currentFocus = -1;
+
+        if (typeof handleSearch === 'function') {
+          handleSearch();
+        }
+      };
+
+      document.addEventListener('click', function (e) {
+        const suggestionsBox = document.getElementById('searchSuggestions');
+        if (suggestionsBox && !e.target.closest('.search-bar-top')) {
+          suggestionsBox.style.display = 'none';
+          currentFocus = -1;
+        }
+      });
       // Đóng bộ lọc Drawer
       function closeFilter() {
         if (sidebar) {
