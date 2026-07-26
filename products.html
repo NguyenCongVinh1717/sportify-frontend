@@ -278,6 +278,57 @@
       color: var(--text-muted);
     }
 
+    /* --- Wishlist Button Alignment --- */
+    .wishlist-btn-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--black) !important;
+      background: transparent;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 0;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .wishlist-btn-wrapper:hover {
+      background: transparent;
+      opacity: 0.7;
+    }
+
+    .wishlist-icon-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wishlist-icon-container i {
+      color: var(--black);
+      font-size: 19px !important;
+    }
+
+    .wishlist-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ff4757;
+      color: var(--white);
+      font-size: 9px;
+      font-weight: 800;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--white);
+    }
+
+    /* cart */
     .cart-btn-wrapper {
       display: flex;
       align-items: center;
@@ -976,6 +1027,76 @@
       font-size: 15px;
       font-weight: 700;
       color: var(--black);
+    }
+
+    /* ===== WISHLIST BUTTON ON IMAGE ===== */
+    .wishlist-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: #9ca3af;
+      /* Màu xám mặc định */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      z-index: 5;
+
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px);
+
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, color 0.2s ease;
+    }
+
+
+    .product-card:hover .wishlist-btn {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+
+    .wishlist-btn:hover {
+      transform: translateX(0) scale(1.1) !important;
+      color: #ff4757;
+      background: var(--white, #ffffff);
+    }
+
+
+    /* ===== BẢN SỬA MỚI (Thay thế đoạn .wishlist-btn.active cũ) ===== */
+    .wishlist-btn.active {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateX(0) !important;
+      color: #ff4757 !important;
+      background: var(--white, #ffffff) !important;
+    }
+
+
+    .wishlist-btn.active i {
+      animation: heartPulse 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes heartPulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.35);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     /* ===== QUICK ADD OVERLAY ===== */
@@ -1735,6 +1856,12 @@
             <i class="fa-regular fa-user"></i>
           </a>
         </div>
+        <a href="wishlist.html" class="wishlist-btn-wrapper" aria-label="Danh sách yêu thích">
+          <div class="wishlist-icon-container">
+            <i class="fa-regular fa-heart"></i>
+            <span class="wishlist-badge" id="wishlist-count">0</span>
+          </div>
+        </a>
         <a href="cart.html" class="cart-btn-wrapper">
           <div class="cart-icon-container">
             <svg class="cart-icon-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1971,7 +2098,7 @@
     let selectedSizeIds = new Set();
     let selectedColorIds = new Set();
     let advancedFilterActive = false; // true khi danh sách sản phẩm đang hiển thị theo bộ lọc nâng cao
-
+     let userWishlistSet = new Set();
     // ✨ THÊM MỚI: Hàm kích hoạt khi bấm nút TÌM KIẾM
     function handleSearch() {
       const input = document.getElementById('searchInput');
@@ -2300,19 +2427,25 @@
       selectedBrandIdFilter = el.checked ? id : null;
     }
 
+    // ==========================================
+    // QUẢN LÝ DANH SÁCH YÊU THÍCH (WISHLIST)
+    // ==========================================
+
+
+
+    // 1. Render danh sách sản phẩm
     function renderProducts(products) {
       const container = document.getElementById('product-list');
 
-      // ✨ THÊM MỚI: Hiển thị thông báo nếu không tìm thấy kết quả phù hợp
       if (!products || products.length === 0) {
-        const emptyMessage = currentImageSearchActive
+        const emptyMessage = typeof currentImageSearchActive !== 'undefined' && currentImageSearchActive
           ? 'Không tìm thấy sản phẩm nào phù hợp với ảnh bạn đã chọn.'
           : 'Không tìm thấy sản phẩm nào phù hợp yêu cầu.';
         container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #6b7280;">
-            <i class="fa-solid fa-magnifying-glass" style="font-size: 40px; margin-bottom: 15px; display:block; color: #ccc;"></i>
-            <span style="font-size: 15px; font-weight: 500;">${emptyMessage}</span>
-          </div>`;
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: #6b7280;">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 40px; margin-bottom: 15px; display:block; color: #ccc;"></i>
+        <span style="font-size: 15px; font-weight: 500;">${emptyMessage}</span>
+      </div>`;
         return;
       }
 
@@ -2320,24 +2453,147 @@
         const img = Array.isArray(p.images) ? p.images[0] : p.images;
         const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
         const fallbackImg = img?.startsWith('http') ? '' : `${IMG_VIEW_FALLBACK_BASE}${img}`;
+
+        const isFavorite = userWishlistSet.has(p.id);
+
         return `
-          <article class="product-card">
-            <div class="img-box" onclick="location.href='product_detail.html?id=${p.id}'" style="cursor:pointer">
-              <img src="${displayImg}" ${fallbackImg ? `onerror="this.onerror=null; this.src='${fallbackImg}'"` : ''}>
-              <button class="quick-add-overlay" onclick="event.stopPropagation(); openModal(${p.id})"><i class="fa-solid fa-cart-plus" style="margin-right: 6px;"></i>Thêm vào giỏ</button>
-            </div>
-            <div class="p-info">
-              <p class="p-brand-tag">${p.brandName || 'SPORTIFY'}</p>
-              <h5>${p.productName}</h5>
-              <div class="p-action-row">
-                <span class="price">${p.price.toLocaleString('vi-VN')}đ</span>
-              </div>
-            </div>
-          </article>
-        `;
+      <article class="product-card">
+        <div class="img-box" onclick="location.href='product_detail.html?id=${p.id}'" style="cursor:pointer">
+          <img src="${displayImg}" ${fallbackImg ? `onerror="this.onerror=null; this.src='${fallbackImg}'"` : ''}>
+          
+          <button type="button" 
+                  class="wishlist-btn ${isFavorite ? 'active' : ''}" 
+                  data-id="${p.id}"
+                  onclick="toggleWishlist(event, ${p.id})"
+                  aria-label="Thêm vào yêu thích">
+            <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+          </button>
+
+          <button class="quick-add-overlay" onclick="event.stopPropagation(); openModal(${p.id})">
+            <i class="fa-solid fa-cart-plus" style="margin-right: 6px;"></i>Thêm vào giỏ
+          </button>
+        </div>
+        <div class="p-info">
+          <p class="p-brand-tag">${p.brandName || 'SPORTIFY'}</p>
+          <h5>${p.productName}</h5>
+          <div class="p-action-row">
+            <span class="price">${p.price ? p.price.toLocaleString('vi-VN') : 0}đ</span>
+          </div>
+        </div>
+      </article>
+    `;
       }).join('');
     }
 
+    // 2. Cập nhật Badge hiển thị trên Header
+    function updateWishlistBadge() {
+      const badge = document.getElementById("wishlist-count");
+      if (!badge) return;
+
+      // Nếu Set rỗng (hoặc chưa đăng nhập), gán mặc định là 0
+      const count = userWishlistSet ? userWishlistSet.size : 0;
+
+      badge.textContent = count;
+
+      // Luôn hiển thị badge
+      badge.style.display = "flex";
+    }
+
+    // 3. Tải danh sách yêu thích từ CSDL khi mở trang
+    async function loadWishlist() {
+      try {
+        const res = await apiGet("/wishlist");
+
+        // Xử lý ép mảng dữ liệu an toàn
+        const wishlist = Array.isArray(res)
+          ? res
+          : (res?.data || (typeof extractProductArray === 'function' ? extractProductArray(res) : []));
+
+        userWishlistSet.clear();
+
+        wishlist.forEach(item => {
+          const pId = item.id || item.productId;
+          if (pId) userWishlistSet.add(pId);
+        });
+
+        updateWishlistBadge();
+
+      } catch (err) {
+        // Nếu lỗi hoặc chưa đăng nhập thì reset số đếm về 0
+        userWishlistSet.clear();
+        updateWishlistBadge();
+      }
+    }
+
+    // 4. Thêm / Xóa Wishlist khi bấm nút Tim trên Sản phẩm
+    async function toggleWishlist(event, productId) {
+      event.stopPropagation();
+
+      const btn = event.currentTarget;
+      const icon = btn.querySelector("i");
+      const isFavorite = userWishlistSet.has(productId);
+
+      try {
+        if (isFavorite) {
+          // Đã thích -> Bấm lần nữa để Gọi API Xóa khỏi CSDL
+          await apiDelete(`/wishlist/${productId}`);
+          userWishlistSet.delete(productId);
+
+          btn.classList.remove("active");
+          if (icon) icon.className = "fa-regular fa-heart";
+
+          Swal.fire({
+            icon: "success",
+            title: "Đã xóa khỏi yêu thích",
+            timer: 800,
+            showConfirmButton: false
+          });
+
+        } else {
+          // Chưa thích -> Gọi API Thêm vào CSDL
+          await apiPost("/wishlist", { productId: productId });
+          userWishlistSet.add(productId);
+
+          btn.classList.add("active");
+          if (icon) icon.className = "fa-solid fa-heart";
+
+          Swal.fire({
+            icon: "success",
+            title: "Đã thêm vào yêu thích",
+            timer: 800,
+            showConfirmButton: false
+          });
+        }
+
+        // Cập nhật lại badge sau khi Toggle thành công
+        updateWishlistBadge();
+
+      } catch (err) {
+        console.error("Lỗi thao tác wishlist:", err);
+        // Báo yêu cầu đăng nhập nếu chưa có token / bị từ chối 401
+        Swal.fire({
+          icon: "warning",
+          title: "YÊU CẦU ĐĂNG NHẬP",
+          text: "Vui lòng đăng nhập để sử dụng danh sách yêu thích.",
+          confirmButtonColor: "#111111"
+        });
+      }
+    }
+
+    // 5. Khởi tạo khi tải trang xong
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load số lượng và danh sách Wishlist từ CSDL
+      await loadWishlist();
+
+      // Đã sửa Selector khớp đúng với Class `.wishlist-btn-wrapper` ở HTML của bạn
+      const headerWishlistBtn = document.querySelector('.wishlist-btn-wrapper');
+      if (headerWishlistBtn) {
+        headerWishlistBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = 'wishlist.html';
+        });
+      }
+    });
     function updateResultCount(totalCount, labelText = '') {
       const resultCountEl = document.getElementById('result-count-text');
       if (!resultCountEl) return;

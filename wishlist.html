@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh sách yêu thích | Sportify Premium Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Tích hợp SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root {
+      --white: #ffffff;
+      --gray-bg: #f9fafb;
+      --gray-border: #e5e7eb;
+      --black: #000000;
+      --text-muted: #6b7280;
+      --radius-sm: 2px;
+      --transition: all 0.2s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== HEADER ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 1px solid var(--black);
+      padding: 20px 0;
+    }
+
+    .topbar-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0px;
+      color: var(--black);
+      text-transform: uppercase;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: var(--black);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+    }
+
+    .back-link:hover {
+      border-color: var(--black);
+    }
+
+    /* ===== LAYOUT TRANG WISHLIST DẠNG BẢNG ===== */
+    .wishlist-page {
+      max-width: 1440px;
+      margin: 60px auto 100px;
+      padding: 0 40px;
+    }
+
+    .wishlist-header-title {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .wishlist-title {
+      font-size: 32px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    /* ĐẾM SỐ LƯỢNG SẢN PHẨM */
+    .wishlist-count-badge {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    /* HEADER BẢNG SẢN PHẨM */
+    .wishlist-table-header {
+      display: grid;
+      grid-template-columns: 50px 4fr 1.8fr 2fr;
+      align-items: center;
+      padding: 14px 20px;
+      background: #f3f4f6;
+      border-bottom: 2px solid var(--black);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--black);
+    }
+
+    /* DÒNG SẢN PHẨM YÊU THÍCH */
+    .wishlist-item {
+      display: grid;
+      grid-template-columns: 50px 4fr 1.8fr 2fr;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid var(--gray-border);
+      transition: var(--transition);
+    }
+
+    .wishlist-item:hover {
+      background-color: #fafafa;
+    }
+
+    /* NÚT XÓA HÌNH DẤU X */
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 18px;
+      transition: var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 36px;
+      width: 36px;
+    }
+
+    .remove-btn:hover {
+      color: #ef4444;
+      transform: scale(1.2);
+    }
+
+    /* THÔNG TIN SẢN PHẨM */
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      cursor: pointer;
+    }
+
+    .product-img {
+      width: 80px;
+      height: 100px;
+      background: var(--gray-bg);
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      object-position: center;
+      border: 1px solid var(--gray-border);
+      flex-shrink: 0;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .product-details .brand-name {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      background: var(--gray-bg);
+      display: inline-block;
+      padding: 2px 6px;
+      width: fit-content;
+      border: 1px solid var(--gray-border);
+    }
+
+    .product-details .name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+      transition: var(--transition);
+    }
+
+    .product-info:hover .name {
+      text-decoration: underline;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--black);
+    }
+
+    /* NÚT XEM CHI TIẾT ĐEN CÓ ICON CON MẮT */
+    .action-col {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .view-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--black);
+      color: var(--white);
+      padding: 12px 24px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 0px;
+      transition: var(--transition);
+      width: 100%;
+      max-width: 200px;
+    }
+
+    .view-btn:hover {
+      background: #222222;
+      opacity: 0.9;
+    }
+
+    /* STYLING SWEETALERT2 */
+    .swal2-popup { border-radius: 0px !important; }
+    .swal2-title { font-family: 'Plus Jakarta Sans', sans-serif !important; font-weight: 800 !important; text-transform: uppercase !important; font-size: 18px !important; letter-spacing: 0.5px; }
+    .swal2-html-container { font-family: 'Plus Jakarta Sans', sans-serif !important; font-weight: 500 !important; font-size: 14px !important; }
+    .swal2-confirm { background-color: var(--black) !important; border-radius: 0px !important; font-weight: 700 !important; text-transform: uppercase !important; font-size: 12px !important; letter-spacing: 1px !important; }
+    .swal2-cancel { border-radius: 0px !important; font-weight: 700 !important; text-transform: uppercase !important; font-size: 12px !important; letter-spacing: 1px !important; background-color: #f3f4f6 !important; color: #000000 !important; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .wishlist-page { padding: 0 20px; margin-top: 30px; }
+      .topbar-inner { padding: 0 20px; }
+      .wishlist-table-header { display: none; }
+      .wishlist-item { grid-template-columns: 1fr; gap: 16px; text-align: center; justify-items: center; padding: 24px 15px; background: var(--gray-bg); margin-bottom: 15px; border: 1px solid var(--gray-border); position: relative; }
+      .product-info { flex-direction: column; gap: 12px; }
+      .remove-btn { position: absolute; top: 15px; right: 15px; }
+      .action-col { width: 100%; justify-content: center; }
+      .view-btn { max-width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="products.html" class="brand-wrapper">
+        <div class="brand-title">SPORTIFY</div>
+      </a>
+      <a href="products.html" class="back-link">
+        <i class="fa-solid fa-arrow-left-long"></i> Tiếp tục mua sắm
+      </a>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="wishlist-page">
+    <div class="wishlist-header-title">
+      <h2 class="wishlist-title">Danh sách yêu thích</h2>
+      <span class="wishlist-count-badge" id="wishlist-count-badge"></span>
+    </div>
+
+    <!-- KHUNG BẢNG HIỂN THỊ -->
+    <div id="wishlist-container">
+      <p style="padding: 60px; text-align: center; color: var(--text-muted); font-weight: 500;">
+        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Đang tải danh sách yêu thích...
+      </p>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script>
+    const IMAGE_BASE_URL = "https://res.cloudinary.com/l3chl8tz/image/upload/products/";
+    const IMAGE_BASE_URL_FALLBACK = "https://res.cloudinary.com/l3chl8tz/image/upload/";
+
+    document.addEventListener('DOMContentLoaded', loadWishlist);
+
+    function isUserLoggedIn() {
+      return Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || (typeof accessToken !== 'undefined' && accessToken));
+    }
+
+    function updateWishlistCount(count) {
+      const badge = document.getElementById('wishlist-count-badge');
+      if (badge) {
+        badge.innerText = count > 0 ? `(${count})` : '';
+      }
+    }
+
+    async function loadWishlist() {
+      const container = document.getElementById('wishlist-container');
+      
+      if (!isUserLoggedIn()) {
+        updateWishlistCount(0);
+        renderNotLoggedInState(container);
+        return;
+      }
+
+      try {
+        const response = await apiGet('/wishlist');
+        const items = Array.isArray(response) 
+          ? response 
+          : (response && response.items ? response.items : (response && response.data ? response.data : []));
+
+        if (!items || items.length === 0) {
+          updateWishlistCount(0);
+          renderEmptyState(container);
+          return;
+        }
+
+        updateWishlistCount(items.length);
+        renderWishlistTable(container, items);
+      } catch (err) {
+        console.error("Lỗi khi tải wishlist:", err);
+        updateWishlistCount(0);
+        renderEmptyState(container);
+      }
+    }
+
+    function renderNotLoggedInState(container) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 80px 20px; border-top: 2px solid var(--black);">
+          <i class="fa-solid fa-right-to-bracket" style="font-size: 36px; color: var(--black); margin-bottom: 20px;"></i>
+          <p style="color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; margin-bottom: 25px;">
+            Vui lòng đăng nhập để xem và quản lý danh sách yêu thích.
+          </p>
+          <a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="view-btn" style="display: inline-flex; width: auto;">
+            ĐĂNG NHẬP NGAY
+          </a>
+        </div>`;
+    }
+
+    function renderEmptyState(container) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 80px 20px; border-top: 2px solid var(--black);">
+          <i class="fa-regular fa-heart" style="font-size: 40px; color: var(--black); margin-bottom: 20px;"></i>
+          <p style="color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; margin-bottom: 25px;">
+            Danh sách yêu thích của bạn đang trống.
+          </p>
+          <a href="products.html" class="view-btn" style="display: inline-flex; width: auto;">
+            KHÁM PHÁ SẢN PHẨM
+          </a>
+        </div>`;
+    }
+
+    function renderWishlistTable(container, items) {
+      const html = `
+        <div class="wishlist-table-header">
+          <span></span>
+          <span>Sản phẩm</span>
+          <span>Giá</span>
+          <span style="text-align: right;">Thao tác</span>
+        </div>
+
+        <div class="wishlist-items-list">
+          ${items.map(item => {
+            const pId = item.id || item.productId;
+            const rawImg = Array.isArray(item.images) ? item.images[0] : (item.image || item.images || '');
+            
+            const imgUrl = rawImg 
+              ? (rawImg.startsWith('http') ? rawImg : `${IMAGE_BASE_URL}${rawImg}`) 
+              : 'https://via.placeholder.com/200';
+              
+            const imgFallback = rawImg && !rawImg.startsWith('http') ? `${IMAGE_BASE_URL_FALLBACK}${rawImg}` : '';
+
+            return `
+              <div class="wishlist-item" id="wishlist-item-${pId}">
+                <!-- NÚT XÓA HÌNH DẤU X -->
+                <button class="remove-btn" onclick="removeFromWishlist(${pId})" title="Xóa khỏi danh sách">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- THÔNG TIN SẢN PHẨM -->
+                <div class="product-info" onclick="location.href='product_detail.html?id=${pId}'">
+                  <img src="${imgUrl}" alt="${item.productName || 'Sản phẩm'}" class="product-img" ${imgFallback ? `onerror="this.onerror=null; this.src='${imgFallback}'"` : ''}>
+                  <div class="product-details">
+                    <div class="name">${item.productName || 'Sản phẩm chưa cập nhật'}</div>
+                    <span class="brand-name">${item.brandName || 'SPORTIFY'}</span>
+                  </div>
+                </div>
+
+                <!-- GIÁ SẢN PHẨM -->
+                <div class="price">${item.price ? item.price.toLocaleString('vi-VN') + 'đ' : '0đ'}</div>
+
+                <!-- NÚT XEM CHI TIẾT VỚI ICON CON MẮT -->
+                <div class="action-col">
+                  <a href="product_detail.html?id=${pId}" class="view-btn">
+                    <i class="fa-solid fa-eye"></i> Xem chi tiết
+                  </a>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    async function removeFromWishlist(productId) {
+      const result = await Swal.fire({
+        title: 'XÓA SẢN PHẨM?',
+        text: "Bạn có chắc chắn muốn xóa sản phẩm này khỏi danh sách yêu thích?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#000000',
+        cancelButtonColor: '#ffffff',
+        confirmButtonText: 'ĐỒNG Ý XÓA',
+        cancelButtonText: 'QUAY LẠI'
+      });
+
+      if (!result.isConfirmed) return;
+
+      try {
+        await apiDelete(`/wishlist/${productId}`);
+
+        const itemElement = document.getElementById(`wishlist-item-${productId}`);
+        if (itemElement) {
+          itemElement.remove();
+        }
+
+        const container = document.getElementById('wishlist-container');
+        const remainingItems = container.querySelectorAll('.wishlist-item');
+
+        // Cập nhật lại số lượng sản phẩm hiển thị trên tiêu đề
+        updateWishlistCount(remainingItems.length);
+
+        if (remainingItems.length === 0) {
+          renderEmptyState(container);
+        }
+
+        Swal.fire({
+          title: 'ĐÃ XÓA SẢN PHẨM',
+          text: 'Sản phẩm đã được loại khỏi danh sách yêu thích.',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true
+        });
+
+      } catch (err) {
+        console.error("Lỗi xóa wishlist:", err);
+        Swal.fire({
+          title: 'LỖI HỆ THỐNG',
+          text: 'Không thể xóa sản phẩm vào lúc này.',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>

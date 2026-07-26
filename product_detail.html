@@ -20,9 +20,12 @@
       --shadow-premium: none;
       --radius: 4px;
       --transition: all 0.2s ease-in-out;
-      --success: #2ecc71; /* Chấm xanh lá khi còn hàng */
-      --danger: #e74c3c;  /* Màu đỏ tươi hơn cho nút xóa, hủy, hết hàng */
-      --star-color: #f1c40f; /* Ngôi sao chuyển sang màu vàng tươi */
+      --success: #2ecc71;
+      /* Chấm xanh lá khi còn hàng */
+      --danger: #e74c3c;
+      /* Màu đỏ tươi cho nút xóa, hủy, hết hàng, trái tim */
+      --star-color: #f1c40f;
+      /* Ngôi sao chuyển sang màu vàng tươi */
     }
 
     * {
@@ -67,63 +70,79 @@
     .brand-title {
       font-size: 24px;
       font-weight: 900;
-      font-style: normal; /* Bỏ in nghiêng chữ SPORTIFY */
+      font-style: normal;
       letter-spacing: 0px;
       color: var(--black);
       text-transform: uppercase;
     }
 
-    .cart-btn-wrapper {
-      position: relative;
+    /* Container chứa các icon hành động */
+    .header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 24px;
+      /* Khoảng cách giữa icon Yêu thích và Giỏ hàng */
+    }
+
+    /* Style cho Nút / Wrapper Icon */
+    .wishlist-btn-wrapper,
+    .cart-btn-wrapper {
+      display: inline-block;
       text-decoration: none;
       color: var(--black);
-      font-weight: 700;
-      font-size: 12px;
-      background: transparent;
-      padding: 8px 16px;
-      border-radius: var(--radius);
-      border: 1px solid var(--black);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       transition: var(--transition);
     }
 
+    .wishlist-btn-wrapper:hover,
     .cart-btn-wrapper:hover {
-      background: var(--black);
-      color: var(--white);
+      opacity: 0.7;
     }
 
+    /* Khung chứa icon và badge */
+    .wishlist-icon-container,
     .cart-icon-container {
+      position: relative;
       display: flex;
       align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
     }
 
-    .cart-icon-container i {
-      font-size: 14px;
+    /* Định dạng Icon trái tim FontAwesome */
+    .wishlist-icon-container i {
+      font-size: 20px;
+      color: var(--black);
     }
 
+    /* Định dạng Icon giỏ hàng SVG */
+    .cart-icon-svg {
+      width: 38px;
+      height: 38px;
+      display: block;
+      color: var(--black);
+    }
+
+    /* Badge màu đỏ hiển thị số lượng góc trên */
+    .wishlist-badge,
     .cart-badge {
       position: absolute;
-      top: -6px;
-      right: -8px;
-      background: var(--danger); /* Số lượng giỏ hàng đổi sang màu đỏ */
-      color: var(--white);
-      font-size: 10px;
-      font-weight: 800;
-      width: 18px;
-      height: 18px;
+      top: -1px;
+      right: -1px;
+      background-color: #ff4757;
+      /* Màu đỏ tươi nổi bật */
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 700;
+      min-width: 15px;
+      height: 15px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .cart-btn-wrapper:hover .cart-badge {
-      background: var(--danger);
-      color: var(--white);
+      padding: 0 4px;
+      line-height: 1;
+      pointer-events: none;
     }
 
     /* ===== LAYOUT CHI TIẾT SẢN PHẨM ===== */
@@ -144,7 +163,7 @@
     }
 
     .gallery-container {
-      position: relative; /* Bỏ tính chất sticky để ảnh cuộn theo văn bản khi kéo trang */
+      position: relative;
       height: fit-content;
     }
 
@@ -221,18 +240,25 @@
       transition: all 0.2s ease;
     }
 
-    .prev-btn { left: 10px; }
-    .next-btn { right: 10px; }
+    .prev-btn {
+      left: 10px;
+    }
+
+    .next-btn {
+      right: 10px;
+    }
 
     @media (hover: hover) {
       .nav-btn {
         opacity: 0;
         visibility: hidden;
       }
+
       .main-img-view:hover .nav-btn {
         opacity: 1;
         visibility: visible;
       }
+
       .nav-btn:hover {
         background: var(--black);
         color: var(--white);
@@ -336,8 +362,16 @@
       background: #aaa;
     }
 
-    .btn-add-cart {
+    /* KHU VỰC CÁC NÚT BẤM MUA HÀNG & WISHLIST */
+    .action-buttons-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
       width: 100%;
+    }
+
+    .btn-add-cart {
+      flex: 1;
       background: var(--black);
       color: var(--white);
       border: none;
@@ -359,6 +393,27 @@
       background: var(--gray-border);
       color: #9ca3af;
       cursor: not-allowed;
+    }
+
+    .btn-wishlist-detail {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .btn-wishlist-detail:hover {
+      background: var(--gray-bg);
+      border-color: var(--black);
     }
 
     .error-msg {
@@ -479,7 +534,7 @@
 
     .btn-collapse-related {
       background: transparent;
-      color: var(--danger); /* Đổi nút thu gọn sang màu đỏ tươi */
+      color: var(--danger);
       border: 1px solid var(--danger);
       padding: 10px 24px;
       font-size: 12px;
@@ -616,7 +671,7 @@
     }
 
     .comment-stars-view i.fa-solid {
-      color: var(--star-color); /* Ngôi sao vàng hiển thị bình luận cũ */
+      color: var(--star-color);
     }
 
     .comment-stars-view i.fa-regular {
@@ -660,39 +715,58 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a href="products.html" class="brand-wrapper">
-        <!-- Bỏ logo sấm sét hoàn toàn -->
-        <div class="brand-title">SPORTIFY</div> 
+        <div class="brand-title">SPORTIFY</div>
       </a>
-      <a href="cart.html" class="cart-btn-wrapper">
-        <div class="cart-icon-container">
-          <i class="fa-solid fa-bag-shopping"></i>
-          <span class="cart-badge" id="cart-count">0</span>
-        </div>
-        <span>Giỏ hàng</span>
-      </a>
+      <div class="header-actions">
+        <!-- Nút Yêu thích -->
+        <a href="wishlist.html" class="wishlist-btn-wrapper" aria-label="Danh sách yêu thích">
+          <div class="wishlist-icon-container">
+            <i class="fa-regular fa-heart"></i>
+            <span class="wishlist-badge" id="wishlist-count">0</span>
+          </div>
+        </a>
+
+        <!-- Nút Giỏ hàng (Đã cập nhật SVG nét mảnh chuẩn ảnh) -->
+        <a href="cart.html" class="cart-btn-wrapper" aria-label="Giỏ hàng">
+          <div class="cart-icon-container">
+            <svg class="cart-icon-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 7h14l-1.2 9.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 7Z" stroke="currentColor" stroke-width="1.5"
+                stroke-linejoin="round" />
+              <path d="M9 7V5.8A2.8 2.8 0 0 1 11.8 3h.4A2.8 2.8 0 0 1 15 5.8V7" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" />
+              <path d="M9 11.2h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            <span class="cart-badge" id="cart-count">0</span>
+          </div>
+        </a>
+      </div>
     </div>
   </header>
 
   <div class="product-box-wrapper">
     <main class="main-detail" id="product-content">
       <div style="padding: 100px 0; text-align: center; grid-column: 1/-1; color: var(--text-muted); font-weight: 500;">
-        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản phẩm...
+        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px; font-size: 18px;"></i> Đang tải thông tin sản
+        phẩm...
       </div>
     </main>
   </div>
 
   <section class="related-section">
     <div class="related-header-wrapper">
-      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên quan</h3>
+      <h3 class="comment-header-title" style="margin-bottom: 0;"><i class="fa-solid fa-layer-group"></i> Sản phẩm liên
+        quan</h3>
     </div>
 
     <div class="related-grid" id="related-list-target"></div>
 
     <div class="view-more-container">
-      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()" style="display: none;">
+      <button id="btn-load-more-related" class="btn-view-more-related" onclick="loadNextRelatedPage()"
+        style="display: none;">
         Xem thêm <i class="fa-solid fa-chevron-down" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
-      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()" style="display: none;">
+      <button id="btn-collapse-related" class="btn-collapse-related" onclick="collapseRelatedToDefault()"
+        style="display: none;">
         Thu gọn <i class="fa-solid fa-chevron-up" style="margin-left: 5px; font-size: 11px;"></i>
       </button>
     </div>
@@ -709,11 +783,13 @@
     <div>
       <h3 class="comment-header-title"><i class="fa-regular fa-pen-to-square"></i> Viết đánh giá của bạn</h3>
       <div class="comment-form">
-        <div id="comment-login-notice" style="display: none; margin-bottom: 12px; padding: 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 4px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
+        <div id="comment-login-notice"
+          style="display: none; margin-bottom: 12px; padding: 12px; border: 1px solid var(--gray-border); background: #f9fafb; border-radius: 4px; color: var(--text-muted); font-size: 13px; line-height: 1.5;">
           <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
           <span>Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.</span>
           <div style="margin-top: 10px;">
-            <button type="button" class="btn-submit-comment" id="comment-login-button" style="padding: 8px 14px; font-size: 13px; width: auto;">Đăng nhập để bình luận</button>
+            <button type="button" class="btn-submit-comment" id="comment-login-button"
+              style="padding: 8px 14px; font-size: 13px; width: auto;">Đăng nhập để bình luận</button>
           </div>
         </div>
         <div class="variant-title">Xếp hạng của bạn</div>
@@ -730,7 +806,8 @@
           <textarea id="comment-input-text"
             placeholder="Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển..."></textarea>
         </div>
-        <button class="btn-submit-comment" id="comment-submit-button" onclick="submitProductComment()">Gửi đánh giá</button>
+        <button class="btn-submit-comment" id="comment-submit-button" onclick="submitProductComment()">Gửi đánh
+          giá</button>
       </div>
     </div>
   </section>
@@ -745,6 +822,8 @@
     let globalCartCount = 0;
     let currentSelectedRating = 5;
 
+    let isProductWishlisted = false;
+
     let currentRelatedPage = 0;
     const RELATED_PAGE_SIZE = 4;
 
@@ -752,7 +831,7 @@
     const productId = urlParams.get('id');
 
     function isUserLoggedIn() {
-      return Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
+      return Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || (typeof accessToken !== 'undefined' && accessToken));
     }
 
     function getCurrentUserIdentity() {
@@ -824,8 +903,11 @@
         document.getElementById('cart-count').innerText = globalCartCount;
       }
       await loadCartCountFromBackend();
+      await loadWishlistCountFromBackend();
+
       if (productId) {
         await loadProduct();
+        await checkWishlistStatus();
         await loadCommentsUI();
         updateReviewFormState();
 
@@ -843,7 +925,83 @@
         const count = (res.items || []).reduce((acc, item) => acc + item.quantity, 0);
         updateCartUI(count);
       } catch (err) {
-        console.error("Chưa đăng nhập");
+        console.error("Chưa đăng nhập cart");
+      }
+    }
+
+    /* ===== CHỨC NĂNG WISHLIST ===== */
+    async function loadWishlistCountFromBackend() {
+      if (!isUserLoggedIn()) {
+        document.getElementById('wishlist-count').innerText = '0';
+        return;
+      }
+      try {
+        const wishlistData = await apiGet('/wishlist');
+        const list = Array.isArray(wishlistData) ? wishlistData : (wishlistData.content || []);
+        document.getElementById('wishlist-count').innerText = list.length;
+      } catch (err) {
+        console.error("Chưa đăng nhập hoặc lỗi danh sách yêu thích:", err);
+        document.getElementById('wishlist-count').innerText = '0';
+      }
+    }
+
+    async function checkWishlistStatus() {
+      if (!isUserLoggedIn() || !productId) return;
+      try {
+        const wishlistData = await apiGet('/wishlist');
+        const list = Array.isArray(wishlistData) ? wishlistData : (wishlistData.content || []);
+        isProductWishlisted = list.some(item => (item.id == productId || item.productId == productId));
+        updateWishlistButtonUI();
+      } catch (err) {
+        console.error("Lỗi lấy thông tin yêu thích:", err);
+      }
+    }
+
+    function updateWishlistButtonUI() {
+      const btn = document.getElementById('wishlist-detail-btn');
+      if (!btn) return;
+
+      if (isProductWishlisted) {
+        btn.innerHTML = `<i class="fa-solid fa-heart" style="color: var(--danger);"></i>`;
+        btn.title = "Bỏ yêu thích";
+      } else {
+        btn.innerHTML = `<i class="fa-regular fa-heart"></i>`;
+        btn.title = "Thêm vào yêu thích";
+      }
+    }
+
+    async function toggleWishlistDetail() {
+      if (!isUserLoggedIn()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Yêu cầu đăng nhập',
+          text: 'Vui lòng đăng nhập để lưu sản phẩm vào danh sách yêu thích!',
+          confirmButtonColor: '#000000',
+          confirmButtonText: 'ĐĂNG NHẬP',
+        }).then((res) => {
+          if (res.isConfirmed) {
+            const redirectUrl = encodeURIComponent(window.location.href);
+            window.location.href = `login.html?redirect=${redirectUrl}`;
+          }
+        });
+        return;
+      }
+
+      try {
+        if (isProductWishlisted) {
+          await apiDelete(`/wishlist/${productId}`);
+          isProductWishlisted = false;
+          Swal.fire({ icon: 'success', title: 'Đã xóa khỏi danh sách yêu thích', showConfirmButton: false, timer: 1300 });
+        } else {
+          await apiPost('/wishlist', { productId: parseInt(productId) });
+          isProductWishlisted = true;
+          Swal.fire({ icon: 'success', title: 'Đã thêm vào danh sách yêu thích', showConfirmButton: false, timer: 1300 });
+        }
+        updateWishlistButtonUI();
+        await loadWishlistCountFromBackend();
+      } catch (err) {
+        console.error("Lỗi cập nhật wishlist:", err);
+        Swal.fire({ icon: 'error', title: 'Thất bại', text: 'Có lỗi xảy ra khi thực hiện thao tác này!' });
       }
     }
 
@@ -917,9 +1075,15 @@
         <div class="dot"></div> Chọn biến thể để xem tình trạng hàng
       </div>
 
-      <button class="btn-add-cart" id="add-btn" onclick="handleAddToCart()">Thêm vào giỏ hàng</button>
+      <div class="action-buttons-group">
+        <button class="btn-add-cart" id="add-btn" onclick="handleAddToCart()">Thêm vào giỏ hàng</button>
+        <button class="btn-wishlist-detail" id="wishlist-detail-btn" onclick="toggleWishlistDetail()" title="Thêm vào yêu thích">
+          <i class="fa-regular fa-heart"></i>
+        </button>
+      </div>
     </div>
   `;
+      updateWishlistButtonUI();
     }
 
     function switchImg(el, src) {
@@ -927,6 +1091,7 @@
       document.querySelectorAll('.thumb-item').forEach(i => i.classList.remove('active'));
       el.classList.add('active');
     }
+
     function navigateImg(direction) {
       const thumbs = document.querySelectorAll('.thumb-item');
       if (thumbs.length <= 1) return;
@@ -975,7 +1140,6 @@
 
         if (v) {
           const isOutOfStock = v.stock <= 0;
-          /* Sửa đổi màu sắc chấm tình trạng: Xanh lá khi còn hàng, đỏ tươi khi hết hàng */
           stockInfo.innerHTML = `
             <div class="dot" style="background: ${isOutOfStock ? 'var(--danger)' : 'var(--success)'}"></div> 
             ${isOutOfStock ? 'Hết hàng' : `Tình trạng: Còn lại ${v.stock} sản phẩm`}`;
@@ -1083,7 +1247,6 @@
           const isOwner = isOwnComment(c);
           let actionButtonsHtml = '';
           if (isOwner) {
-            /* Sửa icon thùng rác thành màu đỏ tươi var(--danger) */
             actionButtonsHtml = `
           <i class="fa-solid fa-pen-to-square" onclick="toggleEditRow(${c.id})" style="color: var(--text-muted); cursor: pointer; font-size: 13px; margin-left: 15px;" title="Sửa bình luận"></i>
           <i class="fa-solid fa-trash-can" onclick="removeComment(${c.id})" style="color: var(--danger); cursor: pointer; font-size: 13px; margin-left: 10px;" title="Xóa bình luận"></i>
@@ -1135,7 +1298,7 @@
     }
 
     function requireLoginForReview() {
-      const loggedIn = Boolean(localStorage.getItem('fullName') || localStorage.getItem('email') || accessToken);
+      const loggedIn = isUserLoggedIn();
       if (!loggedIn) {
         const redirectUrl = encodeURIComponent(buildCommentRedirectUrl());
         window.location.href = `login.html?redirect=${redirectUrl}`;
