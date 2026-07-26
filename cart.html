@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giỏ hàng | Sportify Premium Store</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Tích hợp SweetAlert2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -17,7 +18,8 @@
       --black: #000000;
       --text-muted: #6b7280;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-      --radius-sm: 2px; /* Bo góc cực nhẹ, sắc nét */
+      --radius-sm: 2px;
+      /* Bo góc cực nhẹ, sắc nét */
       --radius-md: 4px;
       --transition: all 0.2s ease;
     }
@@ -42,7 +44,8 @@
       top: 0;
       z-index: 1000;
       background: var(--white);
-      border-bottom: 1px solid var(--black); /* Đường viền đen phẳng mảnh cực chất */
+      border-bottom: 1px solid var(--black);
+      /* Đường viền đen phẳng mảnh cực chất */
       padding: 20px 0;
     }
 
@@ -140,7 +143,7 @@
       height: 106px;
       background: var(--gray-bg);
       border-radius: var(--radius-sm);
-      object-fit: cover; 
+      object-fit: cover;
       object-position: center;
       border: 1px solid var(--gray-border);
     }
@@ -150,7 +153,8 @@
       font-size: 15px;
       color: var(--black);
       margin-bottom: 6px;
-      text-transform: uppercase; /* Đồng bộ thể thao mạnh mẽ */
+      text-transform: uppercase;
+      /* Đồng bộ thể thao mạnh mẽ */
       letter-spacing: 0.3px;
     }
 
@@ -181,7 +185,8 @@
     .quantity-control {
       display: flex;
       align-items: center;
-      border: 1px solid var(--black); /* Đổi sang viền đen cứng cáp */
+      border: 1px solid var(--black);
+      /* Đổi sang viền đen cứng cáp */
       width: fit-content;
       border-radius: var(--radius-sm);
       overflow: hidden;
@@ -197,6 +202,9 @@
       font-size: 14px;
       color: var(--black);
       transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .qty-btn:hover {
@@ -204,15 +212,23 @@
       color: var(--white);
     }
 
-    .qty-input {
+.qty-input {
       width: 36px;
+      height: 32px;
       border: none;
+      border-left: 1px solid var(--black);
+      border-right: 1px solid var(--black);   
       background: transparent;
       text-align: center;
       font-weight: 700;
       font-size: 13px;
       outline: none;
       color: var(--black);
+    }
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
     /* NÚT XÓA SẢN PHẨM tối giản phẳng */
@@ -238,14 +254,16 @@
 
     /* ===== KHỐI TỔNG ĐƠN HÀNG & THÔNG TIN ĐẶT HÀNG ===== */
     .cart-summary {
-      background: var(--white); /* Chuyển nền trắng phẳng */
+      background: var(--white);
+      /* Chuyển nền trắng phẳng */
       padding: 0 0 40px 0;
       border-radius: 0;
       height: fit-content;
       position: sticky;
       top: 120px;
       border: none;
-      border-left: 1px solid var(--gray-border); /* Sử dụng border cắt dọc tinh tế */
+      border-left: 1px solid var(--gray-border);
+      /* Sử dụng border cắt dọc tinh tế */
       padding-left: 40px;
     }
 
@@ -368,7 +386,8 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 25px;
-      border-radius: 0px; /* Vuông góc tuyệt đối khỏe khoắn */
+      border-radius: 0px;
+      /* Vuông góc tuyệt đối khỏe khoắn */
       text-transform: uppercase;
       font-size: 13px;
       letter-spacing: 1.5px;
@@ -388,9 +407,11 @@
 
     /* Tối ưu hóa SweetAlert2 sang Phong cách Modern Brutalism (Đen/Trắng) */
     .swal2-popup {
-      border-radius: 0px !important; /* Không bo góc thông báo alert */
+      border-radius: 0px !important;
+      /* Không bo góc thông báo alert */
       /* border: 2px solid var(--black) !important; */
     }
+
     .swal2-title {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 800 !important;
@@ -398,11 +419,13 @@
       font-size: 18px !important;
       letter-spacing: 0.5px;
     }
+
     .swal2-html-container {
       font-family: 'Plus Jakarta Sans', sans-serif !important;
       font-weight: 500 !important;
       font-size: 14px !important;
     }
+
     .swal2-confirm {
       background-color: var(--black) !important;
       border-radius: 0px !important;
@@ -411,6 +434,7 @@
       font-size: 12px !important;
       letter-spacing: 1px !important;
     }
+
     .swal2-cancel {
       border-radius: 0px !important;
       font-weight: 700 !important;
@@ -521,7 +545,9 @@
       </div>
 
       <div class="checkout-form-section" id="checkout-form-container" style="display: none;">
-        <h4 class="summary-title" style="font-size: 13px; margin-bottom: 20px; border-bottom: 1px solid var(--gray-border); padding-bottom: 6px;">Thông tin nhận hàng</h4>
+        <h4 class="summary-title"
+          style="font-size: 13px; margin-bottom: 20px; border-bottom: 1px solid var(--gray-border); padding-bottom: 6px;">
+          Thông tin nhận hàng</h4>
 
         <div class="form-group">
           <label for="order-receiver">Họ tên người nhận</label>
@@ -632,7 +658,15 @@
             <div class="price">${price.toLocaleString('vi-VN')}đ</div>
             <div class="quantity-control">
                 <button class="qty-btn" onclick="changeQty(${item.productColorSizeId}, ${item.quantity - 1})"><i class="fa-solid fa-minus"></i></button>
-                <input type="text" value="${item.quantity}" class="qty-input" readonly>
+                <input 
+                  type="number" 
+                  value="${item.quantity}" 
+                  class="qty-input" 
+                  min="1"
+                  inputmode="numeric"
+                  onchange="handleQtyInputChange(this, ${item.productColorSizeId})"
+                  onkeydown="if(event.key === 'Enter') this.blur()"
+                >
                 <button class="qty-btn" onclick="changeQty(${item.productColorSizeId}, ${item.quantity + 1})"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div class="subtotal">${itemTotal.toLocaleString('vi-VN')}đ</div>
@@ -646,6 +680,19 @@
       container.innerHTML = html;
       updateSummary(total);
     }
+    async function handleQtyInputChange(inputElement, vId) {
+      let newQty = parseInt(inputElement.value);
+
+      // Nếu nhập chữ, để trống, hoặc nhập số < 1 thì mặc định về 1
+      if (isNaN(newQty) || newQty < 1) {
+        newQty = 1;
+      }
+
+      inputElement.value = newQty;
+
+      // Gọi hàm cập nhật số lượng qua API
+      await changeQty(vId, newQty);
+    }
 
     async function changeQty(vId, newQty) {
       if (newQty < 1) return;
@@ -655,12 +702,13 @@
       } catch (err) {
         Swal.fire({
           title: 'CẬP NHẬT THẤT BẠI',
-          text: 'Không thể cập nhật số lượng sản phẩm.',
+          text: err.message || 'Không thể cập nhật số lượng sản phẩm.',
           icon: 'error',
           showConfirmButton: false,
           timer: 1500,
           timerProgressBar: true
         });
+        loadCart(); // Khôi phục lại số lượng cũ trên UI nếu gặp lỗi
       }
     }
 
