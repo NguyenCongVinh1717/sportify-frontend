@@ -1,30 +1,8 @@
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8081'
-    : (window.__API_BASE__ || '/api');
+    : 'https://sportify-backend-6dou.onrender.com';
 
-const FALLBACK_API_BASE = 'https://sportify-backend-6dou.onrender.com';
 let accessToken = null;
-
-function normalizeBase(base) {
-    return (base || '').replace(/\/$/, '');
-}
-
-function buildApiUrl(path, base = API_BASE) {
-    if (path.startsWith('http')) return path;
-    const normalizedBase = normalizeBase(base);
-    return `${normalizedBase}${path.startsWith('/') ? '' : '/'}${path}`;
-}
-
-function getCandidateApiUrls(path) {
-    if (path.startsWith('http')) return [path];
-
-    const bases = [normalizeBase(API_BASE)];
-    if (normalizeBase(API_BASE) === '/api') {
-        bases.push(normalizeBase(FALLBACK_API_BASE));
-    }
-
-    return bases.map(base => buildApiUrl(path, base));
-}
 
 // ✨ THÊM MỚI: giữ 1 Promise refresh đang chạy (nếu có), để mọi request 401 xảy ra
 // gần như cùng lúc đều CHỜ CHUNG kết quả của đúng 1 lần gọi /auth/refresh, thay vì
@@ -70,64 +48,30 @@ async function apiFetch(path, { method = 'GET', body = null, redirectOnAuthError
         headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    const candidateUrls = getCandidateApiUrls(path);
+    const url = path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
     const opts = { method, headers, credentials: 'include' };
     if (body != null) opts.body = isFormData ? body : JSON.stringify(body);
 
-    let lastRes = null;
-    let lastError = null;
+    let res = await fetch(url, opts);
 
-    for (let i = 0; i < candidateUrls.length; i++) {
-        const url = candidateUrls[i];
+    // 1. XỬ LÝ KHI ACCESS TOKEN HẾT HẠN HOẶC THIẾU QUYỀN (401 HOẶC 403)
+    if ((res.status === 401 || res.status === 403) && !path.includes('/auth/refresh')) {
         try {
-            const res = await fetch(url, opts);
-            lastRes = res;
+            const newToken = await doRefresh();
+            headers['Authorization'] = `Bearer ${newToken}`;
+            res = await fetch(url, { ...opts, headers });
+        } catch (e) {
+            accessToken = null;
+            ['role', 'fullName', 'email'].forEach(key => localStorage.removeItem(key));
 
-            // Nếu là lỗi 502/503/504 từ Render/Vercel rewrite, thử URL dự phòng tiếp theo nếu còn
-            if ((res.status === 502 || res.status === 503 || res.status === 504) && i < candidateUrls.length - 1) {
-                continue;
+            if (redirectOnAuthError) {
+                const redirectUrl = encodeURIComponent(window.location.href);
+                window.location.href = `login.html?redirect=${redirectUrl}`;
             }
-
-            // 1. XỬ LÝ KHI ACCESS TOKEN HẾT HẠN HOẶC THIẾU QUYỀN (401 HOẶC 403)
-            if ((res.status === 401 || res.status === 403) && !path.includes('/auth/refresh')) {
-                try {
-                    const newToken = await doRefresh();
-                    headers['Authorization'] = `Bearer ${newToken}`;
-                    const retryRes = await fetch(url, { ...opts, headers });
-                    lastRes = retryRes;
-                    if (retryRes.status === 401 || retryRes.status === 403) {
-                        throw new Error('Phiên đăng nhập đã hết hạn.');
-                    }
-                    return await handleApiResponse(retryRes, path, redirectOnAuthError);
-                } catch (e) {
-                    accessToken = null;
-                    ['role', 'fullName', 'email'].forEach(key => localStorage.removeItem(key));
-
-                    if (redirectOnAuthError) {
-                        const redirectUrl = encodeURIComponent(window.location.href);
-                        window.location.href = `login.html?redirect=${redirectUrl}`;
-                    }
-                    throw new Error("Phiên đăng nhập đã hết hạn.");
-                }
-            }
-
-            return await handleApiResponse(res, path, redirectOnAuthError);
-        } catch (error) {
-            lastError = error;
-            if (i === candidateUrls.length - 1) {
-                throw error;
-            }
+            throw new Error("Phiên đăng nhập đã hết hạn.");
         }
     }
 
-    if (lastRes) {
-        return await handleApiResponse(lastRes, path, redirectOnAuthError);
-    }
-
-    throw lastError || new Error('Không thể kết nối tới máy chủ.');
-}
-
-async function handleApiResponse(res, path, redirectOnAuthError) {
     // 2. Xử lý lưu Access Token khi đăng nhập thành công
     if (res.ok && (path.includes('/login') || path.includes('/verify-otp') || path.includes('/google'))) {
         const data = await res.json();
@@ -142,6 +86,8 @@ async function handleApiResponse(res, path, redirectOnAuthError) {
     let data;
     try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
 
+    // GIỮ NGUYÊN LOGIC BẮT LỖI CỦA LOCAL: Nếu backend trả về object validation hoặc lỗi chuẩn,
+    // frontend ném nguyên object để HTML xử lý, không làm sai lệch form.
     if (!res.ok) {
         if (data && typeof data === 'object' && !data.message && !data.error) {
             throw data;
