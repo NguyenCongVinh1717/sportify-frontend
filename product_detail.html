@@ -299,7 +299,35 @@
       padding-bottom: 14px;
     }
 
+    .product-description-block {
+      margin-top: 8px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .product-description-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--black);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .product-description-content {
+      color: #2d2d2d;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-line;
+      word-break: break-word;
+      margin: 0 0 18px;
+    }
+
     .variant-selector {
+      margin-top: 4px;
       margin-bottom: 20px;
     }
 
@@ -904,6 +932,7 @@
     let currentSelectedRating = 5;
 
     let isProductWishlisted = false;
+    let canCommentThisProduct = false;
 
     let currentRelatedPage = 0;
     let selectedQuantity = 1; // Biến lưu số lượng đang chọn
@@ -938,14 +967,17 @@
       const noticeEl = document.getElementById('comment-login-notice');
       const loginBtnEl = document.getElementById('comment-login-button');
       const starPickerEl = document.getElementById('star-picker-container');
-      const canComment = isUserLoggedIn();
+      const loggedIn = isUserLoggedIn();
+      const canComment = loggedIn && canCommentThisProduct;
 
       if (!textareaEl || !submitBtnEl) return;
 
       textareaEl.disabled = !canComment;
       textareaEl.placeholder = canComment
         ? 'Chia sẻ cảm nhận chi tiết của bạn về chất lượng sản phẩm, form dáng, dịch vụ vận chuyển...'
-        : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
+        : loggedIn
+          ? 'Bạn chỉ có thể đánh giá khi đã mua và đơn hàng đã được giao.'
+          : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
 
       submitBtnEl.style.display = canComment ? 'inline-flex' : 'none';
       submitBtnEl.disabled = !canComment;
@@ -964,11 +996,31 @@
 
       if (noticeEl) {
         noticeEl.style.display = canComment ? 'none' : 'block';
+        const noticeTextEl = noticeEl.querySelector('span');
+        if (noticeTextEl) {
+          noticeTextEl.textContent = loggedIn
+            ? 'Bạn đã đăng nhập nhưng chỉ có thể bình luận khi đã mua sản phẩm này và đơn hàng ở trạng thái đã giao hàng.'
+            : 'Vui lòng đăng nhập để viết đánh giá cho sản phẩm này.';
+        }
       }
 
       if (loginBtnEl) {
-        loginBtnEl.style.display = canComment ? 'none' : 'inline-flex';
+        loginBtnEl.style.display = loggedIn ? 'none' : 'inline-flex';
         loginBtnEl.onclick = () => requireLoginForReview();
+      }
+    }
+
+    async function loadCommentPermission() {
+      if (!isUserLoggedIn() || !productId) {
+        canCommentThisProduct = false;
+        return;
+      }
+
+      try {
+        canCommentThisProduct = Boolean(await apiGet(`/comments/product/${productId}/can-comment`));
+      } catch (err) {
+        console.error('Lỗi kiểm tra quyền bình luận:', err);
+        canCommentThisProduct = false;
       }
     }
 
@@ -990,6 +1042,7 @@
       if (productId) {
         await loadProduct();
         await checkWishlistStatus();
+        await loadCommentPermission();
         await loadCommentsUI();
         updateReviewFormState();
 
@@ -1135,6 +1188,11 @@
       <span class="brand-label">${p.brandName}</span>
       <h1 class="p-name">${p.productName}</h1>
       <div class="p-price">${p.price.toLocaleString('vi-VN')}đ</div>
+
+      <div class="product-description-block">
+        <div class="product-description-label">Mô tả sản phẩm</div>
+        <div class="product-description-content">${p.description ? p.description : 'Sản phẩm chưa có mô tả chi tiết.'}</div>
+      </div>
       
       <div class="variant-selector">
         <span class="variant-title">Màu sắc</span>
@@ -1350,6 +1408,15 @@
         return;
       }
 
+      if (!canCommentThisProduct) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Không thể đánh giá',
+          text: 'Bạn chỉ có thể bình luận khi đã mua sản phẩm này và đơn hàng đã được giao.'
+        });
+        return;
+      }
+
       currentSelectedRating = score;
       const stars = document.querySelectorAll('#star-picker-container i');
       stars.forEach(star => {
@@ -1478,6 +1545,15 @@
         return;
       }
 
+      if (!canCommentThisProduct) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Không thể bình luận',
+          text: 'Bạn chỉ có thể bình luận khi đã mua sản phẩm này và đơn hàng đã được giao.'
+        });
+        return;
+      }
+
       if (!content) {
         Swal.fire({ icon: 'warning', title: 'Nội dung trống', text: 'Vui lòng nhập nội dung cảm nghĩ trước khi gửi đánh giá!' });
         return;
@@ -1495,7 +1571,7 @@
 
       } catch (err) {
         console.error("Lỗi đăng bình luận:", err);
-        Swal.fire({ icon: 'error', title: 'Gửi đánh giá thất bại', text: 'Vui lòng đăng nhập tài khoản thành viên để thực hiện chức năng này!' });
+        Swal.fire({ icon: 'error', title: 'Gửi đánh giá thất bại', text: err?.message || 'Có lỗi xảy ra khi gửi đánh giá!' });
       }
     }
 

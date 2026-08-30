@@ -246,6 +246,32 @@
       border: 1px solid #ddd;
     }
 
+    .form-message {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .form-message.error {
+      display: flex;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+    }
+
+    .form-message.success {
+      display: flex;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
     /* SIDEBAR OVERLAY (Màn che khi mở menu trên mobile) */
     .sidebar-overlay {
       display: none;
@@ -382,6 +408,8 @@
       <form id="brandForm">
         <input type="hidden" id="b-id">
 
+        <div id="brandFormMessage" class="form-message"></div>
+
         <div class="form-group">
           <label>Mã thương hiệu</label>
           <input type="text" id="b-code" class="form-control" required placeholder="Ví dụ: NIKE, ADI...">
@@ -412,6 +440,42 @@
     }
 
     let allBrands = [];
+
+    function getErrorMessage(err) {
+      if (!err) return 'Có lỗi xảy ra. Vui lòng thử lại.';
+      if (typeof err === 'string') return err;
+      if (err.message) return err.message;
+      if (err.error) return err.error;
+      if (err.detail) return err.detail;
+      if (Array.isArray(err)) return err.join(', ');
+      if (typeof err === 'object') {
+        const values = Object.values(err).filter(v => v != null && v !== '');
+        for (const value of values) {
+          if (typeof value === 'string') return value;
+          if (Array.isArray(value) && value.length > 0) return getErrorMessage(value);
+          if (typeof value === 'object') {
+            const nested = getErrorMessage(value);
+            if (nested && nested !== 'Có lỗi xảy ra. Vui lòng thử lại.') return nested;
+          }
+        }
+        return 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+      }
+      return 'Có lỗi xảy ra. Vui lòng thử lại.';
+    }
+
+    function showFormMessage(elId, message, type = 'error') {
+      const msgEl = document.getElementById(elId);
+      if (!msgEl) return;
+      msgEl.textContent = message;
+      msgEl.className = `form-message ${type}`;
+    }
+
+    function clearFormMessage(elId) {
+      const msgEl = document.getElementById(elId);
+      if (!msgEl) return;
+      msgEl.textContent = '';
+      msgEl.className = 'form-message';
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       loadBrands();
@@ -489,16 +553,19 @@
     function openModal() {
       document.getElementById('brandModal').style.display = 'flex';
       document.getElementById('brandForm').reset();
+      clearFormMessage('brandFormMessage');
       document.getElementById('b-id').value = '';
       document.getElementById('modalTitle').innerText = 'THÊM THƯƠNG HIỆU';
     }
 
     function closeModal() {
+      clearFormMessage('brandFormMessage');
       document.getElementById('brandModal').style.display = 'none';
     }
 
     document.getElementById('brandForm').onsubmit = async (e) => {
       e.preventDefault();
+      clearFormMessage('brandFormMessage');
       const id = document.getElementById('b-id').value;
       const body = {
         brandCode: document.getElementById('b-code').value.trim(),
@@ -515,7 +582,8 @@
         loadBrands();
         Swal.fire('Thành công', 'Lưu dữ liệu thành công', 'success');
       } catch (err) {
-        Swal.fire('Lỗi', err.message, 'error');
+        showFormMessage('brandFormMessage', getErrorMessage(err), 'error');
+        document.querySelector('#brandModal .modal-content').scrollTop = 0;
       }
     };
 
@@ -528,7 +596,7 @@
         document.getElementById('b-code').value = b.brandCode || '';
         document.getElementById('b-name').value = b.brandName || '';
       } catch (err) {
-        Swal.fire('Lỗi', err.message, 'error');
+        showFormMessage('brandFormMessage', getErrorMessage(err), 'error');
       }
     }
 

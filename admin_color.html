@@ -213,6 +213,32 @@
             border: 1px solid #ddd;
         }
 
+        .form-message {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .form-message.error {
+            display: flex;
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+            color: #be123c;
+        }
+
+        .form-message.success {
+            display: flex;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
         /* SIDEBAR OVERLAY BACKGROUND */
         .sidebar-overlay {
             display: none;
@@ -345,6 +371,8 @@
             <form id="colorForm">
                 <input type="hidden" id="c-id">
 
+                <div id="colorFormMessage" class="form-message"></div>
+
                 <div class="form-group">
                     <label>Mã màu</label>
                     <input type="text" id="c-code" class="form-control" required>
@@ -379,6 +407,42 @@
         }
 
         let allColors = [];
+
+        function getErrorMessage(err) {
+            if (!err) return 'Có lỗi xảy ra. Vui lòng thử lại.';
+            if (typeof err === 'string') return err;
+            if (err.message) return err.message;
+            if (err.error) return err.error;
+            if (err.detail) return err.detail;
+            if (Array.isArray(err)) return err.join(', ');
+            if (typeof err === 'object') {
+                const values = Object.values(err).filter(v => v != null && v !== '');
+                for (const value of values) {
+                    if (typeof value === 'string') return value;
+                    if (Array.isArray(value) && value.length > 0) return getErrorMessage(value);
+                    if (typeof value === 'object') {
+                        const nested = getErrorMessage(value);
+                        if (nested && nested !== 'Có lỗi xảy ra. Vui lòng thử lại.') return nested;
+                    }
+                }
+                return 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+            }
+            return 'Có lỗi xảy ra. Vui lòng thử lại.';
+        }
+
+        function showFormMessage(elId, message, type = 'error') {
+            const msgEl = document.getElementById(elId);
+            if (!msgEl) return;
+            msgEl.textContent = message;
+            msgEl.className = `form-message ${type}`;
+        }
+
+        function clearFormMessage(elId) {
+            const msgEl = document.getElementById(elId);
+            if (!msgEl) return;
+            msgEl.textContent = '';
+            msgEl.className = 'form-message';
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadColors();
@@ -419,16 +483,19 @@
         function openModal() {
             document.getElementById('colorModal').style.display = 'flex';
             document.getElementById('colorForm').reset();
+            clearFormMessage('colorFormMessage');
             document.getElementById('c-id').value = '';
             document.getElementById('modalTitle').innerText = 'THÊM MÀU';
         }
 
         function closeModal() {
+            clearFormMessage('colorFormMessage');
             document.getElementById('colorModal').style.display = 'none';
         }
 
         document.getElementById('colorForm').onsubmit = async (e) => {
             e.preventDefault();
+            clearFormMessage('colorFormMessage');
             const id = document.getElementById('c-id').value;
             const body = {
                 colorCode: document.getElementById('c-code').value.trim(),
@@ -445,7 +512,8 @@
                 loadColors();
                 Swal.fire('Thành công', 'Lưu dữ liệu thành công', 'success');
             } catch (err) {
-                Swal.fire('Lỗi', err.message, 'error');
+                showFormMessage('colorFormMessage', getErrorMessage(err), 'error');
+                document.querySelector('#colorModal .modal-content').scrollTop = 0;
             }
         }
 

@@ -660,6 +660,11 @@
           </div>
         </div>
 
+        <div class="form-group" style="margin-top: 20px;">
+          <label>Mô tả sản phẩm</label>
+          <textarea id="p-description" class="form-control" rows="4" required placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
+        </div>
+
         <div class="variant-table-container">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <label style="font-size: 11px; font-weight: 800;">QUẢN LÝ BIẾN THỂ (SIZE & MÀU)</label>
@@ -983,6 +988,7 @@
         productName: document.getElementById('p-name').value.trim(),
         price: parseFloat(document.getElementById('p-price').value),
         brandId: parseInt(document.getElementById('p-brand').value),
+        description: document.getElementById('p-description').value.trim(),
         images: currentImages,
         variants: variants
       };
@@ -1088,6 +1094,7 @@
       document.getElementById('productForm').reset();
       document.getElementById('modal-error-msg').style.display = 'none';
       document.getElementById('p-id').value = "";
+      document.getElementById('p-description').value = "";
       document.getElementById('variant-input-body').innerHTML = '';
       addVariantRow();
       currentImages = [];
@@ -1104,6 +1111,7 @@
         document.getElementById('p-name').value = p.productName;
         document.getElementById('p-price').value = p.price;
         document.getElementById('p-brand').value = p.brandId || "";
+        document.getElementById('p-description').value = p.description || "";
 
         document.getElementById('variant-input-body').innerHTML = '';
         document.getElementById('modalTitle').innerText = "Cập nhật sản phẩm";

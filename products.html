@@ -154,6 +154,79 @@
       min-height: 16px;
     }
 
+    .search-image-preview {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 10px;
+      top: 4px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid #dfe9ff;
+      background: #f4f8ff;
+      border-radius: 6px;
+      box-shadow: 0 3px 8px rgba(52, 95, 188, 0.08);
+      overflow: visible;
+    }
+
+    .search-image-preview.visible {
+      display: flex;
+    }
+
+    .search-image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+      background: var(--white);
+      display: block;
+    }
+
+    .search-image-preview-meta {
+      display: none;
+    }
+
+    .search-image-preview-name {
+      display: none;
+    }
+
+    .search-image-preview-status {
+      display: none;
+    }
+
+    .clear-image-preview-btn {
+      position: absolute;
+      right: -5px;
+      top: -5px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #dfe9ff;
+      background: var(--white);
+      color: #4d6fd3;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 9px;
+      flex-shrink: 0;
+      transition: var(--transition);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      z-index: 4;
+    }
+
+    .search-bar-row.has-search-image-preview input {
+      padding-left: 70px;
+    }
+
+    .clear-image-preview-btn:hover {
+      color: var(--black);
+      border-color: var(--black);
+    }
+
     .search-suggestions-box {
       position: absolute;
       top: 48px;
@@ -1848,6 +1921,16 @@
         </div>
         <div id="searchSuggestions" class="search-suggestions-box"></div>
         <input type="file" id="imageSearchInput" accept="image/*" hidden onchange="handleImageSearchFile(event)">
+        <div class="search-image-preview" id="imageSearchPreviewWrap" aria-live="polite">
+          <img id="imageSearchPreview" src="" alt="Ảnh đã chọn để tìm kiếm" />
+          <div class="search-image-preview-meta">
+            <span class="search-image-preview-name" id="imageSearchPreviewName">Ảnh đã chọn</span>
+            <span class="search-image-preview-status" id="imageSearchPreviewStatus">Sẵn sàng tìm kiếm</span>
+          </div>
+          <button type="button" class="clear-image-preview-btn" id="clearImageSearchPreviewBtn" onclick="clearImageSearchPreview()" aria-label="Xóa ảnh tìm kiếm">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
         <div class="search-image-note" id="imageSearchNote">Chọn ảnh sản phẩm để tìm mẫu tương tự.</div>
       </div>
       <div class="user-actions">
@@ -2120,10 +2203,62 @@
       if (note) note.textContent = message;
     }
 
-    function deactivateImageSearch() {
+    function setImageSearchPreview(file) {
+      const wrap = document.getElementById('imageSearchPreviewWrap');
+      const img = document.getElementById('imageSearchPreview');
+      const nameEl = document.getElementById('imageSearchPreviewName');
+      const statusEl = document.getElementById('imageSearchPreviewStatus');
+      const row = document.querySelector('.search-bar-row');
+
+      if (!file || !wrap || !img || !nameEl || !statusEl) return;
+
+      const objectUrl = URL.createObjectURL(file);
+      if (img.dataset.objectUrl && img.dataset.objectUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(img.dataset.objectUrl);
+      }
+
+      img.src = objectUrl;
+      img.dataset.objectUrl = objectUrl;
+      nameEl.textContent = file.name;
+      statusEl.textContent = currentImageSearchActive ? 'Đang tìm kiếm...' : 'Sẵn sàng tìm kiếm';
+      wrap.classList.add('visible');
+      if (row) row.classList.add('has-search-image-preview');
+    }
+
+    function clearImageSearchPreview() {
+      const wrap = document.getElementById('imageSearchPreviewWrap');
+      const img = document.getElementById('imageSearchPreview');
+      const nameEl = document.getElementById('imageSearchPreviewName');
+      const statusEl = document.getElementById('imageSearchPreviewStatus');
+      const row = document.querySelector('.search-bar-row');
+
+      if (img && img.dataset.objectUrl && img.dataset.objectUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(img.dataset.objectUrl);
+      }
+
+      if (img) {
+        img.removeAttribute('src');
+        delete img.dataset.objectUrl;
+      }
+
+      if (nameEl) nameEl.textContent = 'Ảnh đã chọn';
+      if (statusEl) statusEl.textContent = 'Sẵn sàng tìm kiếm';
+      if (wrap) wrap.classList.remove('visible');
+      if (row) row.classList.remove('has-search-image-preview');
+
       currentImageSearchActive = false;
       currentImageSearchLabel = '';
       setImageSearchNote('Chọn ảnh sản phẩm để tìm mẫu tương tự.');
+    }
+
+    function deactivateImageSearch() {
+      currentImageSearchActive = false;
+      currentImageSearchLabel = '';
+      const statusEl = document.getElementById('imageSearchPreviewStatus');
+      if (statusEl) statusEl.textContent = 'Sẵn sàng tìm kiếm';
+      if (!document.getElementById('imageSearchPreviewWrap')?.classList.contains('visible')) {
+        setImageSearchNote('Chọn ảnh sản phẩm để tìm mẫu tương tự.');
+      }
     }
 
     function resetBrowsingStateForImageSearch() {
@@ -2313,6 +2448,7 @@
       resetBrowsingStateForImageSearch();
       currentImageSearchActive = true;
       currentImageSearchLabel = file.name;
+      setImageSearchPreview(file);
       setImageSearchNote(`Đang tìm với ảnh: ${file.name}`);
 
       const formData = new FormData();
@@ -2337,11 +2473,15 @@
         renderProducts(products);
         updateResultCount(products.length, `Kết quả từ ảnh: ${currentImageSearchLabel}`);
         clearPaginationControls();
+        const statusEl = document.getElementById('imageSearchPreviewStatus');
+        if (statusEl) statusEl.textContent = products.length > 0 ? 'Đã tìm thấy kết quả' : 'Không có kết quả';
         setImageSearchNote(products.length > 0 ? `Đã tìm thấy ${products.length} sản phẩm phù hợp từ ảnh đã chọn.` : 'Không tìm thấy sản phẩm nào phù hợp từ ảnh đã chọn.');
         Swal.close();
       } catch (error) {
         currentImageSearchActive = false;
         currentImageSearchLabel = '';
+        const statusEl = document.getElementById('imageSearchPreviewStatus');
+        if (statusEl) statusEl.textContent = 'Không thể tìm kiếm';
         setImageSearchNote('Không thể tìm kiếm bằng ảnh vào lúc này.');
         Swal.close();
         Swal.fire({

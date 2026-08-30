@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Tích hợp SweetAlert2 để đồng bộ thông báo và xác nhận đẹp mắt -->
+  <!-- Tích hợp SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
@@ -20,7 +20,7 @@
       --gray-border: #dee2e6;
       --gray-dark: #212529;
       --text-muted: #6c757d;
-      --radius: 4px; /* Bo góc nhẹ kiểu cá tính, vuông vắn */
+      --radius: 4px;
       --transition: all 0.2s ease-in-out;
     }
 
@@ -127,7 +127,6 @@
       font-weight: 700;
     }
 
-    /* Badge số lượng đơn hàng */
     .tab-badge {
       display: inline-flex;
       align-items: center;
@@ -141,11 +140,6 @@
       min-width: 18px;
       height: 18px;
       line-height: 1;
-    }
-
-    .tab-btn.active .tab-badge {
-      background-color: var(--black);
-      color: var(--white);
     }
 
     .status-view {
@@ -208,7 +202,6 @@
     .status-delivered { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .status-cancelled { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-    /* Layout hàng thông tin */
     .order-body {
       display: flex;
       flex-direction: column;
@@ -234,7 +227,6 @@
       text-align: right;
     }
 
-    /* ===== TỐI ƯU RESPONSIVE FOOTER ===== */
     .order-footer {
       display: flex;
       justify-content: space-between;
@@ -256,7 +248,7 @@
       display: flex;
       align-items: center;
       gap: 24px;
-      margin-left: auto; /* Đẩy cụm thông tin tổng tiền luôn bám sang lề phải cực chuẩn */
+      margin-left: auto;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
@@ -392,14 +384,35 @@
     .product-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
+      align-items: flex-start;
+      padding: 14px 0;
       border-bottom: 1px dashed var(--gray-border);
     }
     
     .product-info-name { font-weight: 700; font-size: 14px; color: var(--black); }
-    .product-info-qty { font-size: 13px; color: var(--text-muted); margin-top: 2px; display: block; }
-    .product-info-price { font-weight: 700; font-size: 14px; color: var(--black); }
+    .product-info-variant { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .product-info-qty { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: block; }
+    .product-info-price { font-weight: 700; font-size: 14px; color: var(--black); white-space: nowrap; margin-left: 12px; }
+
+    .btn-review-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--black);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: var(--radius);
+      text-transform: uppercase;
+      margin-top: 10px;
+      transition: var(--transition);
+    }
+
+    .btn-review-item:hover {
+      background: #333333;
+    }
 
     .modal-footer {
       display: flex;
@@ -410,27 +423,11 @@
       border-top: 2px solid var(--black);
     }
 
-    /* ĐÈ PHONG CÁCH SWEETALERT2 CHO PHÙ HỢP BRAND SPORTIFY */
     .swal2-popup {
-      /* border: 2px solid var(--black) !important; */
       border-radius: var(--radius) !important;
       font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
-    .swal2-styled.swal2-confirm {
-      background-color: var(--black) !important;
-      border-radius: var(--radius) !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      font-size: 13px !important;
-    }
-    .swal2-styled.swal2-cancel {
-      border-radius: var(--radius) !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      font-size: 13px !important;
-    }
 
-    /* Responsive cho màn hình nhỏ hơn 600px */
     @media (max-width: 600px) {
       .order-footer {
         flex-direction: column;
@@ -527,26 +524,6 @@
       await loadMyOrders();
     });
 
-    // HÀM HIỂN THỊ THÔNG BÁO ĐỒNG BỘ QUA SWEETALERT2 TOAST (Dùng cho các thông báo nhỏ góc màn hình nếu cần)
-    function showToast(message, type = "success") {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      });
-
-      Toast.fire({
-        icon: type,
-        title: message
-      });
-    }
-
     async function loadMyOrders() {
       const loadingView = document.getElementById("loading-view");
       loadingView.style.display = "block";
@@ -577,22 +554,9 @@
       }
     }
 
-    // ĐẾM SỐ LƯỢNG ĐƠN HÀNG VÀ HIỂN THỊ BADGE (NẾU > 0)
     function updateTabBadges() {
-      const counts = {
-        ALL: globalOrdersArray.length,
-        UNPAID: 0,
-        PENDING: 0,
-        SHIPPING: 0,
-        DELIVERED: 0,
-        CANCELLED: 0
-      };
-
-      globalOrdersArray.forEach(order => {
-        if (counts.hasOwnProperty(order.status)) {
-          counts[order.status]++;
-        }
-      });
+      const counts = { ALL: globalOrdersArray.length, UNPAID: 0, PENDING: 0, SHIPPING: 0, DELIVERED: 0, CANCELLED: 0 };
+      globalOrdersArray.forEach(order => { if (counts.hasOwnProperty(order.status)) counts[order.status]++; });
 
       Object.keys(counts).forEach(status => {
         const badgeElement = document.getElementById(`badge-${status}`);
@@ -618,7 +582,6 @@
     function renderOrders() {
       const emptyView = document.getElementById("empty-view");
       const ordersContainer = document.getElementById("orders-container");
-      
       ordersContainer.innerHTML = "";
 
       const filteredOrders = currentFilterStatus === "ALL" 
@@ -635,49 +598,39 @@
       ordersContainer.style.display = "flex";
 
       filteredOrders.forEach(order => {
-        let statusClass = "";
-        let statusText = "";
-        let statusIcon = "";
+        let statusClass = "", statusText = "", statusIcon = "";
 
         switch (order.status) {
           case "UNPAID":
-            statusClass = "status-unpaid"; statusText = "Chưa thanh toán";
-            statusIcon = '<i class="fa-regular fa-clock"></i>';
-            break;
+            statusClass = "status-unpaid"; statusText = "Chưa thanh toán"; statusIcon = '<i class="fa-regular fa-clock"></i>'; break;
           case "PENDING":
-            statusClass = "status-pending"; statusText = "Chờ duyệt";
-            statusIcon = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-            break;
+            statusClass = "status-pending"; statusText = "Chờ duyệt"; statusIcon = '<i class="fa-solid fa-circle-notch fa-spin"></i>'; break;
           case "SHIPPING":
-            statusClass = "status-shipping"; statusText = "Đang giao";
-            statusIcon = '<i class="fa-solid fa-truck-fast"></i>';
-            break;
+            statusClass = "status-shipping"; statusText = "Đang giao"; statusIcon = '<i class="fa-solid fa-truck-fast"></i>'; break;
           case "DELIVERED":
-            statusClass = "status-delivered"; statusText = "Đã giao";
-            statusIcon = '<i class="fa-solid fa-circle-check"></i>';
-            break;
+            statusClass = "status-delivered"; statusText = "Đã giao"; statusIcon = '<i class="fa-solid fa-circle-check"></i>'; break;
           case "CANCELLED":
-            statusClass = "status-cancelled"; statusText = "Đã hủy đơn";
-            statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
-            break;
+            statusClass = "status-cancelled"; statusText = "Đã hủy đơn"; statusIcon = '<i class="fa-solid fa-circle-xmark"></i>'; break;
           default:
-            statusClass = "status-unpaid"; statusText = order.status || "Đang xử lý";
-            statusIcon = '<i class="fa-solid fa-circle-question"></i>';
+            statusClass = "status-unpaid"; statusText = order.status || "Đang xử lý"; statusIcon = '<i class="fa-solid fa-circle-question"></i>';
         }
 
-        let methodIcon = '<i class="fa-solid fa-money-bill-wave"></i>';
-        let methodText = "COD";
-
+        let methodIcon = '<i class="fa-solid fa-money-bill-wave"></i>', methodText = "COD";
         if (order.paymentMethod === "VNPAY" || order.paymentMethod === "ONLINE") {
-          methodIcon = '<i class="fa-solid fa-credit-card"></i>';
-          methodText = "VNPay";
+          methodIcon = '<i class="fa-solid fa-credit-card"></i>'; methodText = "VNPay";
         }
 
-        let cancelBtnHtml = "";
+        let actionBtnHtml = "";
         if (order.status === "UNPAID" || order.status === "PENDING") {
-          cancelBtnHtml = `
+          actionBtnHtml = `
             <button class="action-btn btn-danger" onclick="cancelOrder(${order.id}, event)">
               <i class="fa-solid fa-ban"></i> Hủy đơn
+            </button>
+          `;
+        } else if (order.status === "DELIVERED") {
+          actionBtnHtml = `
+            <button class="action-btn" onclick="openOrderDetailModal(${order.id})">
+              <i class="fa-solid fa-star"></i> Đánh giá ngay
             </button>
           `;
         }
@@ -687,24 +640,13 @@
         orderCard.innerHTML = `
           <div class="order-header">
             <span class="order-tag">ĐƠN HÀNG #${order.id}</span>
-            <span class="order-status ${statusClass}">
-              ${statusIcon} ${statusText}
-            </span>
+            <span class="order-status ${statusClass}">${statusIcon} ${statusText}</span>
           </div>
           
           <div class="order-body">
-            <div class="info-row">
-              <span class="info-label">Người nhận</span>
-              <span class="info-value">${order.receiver || "---"}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Số điện thoại</span>
-              <span class="info-value">${order.phone || "---"}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Địa chỉ giao hàng</span>
-              <span class="info-value">${order.address || "---"}</span>
-            </div>
+            <div class="info-row"><span class="info-label">Người nhận</span><span class="info-value">${order.receiver || "---"}</span></div>
+            <div class="info-row"><span class="info-label">Số điện thoại</span><span class="info-value">${order.phone || "---"}</span></div>
+            <div class="info-row"><span class="info-label">Địa chỉ giao hàng</span><span class="info-value">${order.address || "---"}</span></div>
           </div>
           
           <div class="order-footer">
@@ -712,12 +654,10 @@
               <button class="action-btn btn-secondary" onclick="openOrderDetailModal(${order.id})">
                 Xem chi tiết
               </button>
-              ${cancelBtnHtml}
+              ${actionBtnHtml}
             </div>
             <div class="footer-right">
-              <div class="method-badge">
-                ${methodIcon} <span>${methodText}</span>
-              </div>
+              <div class="method-badge">${methodIcon} <span>${methodText}</span></div>
               <div class="total-container">
                 <span class="total-label">Tổng tiền</span>
                 <span class="total-price">${(order.totalPrice || 0).toLocaleString('vi-VN')}đ</span>
@@ -755,10 +695,32 @@
         order.items.forEach(item => {
           const itemDiv = document.createElement("div");
           itemDiv.className = "product-item";
+
+          // Chuẩn hóa phân loại Màu / Size từ OrderItemResponse
+          let variantInfo = [];
+          if (item.colorName) variantInfo.push(`Màu: ${item.colorName}`);
+          if (item.sizeName) variantInfo.push(`Size: ${item.sizeName}`);
+          const variantText = variantInfo.length > 0 ? variantInfo.join(" | ") : "";
+
+          // Bắt buộc lấy chuẩn trường productId từ OrderItemResponse DTO
+          let itemReviewBtnHtml = "";
+          if (order.status === "DELIVERED") {
+            const redirectUrl = item.productId ? `product_detail.html?id=${item.productId}` : `products.html`;
+            itemReviewBtnHtml = `
+              <div>
+                <a href="${redirectUrl}" class="btn-review-item">
+                  <i class="fa-solid fa-star"></i> Đánh giá
+                </a>
+              </div>
+            `;
+          }
+
           itemDiv.innerHTML = `
             <div>
               <span class="product-info-name">${item.productName || "Sản phẩm"}</span>
+              ${variantText ? `<div class="product-info-variant">${variantText}</div>` : ''}
               <span class="product-info-qty">Số lượng: x${item.quantity || 1}</span>
+              ${itemReviewBtnHtml}
             </div>
             <span class="product-info-price">${((item.price || 0) * (item.quantity || 1)).toLocaleString('vi-VN')}đ</span>
           `;
@@ -777,6 +739,12 @@
             <i class="fa-solid fa-ban"></i> Hủy đơn hàng
           </button>
         `;
+      } else if (order.status === "DELIVERED") {
+        modalActionFooter.style.display = "flex";
+        modalActionFooter.innerHTML = `
+          <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Cảm ơn bạn đã tin tưởng mua sắm tại Sportify!</span>
+          <span class="order-status status-delivered" style="white-space: nowrap; flex-shrink: 0;"><i class="fa-solid fa-circle-check"></i> Đã hoàn thành</span>
+        `;
       } else {
         modalActionFooter.style.display = "none";
       }
@@ -788,18 +756,16 @@
       document.getElementById("detail-modal").classList.remove("open");
     }
 
-   // SỬA HÀM HỦY ĐƠN - THÀNH CÔNG TỰ ĐỘNG BIẾN MẤT KHÔNG CẦN NÚT
     async function cancelOrder(orderId, event, isFromModal = false) {
       if (event) event.stopPropagation();
 
-      // 1. Hộp thoại xác nhận hủy đơn (To ở giữa, cần bấm xác nhận)
       const result = await Swal.fire({
         title: 'XÁC NHẬN HỦY ĐƠN?',
         text: `Bạn có chắc chắn muốn hủy Đơn hàng #${orderId} không? Hành động này không thể hoàn tác.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#000000', // Màu đen thương hiệu Sportify
-        cancelButtonColor: '#dc3545',  // Màu đỏ nguy hiểm
+        confirmButtonColor: '#000000',
+        cancelButtonColor: '#dc3545',
         confirmButtonText: 'ĐỒNG Ý HỦY',
         cancelButtonText: 'QUAY LẠI'
       });
@@ -807,24 +773,21 @@
       if (!result.isConfirmed) return;
 
       try {
-        // Gọi API hủy đơn
         await apiPut(`/order/cancel-order/${orderId}`);
         
-        // 2. Hộp thoại thông báo THÀNH CÔNG (To ở giữa, tự biến mất sau 2 giây)
         await Swal.fire({
           title: 'HỦY ĐƠN THÀNH CÔNG!',
           text: `Đơn hàng #${orderId} của bạn đã được hủy thành công khỏi hệ thống.`,
           icon: 'success',
-          showConfirmButton: false, // Ẩn nút "Đồng ý"
-          timer: 1000,              // Tự động đóng sau 2000 mili-giây (2 giây)
-          timerProgressBar: true    // Hiển thị thanh thời gian chạy phía dưới cho đẹp mắt
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true
         });
 
         if (isFromModal) {
           closeModal();
         }
 
-        // Cập nhật cấu trúc mảng cục bộ
         const index = globalOrdersArray.findIndex(o => o.id === orderId);
         if (index !== -1) {
           globalOrdersArray[index].status = "CANCELLED";
@@ -836,7 +799,6 @@
       } catch (error) {
         console.error("Lỗi khi hủy đơn:", error);
         
-        // 3. Hộp thoại thông báo THẤT BẠI (Vẫn giữ nút ĐỒNG Ý để người dùng kịp đọc lỗi)
         await Swal.fire({
           title: 'HỦY ĐƠN THẤT BẠI',
           text: error.message || "Không thể hủy đơn hàng vào lúc này. Vui lòng thử lại sau.",
