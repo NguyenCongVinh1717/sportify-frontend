@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -473,6 +473,70 @@
       cursor: pointer;
     }
 
+    .modal-content:has(#productForm) {
+      width: 980px;
+      padding: 44px 48px;
+    }
+
+    .variant-table-container table {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    .variant-table-container th,
+    .variant-table-container td {
+      padding: 7px 4px !important;
+    }
+
+    .variant-table-container th:nth-child(1),
+    .variant-table-container td:nth-child(1),
+    .variant-table-container th:nth-child(2),
+    .variant-table-container td:nth-child(2),
+    .variant-table-container th:nth-child(3),
+    .variant-table-container td:nth-child(3) {
+      width: 28%;
+    }
+
+    .variant-table-container th:nth-child(4),
+    .variant-table-container td:nth-child(4) {
+      width: 16%;
+    }
+
+    .variant-table-container .form-control {
+      min-width: 0;
+      padding: 10px 8px;
+    }
+
+    .preview-card {
+      overflow: visible;
+    }
+
+    .preview-card .remove-img {
+      top: -9px;
+      right: -9px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    #viewVariantModal .modal-content {
+      width: 560px !important;
+      padding: 44px 48px;
+    }
+
+    #viewVariantModal .admin-table {
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    #viewVariantModal .admin-table th {
+      background: var(--black) !important;
+      color: var(--white) !important;
+    }
+
     /* ================= RESPONSIVE QUERIES ĐỒNG BỘ ================= */
     @media (max-width: 992px) {
       .sidebar {
@@ -544,6 +608,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>

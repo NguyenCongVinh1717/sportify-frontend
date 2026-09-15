@@ -148,6 +148,11 @@
       border: 1px solid var(--gray-border);
     }
 
+    .cart-item {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
     .product-details .name {
       font-weight: 700;
       font-size: 15px;
@@ -265,6 +270,10 @@
       border-left: 1px solid var(--gray-border);
       /* Sử dụng border cắt dọc tinh tế */
       padding-left: 40px;
+      padding-right: 28px;
+      padding-top: 22px;
+      border: 1px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
     }
 
     .summary-title {
@@ -458,6 +467,9 @@
       .cart-summary {
         border-left: none;
         padding-left: 0;
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--gray-border);
         border-top: 1px solid var(--gray-border);
         padding-top: 40px;
       }
@@ -494,7 +506,29 @@
         right: 15px;
       }
     }
+
+    .cart-item {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .cart-summary {
+      padding: 22px 28px 40px;
+      border: 1px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 1024px) {
+      .cart-summary {
+        padding: 40px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid var(--gray-border);
+        box-shadow: none;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>

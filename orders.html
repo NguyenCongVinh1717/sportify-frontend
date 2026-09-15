@@ -445,7 +445,32 @@
         padding-top: 12px;
       }
     }
+
+    .status-view > i {
+      display: block;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      line-height: 48px;
+      font-size: 32px !important;
+      color: var(--text-muted) !important;
+    }
+
+    #empty-view .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    #empty-view .action-btn:hover {
+      background: #212529;
+      color: var(--white);
+    }
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>

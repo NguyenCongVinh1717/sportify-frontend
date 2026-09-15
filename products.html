@@ -1896,7 +1896,61 @@
         width: auto;
       }
     }
+
+    /* Product cards: clear separation and more breathing room for text. */
+    .product-grid {
+      gap: 28px 24px;
+    }
+
+    .product-card {
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      background: var(--white);
+      overflow: hidden;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .product-card:hover {
+      border-color: #bdbdbd;
+      box-shadow: 0 7px 20px rgba(0, 0, 0, 0.09);
+      transform: translateY(-2px);
+    }
+
+    .product-card .img-box {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    .product-card .p-info {
+      padding: 17px 18px 19px;
+      min-height: 126px;
+    }
+
+    .product-card .p-brand-tag {
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .product-card .p-info h5 {
+      margin: 0 0 14px;
+      line-height: 1.4;
+    }
+
+    .product-card .p-action-row {
+      padding-top: 0;
+    }
+
+    @media (max-width: 560px) {
+      .product-grid {
+        gap: 18px 12px;
+      }
+
+      .product-card .p-info {
+        padding: 14px 13px 16px;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -2594,7 +2648,7 @@
         const displayImg = img?.startsWith('http') ? img : `${IMG_VIEW_BASE}${img}`;
         const fallbackImg = img?.startsWith('http') ? '' : `${IMG_VIEW_FALLBACK_BASE}${img}`;
 
-        const isFavorite = userWishlistSet.has(p.id);
+        const isFavorite = userWishlistSet.has(Number(p.id));
 
         return `
       <article class="product-card">
@@ -2653,10 +2707,14 @@
 
         wishlist.forEach(item => {
           const pId = item.id || item.productId;
-          if (pId) userWishlistSet.add(pId);
+          const normalizedId = Number(pId);
+          if (Number.isFinite(normalizedId)) userWishlistSet.add(normalizedId);
         });
 
         updateWishlistBadge();
+
+        // The product list may finish rendering before the wishlist request.
+        if (lastRenderedProducts.length > 0) renderProducts(lastRenderedProducts);
 
       } catch (err) {
         // Nếu lỗi hoặc chưa đăng nhập thì reset số đếm về 0
@@ -2671,13 +2729,14 @@
 
       const btn = event.currentTarget;
       const icon = btn.querySelector("i");
-      const isFavorite = userWishlistSet.has(productId);
+      const normalizedProductId = Number(productId);
+      const isFavorite = userWishlistSet.has(normalizedProductId);
 
       try {
         if (isFavorite) {
           // Đã thích -> Bấm lần nữa để Gọi API Xóa khỏi CSDL
           await apiDelete(`/wishlist/${productId}`);
-          userWishlistSet.delete(productId);
+          userWishlistSet.delete(normalizedProductId);
 
           btn.classList.remove("active");
           if (icon) icon.className = "fa-regular fa-heart";
@@ -2692,7 +2751,7 @@
         } else {
           // Chưa thích -> Gọi API Thêm vào CSDL
           await apiPost("/wishlist", { productId: productId });
-          userWishlistSet.add(productId);
+          userWishlistSet.add(normalizedProductId);
 
           btn.classList.add("active");
           if (icon) icon.className = "fa-solid fa-heart";
