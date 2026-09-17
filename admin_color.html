@@ -451,7 +451,8 @@
 
         async function loadColors() {
             try {
-                allColors = await apiGet('/colors');
+                const response = await apiGet('/colors');
+                allColors = Array.isArray(response) ? response : (response?.content || response?.data || []);
                 renderColors();
             } catch (err) {
                 Swal.fire('Lỗi', err.message, 'error');
@@ -460,6 +461,10 @@
 
         function renderColors() {
             const tbody = document.getElementById('color-body');
+            if (allColors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted);">Không tìm thấy màu nào.</td></tr>';
+                return;
+            }
             tbody.innerHTML = allColors.map(c => `
                 <tr>
                     <td>#${c.id}</td>

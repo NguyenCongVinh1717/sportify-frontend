@@ -246,7 +246,7 @@
     }
 
     /* PAGINATION STYLES */
-    .pagination-container {
+    .pagination-wrapper {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -263,7 +263,7 @@
       color: var(--text-muted);
     }
 
-    .pagination-buttons {
+    .pagination-controls {
       display: flex;
       gap: 5px;
       align-items: center;
@@ -333,12 +333,12 @@
       }
 
       /* Responsive đưa các phần tử phân trang vào giữa */
-      .pagination-container {
+      .pagination-wrapper {
         flex-direction: column;
         justify-content: center;
         text-align: center;
       }
-      .pagination-buttons {
+      .pagination-controls {
         justify-content: center;
       }
     }
@@ -418,11 +418,11 @@
       </table>
 
       <!-- Thanh điều hướng Phân trang (Pagination) -->
-      <div class="pagination-container">
+      <div class="pagination-wrapper">
         <div class="pagination-info" id="pagination-info">
           Hiển thị 0 - 0 trên tổng số 0 người dùng
         </div>
-        <div class="pagination-buttons" id="pagination-buttons"></div>
+        <div class="pagination-controls" id="pagination-buttons"></div>
       </div>
     </div>
   </main>
@@ -439,8 +439,7 @@
 
     let allUsers = []; 
     let currentPage = 0;
-    let totalPages = 0;
-    let totalElements = 0;
+    let currentUsersPage = null;
     const pageSize = 12; // Kích thước trang mặc định
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -452,22 +451,20 @@
       try {
         const response = await apiGet(`/users?page=${page}&size=${pageSize}`);
         
-        if (response && response.content) {
+        if (response && Array.isArray(response.content)) {
           allUsers = response.content;
-          currentPage = response.number;
-          totalPages = response.totalPages;
-          totalElements = response.totalElements;
+          currentUsersPage = response;
+          currentPage = response.pageNumber;
         } else if (Array.isArray(response)) {
           allUsers = response;
           currentPage = 0;
-          totalPages = 1;
-          totalElements = response.length;
+          currentUsersPage = { content: response, pageNumber: 0, pageSize, totalPages: 1, totalElements: response.length, last: true };
         }
 
         renderUsers(allUsers);
-        renderPagination();
+        renderPagination(currentUsersPage);
         
-        document.getElementById('user-count-text').innerText = `Hiện có ${totalElements} tài khoản thành viên hệ thống`;
+        document.getElementById('user-count-text').innerText = `Hiện có ${currentUsersPage?.totalElements || 0} tài khoản thành viên hệ thống`;
       } catch (err) {
         Swal.fire('Lỗi', err.message, 'error');
       }
@@ -517,49 +514,46 @@
     }
 
     // Render các nút Phân trang (Pagination)
-    function renderPagination() {
+    function renderPagination(pageData) {
       const infoContainer = document.getElementById('pagination-info');
       const buttonsContainer = document.getElementById('pagination-buttons');
 
-      // 1. Tính toán vị trí hiển thị bắt đầu (startItem) và kết thúc (endItem)
-      const startItem = totalElements === 0 ? 0 : currentPage * pageSize + 1;
-      const endItem = Math.min((currentPage + 1) * pageSize, totalElements);
-
-      // Hiển thị dạng: Hiển thị 1 - 12 trên tổng số 24 người dùng
-      infoContainer.innerText = `Hiển thị ${startItem} - ${endItem} trên tổng số ${totalElements} người dùng`;
-
-      // 2. Cập nhật dãy nút chuyển trang bên phải
-      let buttonsHtml = '';
-
-      // Nút Previous
-      buttonsHtml += `
-        <button class="page-btn" ${currentPage === 0 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-      `;
-
-      // Tạo nút danh sách các trang
-      for (let i = 0; i < totalPages; i++) {
-        buttonsHtml += `
-          <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-            ${i + 1}
-          </button>
-        `;
+      if (!pageData || pageData.totalElements === 0) {
+        infoContainer.innerText = 'Hiển thị 0 - 0 trên tổng số 0 người dùng';
+        buttonsContainer.innerHTML = '';
+        return;
       }
 
-      // Nút Next
-      buttonsHtml += `
-        <button class="page-btn" ${currentPage >= totalPages - 1 ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      `;
+      const totalElements = pageData.totalElements;
+      const totalPages = pageData.totalPages;
+      const number = pageData.pageNumber;
+      const size = pageData.pageSize || pageSize;
+      const startItem = number * size + 1;
+      const endItem = Math.min((number + 1) * size, totalElements);
+      infoContainer.innerText = `Hiển thị ${startItem} - ${endItem} trên tổng số ${totalElements} người dùng`;
+
+      let buttonsHtml = `<button class="page-btn" ${number === 0 ? 'disabled' : ''} onclick="changePage(${number - 1})">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>`;
+
+      for (let i = 0; i < totalPages; i++) {
+        if (i === 0 || i === totalPages - 1 || (i >= number - 2 && i <= number + 2)) {
+          buttonsHtml += `<button class="page-btn ${i === number ? 'active' : ''}" onclick="changePage(${i})">${i + 1}</button>`;
+        } else if (i === number - 3 || i === number + 3) {
+          buttonsHtml += '<span style="padding:0 4px; color:var(--text-muted)">...</span>';
+        }
+      }
+
+      buttonsHtml += `<button class="page-btn" ${pageData.last ? 'disabled' : ''} onclick="changePage(${number + 1})">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>`;
 
       buttonsContainer.innerHTML = buttonsHtml;
     }
 
     // Hàm chuyển trang
     function changePage(pageIndex) {
-      if (pageIndex < 0 || pageIndex >= totalPages) return;
+      if (!currentUsersPage || pageIndex < 0 || pageIndex >= currentUsersPage.totalPages) return;
       currentPage = pageIndex;
       loadUsers(currentPage);
     }

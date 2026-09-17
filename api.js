@@ -9,6 +9,8 @@ let accessToken = null;
 // mỗi request tự bắn 1 lệnh refresh riêng (gây đụng độ nếu backend dùng refresh token
 // xoay vòng — refresh token cũ bị vô hiệu ngay sau lần refresh đầu tiên thành công).
 let refreshPromise = null;
+const cacheBackedGetRequests = new Map();
+const cacheBackedGetPath = /^(\/products|\/brands|\/colors|\/sizes)(?:[/?]|$)/;
 
 async function doRefresh() {
     if (refreshPromise) {
@@ -114,7 +116,23 @@ window.apiLogout = async () => {
         ['role', 'fullName', 'email'].forEach(key => localStorage.removeItem(key));
     }
 };
-window.apiGet = (path, options = {}) => apiFetch(path, { method: 'GET', ...options });
+window.apiGet = (path, options = {}) => {
+    if (!cacheBackedGetPath.test(path)) {
+        return apiFetch(path, { method: 'GET', ...options });
+    }
+
+    const requestKey = `${path}|${JSON.stringify(options)}`;
+    const existingRequest = cacheBackedGetRequests.get(requestKey);
+    if (existingRequest) return existingRequest;
+
+    const request = apiFetch(path, { method: 'GET', ...options });
+    cacheBackedGetRequests.set(requestKey, request);
+    request.then(
+        () => cacheBackedGetRequests.delete(requestKey),
+        () => cacheBackedGetRequests.delete(requestKey)
+    );
+    return request;
+};
 window.apiPost = (path, body, options = {}) => apiFetch(path, { method: 'POST', body, ...options });
 window.apiPut = (path, body, options = {}) => apiFetch(path, { method: 'PUT', body, ...options });
 window.apiDelete = (path, options = {}) => apiFetch(path, { method: 'DELETE', ...options });

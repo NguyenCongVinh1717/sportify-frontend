@@ -2396,6 +2396,10 @@
       return [];
     }
 
+    function getPageTotalPages(response) {
+      return Number(response?.totalPages ?? response?.data?.totalPages ?? 1) || 1;
+    }
+
     function extractLooseImageSearchProducts(rawText) {
       if (typeof rawText !== 'string') return [];
 
@@ -2914,7 +2918,7 @@
       currentPageIndex = pageIndex;
       const response = await apiGet(`/products/brandPaged/${id}?page=${pageIndex}&size=${defaultPageSize}`);
       const productsArray = extractProductArray(response);
-      const totalPages = response.totalPages || 1;
+      const totalPages = getPageTotalPages(response);
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
       renderProducts(productsArray);
@@ -2941,7 +2945,7 @@
 
       const response = await apiGet(url);
       const productsArray = extractProductArray(response);
-      const totalPages = response.totalPages || 1;
+      const totalPages = getPageTotalPages(response);
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
       renderProducts(productsArray);
@@ -2962,7 +2966,7 @@
       const response = await apiGet(`/products/search?keywords=${encodeURIComponent(keyword)}&page=${pageIndex}&size=${defaultPageSize}`);
 
       const productsArray = extractProductArray(response);
-      const totalPages = response.totalPages || 1;
+      const totalPages = getPageTotalPages(response);
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
 
       lastRenderedProducts = productsArray; // ✨ THÊM MỚI: cache phục vụ sắp xếp client-side
@@ -2988,7 +2992,7 @@
 
       const response = await apiGet(url);
       const productsArray = extractProductArray(response);
-      const totalPages = response.totalPages || 1;
+      const totalPages = getPageTotalPages(response);
       const totalCount = Number(response.totalElements ?? response.totalItems ?? productsArray.length);
       lastRenderedProducts = productsArray;
       renderProducts(productsArray);

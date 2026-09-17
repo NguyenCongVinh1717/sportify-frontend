@@ -324,14 +324,14 @@
       color: var(--text-muted);
     }
 
-    .pagination-container {
+    .pagination-controls {
       display: flex;
       justify-content: flex-end;
       align-items: center;
       gap: 8px;
     }
 
-    .pagination-btn {
+    .page-btn {
       min-width: 38px;
       height: 38px;
       padding: 0 12px;
@@ -348,17 +348,17 @@
       transition: var(--transition);
     }
 
-    .pagination-btn:hover {
+    .page-btn:hover {
       background: #f1f1f1;
     }
 
-    .pagination-btn.active {
+    .page-btn.active {
       background: var(--black);
       color: var(--white);
       border-color: var(--black);
     }
 
-    .pagination-btn:disabled {
+    .page-btn:disabled {
       background: #f8f9fa;
       color: #999999;
       cursor: not-allowed;
@@ -586,7 +586,7 @@
         text-align: center;
       }
 
-      .pagination-container {
+      .pagination-controls {
         justify-content: center;
         width: 100%;
       }
@@ -685,7 +685,7 @@
     <!-- KHU VỰC CHỨA CÁC NÚT ĐIỀU HƯỚNG PHÂN TRANG ĐỒNG BỘ -->
     <div class="pagination-wrapper">
       <div class="pagination-info" id="pagination-info">Hiển thị 0-0 trong tổng số 0 sản phẩm</div>
-      <div class="pagination-container" id="pagination-box"></div>
+      <div class="pagination-controls" id="pagination-box"></div>
     </div>
   </main>
 
@@ -807,8 +807,7 @@
     let allBrands = [], allColors = [], allSizes = [];
     let currentPage = 0;
     let pageSize = 12; // Khớp với kích thước mặc định của Controller
-    let totalPages = 0;
-    let totalElements = 0;
+    let currentProductsPage = null;
     let searchTimeout = null;
 
     let currentImages = [];
@@ -823,9 +822,18 @@
 
     async function loadMetadata() {
       try {
-        [allBrands, allColors, allSizes] = await Promise.all([
+        const [brandsResult, colorsResult, sizesResult] = await Promise.allSettled([
           apiGet('/brands'), apiGet('/colors'), apiGet('/sizes')
         ]);
+        const toList = response => Array.isArray(response)
+          ? response
+          : (response?.content || response?.data || []);
+        allBrands = brandsResult.status === 'fulfilled' ? toList(brandsResult.value) : [];
+        allColors = colorsResult.status === 'fulfilled' ? toList(colorsResult.value) : [];
+        allSizes = sizesResult.status === 'fulfilled' ? toList(sizesResult.value) : [];
+        if (brandsResult.status === 'rejected') console.error('Lỗi tải thương hiệu:', brandsResult.reason);
+        if (colorsResult.status === 'rejected') console.error('Lỗi tải màu sắc:', colorsResult.reason);
+        if (sizesResult.status === 'rejected') console.error('Lỗi tải kích thước:', sizesResult.reason);
         const brandSelect = document.getElementById('p-brand');
         const filterBrand = document.getElementById('filter-brand');
 
@@ -860,13 +868,11 @@
           responseData = await apiGet(`/products?page=${page}&size=${pageSize}`);
         }
 
-        const items = responseData.content || [];
-        totalPages = responseData.totalPages || 0;
-        totalElements = responseData.totalElements !== undefined ? responseData.totalElements : items.length;
+        currentProductsPage = responseData;
 
         // Render dữ liệu vào bảng và xây dựng các nút phân trang
-        renderTable(items);
-        renderPagination();
+        renderTable(responseData.content || []);
+        renderPagination(responseData);
 
       } catch (err) { 
         console.error(err);
@@ -912,46 +918,40 @@
     }
 
     // Hiển thị thanh thông tin và các nút phân trang
-    function renderPagination() {
+    function renderPagination(pageData) {
       const box = document.getElementById('pagination-box');
       const info = document.getElementById('pagination-info');
       box.innerHTML = '';
 
-      if (totalElements === 0) {
+      if (!pageData || pageData.totalElements === 0) {
         info.innerText = 'Hiển thị 0-0 trong tổng số 0 sản phẩm';
         return;
       }
 
-      const start = currentPage * pageSize + 1;
-      const end = Math.min((currentPage + 1) * pageSize, totalElements);
-      info.innerText = `Hiển thị ${start}-${end} trong tổng số ${totalElements} sản phẩm`;
+      const totalElements = pageData.totalElements;
+      const totalPages = pageData.totalPages;
+      const number = pageData.pageNumber;
+      const size = pageData.pageSize || pageSize;
+      const start = number * size + 1;
+      const end = Math.min((number + 1) * size, totalElements);
+      info.innerText = `Hiển thị ${start} - ${end} trên tổng số ${totalElements} sản phẩm`;
 
       if (totalPages <= 1) return;
 
-      // Nút Về trang trước (Previous)
-      const prevBtn = document.createElement('button');
-      prevBtn.className = 'pagination-btn';
-      prevBtn.innerHTML = '<i class="fa-solid fa-angle-left"></i>';
-      prevBtn.disabled = (currentPage === 0);
-      prevBtn.onclick = () => loadProducts(currentPage - 1);
-      box.appendChild(prevBtn);
-
-      // Hiển thị các ô số trang cụ thể
+      let html = `<button class="page-btn" ${number === 0 ? 'disabled' : ''} onclick="loadProducts(${number - 1})">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>`;
       for (let i = 0; i < totalPages; i++) {
-        const pageBtn = document.createElement('button');
-        pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
-        pageBtn.innerText = i + 1;
-        pageBtn.onclick = () => loadProducts(i);
-        box.appendChild(pageBtn);
+        if (i === 0 || i === totalPages - 1 || (i >= number - 2 && i <= number + 2)) {
+          html += `<button class="page-btn ${i === number ? 'active' : ''}" onclick="loadProducts(${i})">${i + 1}</button>`;
+        } else if (i === number - 3 || i === number + 3) {
+          html += '<span style="padding:0 4px; color:var(--text-muted)">...</span>';
+        }
       }
-
-      // Nút Sang trang sau (Next)
-      const nextBtn = document.createElement('button');
-      nextBtn.className = 'pagination-btn';
-      nextBtn.innerHTML = '<i class="fa-solid fa-angle-right"></i>';
-      nextBtn.disabled = (currentPage === totalPages - 1);
-      nextBtn.onclick = () => loadProducts(currentPage + 1);
-      box.appendChild(nextBtn);
+      html += `<button class="page-btn" ${pageData.last ? 'disabled' : ''} onclick="loadProducts(${number + 1})">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>`;
+      box.innerHTML = html;
     }
 
     // THÊM MỚI: Sử dụng cơ chế Debounce để tránh spam gọi API liên tục khi gõ ký tự tìm kiếm
