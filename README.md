@@ -156,7 +156,3 @@ const API_BASE = (window.location.hostname === 'localhost' || window.location.ho
 ```
 
 ---
-
-## 📝 Giấy Phép & Bản Quyền
-
-Project thuộc bản quyền phát triển bởi đội ngũ **Sportify Team**. Tất cả các quyền được bảo lưu.
